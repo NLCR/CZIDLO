@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.*;
 
 import java.util.logging.Logger;
@@ -34,7 +33,6 @@ public class DAOFactory {
     private UrnNbnGeneratorDAO urnSearchDao;
     private UrnNbnReservedDAO urnReservedDao;
     private ContentDAO contentDao;
-    private UrnNbnStatisticDAO statisticDao;
     private UrnNbnResolvationLogsDAO urnNbnResolvationLogsDao;
     // cache
     private final boolean postgresImplemantation;
@@ -231,17 +229,6 @@ public class DAOFactory {
             }
         }
         return contentDao;
-    }
-
-    public UrnNbnStatisticDAO urnNbnStatisticDao() {
-        if (statisticDao == null) {
-            if (postgresImplemantation) {
-                statisticDao = new UrnNbntatisticDaoPostgres(connector);
-            } else if (oracleImplementation) {
-                throw new UnsupportedOperationException("Oracle implementation not available");
-            }
-        }
-        return statisticDao;
     }
 
     public UrnNbnResolvationLogsDAO urnNbnResolvationLogsDao() {

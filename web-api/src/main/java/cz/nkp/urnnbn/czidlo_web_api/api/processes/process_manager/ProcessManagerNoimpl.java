@@ -19,71 +19,71 @@ public class ProcessManagerNoimpl implements ProcessManager {
 
     @Override
     public void shutdown(boolean waitForJobsToFinish) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process scheduleNewProcess(String login, ProcessType type, Map<String, Object> processParams) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process getProcess(User user, Long processId) throws UnknownRecordException, AccessRightException {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process getProcess(Long processId) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public List<cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process> getAllProcesses() {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public List<cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process> getProcessesByState(ProcessState state) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public List<cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process> getProcessesScheduledAfter(Date date) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public List<cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process> getProcessesByOwner(String ownerLogin) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public List<Process> getProcessesByOwnerScheduledAfter(String ownerLogin, Date date) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public boolean killRunningProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public boolean cancelScheduledProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public void deleteProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public FileInputStream getProcessLog(User user, Long id) throws UnknownRecordException, AccessRightException, IOException {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 
     @Override
     public ProcessOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException("ProcessManagerNoimpl: Not Implemented");
     }
 }

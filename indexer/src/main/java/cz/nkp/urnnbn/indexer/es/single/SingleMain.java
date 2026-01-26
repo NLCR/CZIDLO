@@ -26,6 +26,10 @@ public class SingleMain {
         Properties props = Utils.loadProperties();
         ObjectMapper mapper = Config.getObjectMapper();
 
+        String indexSearch = "czidlo_multimain_search_1";
+        String indexAssign = "czidlo_multimain_assign_1";
+        String indexResolve = "czidlo_multimain_resolve_1";
+
         ElasticsearchClient elasticClient = Utils.createElasticClient(props, mapper);
         try (Connection conn = Utils.createConnection(props)) {
             EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
@@ -36,14 +40,18 @@ public class SingleMain {
             //System.out.println(conversionResult.getSearch());
             //System.out.println(conversionResult.getAssignment());
             //System.out.println(conversionResolvingResult.getResolve());
-            indexData(elasticClient, conversionResult);
-            indexData(elasticClient, conversionResolvingResult);
+            //indexData(elasticClient, conversionResult); //index search + assign
+            //indexData(elasticClient, conversionResolvingResult); //index resolving
+            indexData(elasticClient, conversionResult, indexSearch, indexAssign);
         } finally {
             Utils.stopElasticsearchClient(elasticClient);
         }
     }
 
-    private static void indexData(ElasticsearchClient esClient, DdEsConversionResult conversionResult) {
+    //TODO: implement indexAccessLogs
+
+    //TODO: rename to indexDigitalDocs
+    private static void indexData(ElasticsearchClient esClient, DdEsConversionResult conversionResult, String indexSearch, String indexAssign) {
         try {
             if (Config.DISABLE_INDEXING) {
                 System.out.println("Indexing is disabled, skipping indexing step.");
@@ -52,7 +60,7 @@ public class SingleMain {
 
             if (conversionResult.getSearch() != null) {
                 esClient.index(idx -> idx
-                        .index(Config.INDEX_SEARCH)
+                        .index(indexSearch)
                         .id(conversionResult.getSearch().getId())
                         .document(conversionResult.getSearch())
                 );
@@ -60,7 +68,7 @@ public class SingleMain {
 
             if (conversionResult.getAssignment() != null) {
                 esClient.index(idx -> idx
-                        .index(Config.INDEX_ASSIGN)
+                        .index(indexAssign)
                         .id(conversionResult.getAssignment().getId())
                         .document(conversionResult.getAssignment())
                 );

@@ -50,7 +50,9 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
     private static final Object HEADER_AVAILABILITY_RESULT_CODE = "Dostupnost URL";
     private static final Object HEADER_AVAILABILITY_RESULT_MESSAGE = "Popis chyby";
 
-    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy");
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+
     private PrintWriter csvWriter;
     private Services services;
 
@@ -71,7 +73,7 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
                 logger.info("Process killed");
                 context.setResult(ProcessState.KILLED);
             } else {
-                logger.info("Process finished, see export");
+                logger.info("Process finished, see report file");
                 context.setResult(ProcessState.FINISHED);
             }
         } catch (Throwable ex) {
@@ -85,7 +87,6 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
 
     private Filter extractFilter(JobExecutionContext context) throws ParseException {
         Filter result = new Filter();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d. M. yyyy");
         // registrars
         String registrarCodesStr = context.getMergedJobDataMap().getString(PARAM_REGISTRAR_CODES);
         logger.info("Registrars: " + registrarCodesStr);

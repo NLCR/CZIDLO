@@ -19,6 +19,7 @@ package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 import cz.nkp.urnnbn.apiClient.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.Services;
@@ -51,27 +52,56 @@ public class IndexationJob extends AbstractJob {
     //czidlo api
     public static final String PARAM_CZIDLO_API_BASE_URL = "czidloApiBaseUrl";
     //solr
-    public static final String PARAM_SOLR_BASE_URL = "solrBaseUrl";
-    public static final String PARAM_SOLR_COLLECTION = "solrCollection";
-    public static final String PARAM_SOLR_USE_HTTPS = "solrUseHttps";
-    public static final String PARAM_SOLR_LOGIN = "solrLogin";
-    public static final String PARAM_SOLR_PASSWORD = "solrPassword";
+    //public static final String PARAM_SOLR_BASE_URL = "solrBaseUrl";
+    //public static final String PARAM_SOLR_COLLECTION = "solrCollection";
+    //public static final String PARAM_SOLR_USE_HTTPS = "solrUseHttps";
+    //public static final String PARAM_SOLR_LOGIN = "solrLogin";
+    //public static final String PARAM_SOLR_PASSWORD = "solrPassword";
+
+    /*public static final String INDEXER_ES_BASE_URL = "indexer.es.baseUrl";
+    public static final String INDEXER_ES_INDEX_NAME = "indexer.es.index";
+    public static final String INDEXER_ES_LOGIN = "indexer.es.login";
+    public static final String INDEXER_ES_PASSWORD = "indexer.es.password";
+
+    public static final String INDEXER_DB_URL = "indexer.db.url";
+    public static final String INDEXER_DB_LOGIN = "indexer.db.login";
+    public static final String INDEXER_DB_PASSWORD = "indexer.db.password";*/
+
+    //elasticsearch
+    public static final String PARAM_ES_BASE_URL = "esBaseUrl";
+    public static final String PARAM_ES_LOGIN = "esLogin";
+    public static final String PARAM_ES_PASSWORD = "esPassword";
+    public static final String PARAM_ES_INDEX_SEARCH_NAME = "esIndexSearchName";
+    public static final String PARAM_ES_INDEX_ASSIGN_NAME = "esIndexAssignName";
+    public static final String PARAM_ES_INDEX_RESOLVE_NAME = "esIndexResolveName";
+
+    //database
+    public static final String PARAM_CZIDLO_DB_URL = "dbUrl";
+    public static final String PARAM_CZIDLO_DB_LOGIN = "dbLogin";
+    public static final String PARAM_CZIDLO_DB_PASSWORD = "dbPassword";
+
     //xslt
-    public static final String PARAM_XSL_FILE = "xslFile";
+    //public static final String PARAM_XSL_FILE = "xslFile";
+
     //date range
     public static final String PARAM_MODIFICATION_DATE_FROM = "mod_date_from";
     public static final String PARAM_MODIFICATION_DATE_TO = "mod_date_to";
     //possiblly other paramethers
 
-    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy");
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 
-    private SolrIndexer solrIndexer;
+    //private SolrIndexer solrIndexer;
+    private EsIndexer esIndexer;
 
     @Override
     public void interrupt() throws UnableToInterruptJobException {
         super.interrupt();
-        if (solrIndexer != null) {
+        /*if (solrIndexer != null) {
             solrIndexer.stop();
+        }*/
+        if (esIndexer != null) {
+            esIndexer.stop();
         }
     }
 
@@ -83,7 +113,6 @@ public class IndexationJob extends AbstractJob {
             logger.info("Executing " + IndexationJob.class.getSimpleName());
 
             IndexerConfig config = new IndexerConfig();
-            DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d. M. yyyy");
 
             // czidlo api
             config.setCzidloApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL));
@@ -91,18 +120,38 @@ public class IndexationJob extends AbstractJob {
             config.setCzidloApiUseHttps(false);
 
             //solr
-            config.setSolrApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_SOLR_BASE_URL));
+            /*config.setSolrApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_SOLR_BASE_URL));
             logger.info("Solr base url: " + config.getSolrApiBaseUrl());
             config.setSolrApiCollection((String) context.getMergedJobDataMap().get(PARAM_SOLR_COLLECTION));
             logger.info("Solr collection: " + config.getSolrApiCollection());
             config.setSolrApiLogin((String) context.getMergedJobDataMap().get(PARAM_SOLR_LOGIN));
             config.setSolrApiPassword((String) context.getMergedJobDataMap().get(PARAM_SOLR_PASSWORD));
             config.setSolrApiUseHttps((Boolean) context.getMergedJobDataMap().get(PARAM_SOLR_USE_HTTPS));
-            logger.info("Solr use https: " + config.getSolrApiUseHttps());
+            logger.info("Solr use https: " + config.getSolrApiUseHttps());*/
+
+            //elasticsearch
+            config.setEsApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_ES_BASE_URL));
+            logger.info("Elasticsearch base url: " + config.getEsApiBaseUrl());
+            config.setEsApiIndexSearchName((String) context.getMergedJobDataMap().get(PARAM_ES_INDEX_SEARCH_NAME));
+            logger.info("ES index (search) name: " + config.getEsApiIndexSearchName());
+            config.setEsApiIndexAssignName((String) context.getMergedJobDataMap().get(PARAM_ES_INDEX_ASSIGN_NAME));
+            logger.info("ES index (assign) name: " + config.getEsApiIndexAssignName());
+            config.setEsApiIndexResolveName((String) context.getMergedJobDataMap().get(PARAM_ES_INDEX_RESOLVE_NAME));
+            logger.info("ES index (resolve) name: " + config.getEsApiIndexResolveName());
+            config.setEsApiLogin((String) context.getMergedJobDataMap().get(PARAM_ES_LOGIN));
+            config.setEsApiPassword((String) context.getMergedJobDataMap().get(PARAM_ES_PASSWORD));
+            //logger.info("Elasticsearch login: " + config.getEsApiLogin() + ", password:" +  config.getEsApiPassword());
+
+            //czidlo database
+            config.setDbUrl((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_DB_URL));
+            logger.info("Database url: " + config.getDbUrl());
+            config.setDbLogin((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_DB_LOGIN));
+            config.setDbPassword((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_DB_PASSWORD));
+            //logger.info("Database login: " + config.getDbLogin() + ", password:" +  config.getDbPassword());
 
             //xslt
-            config.setCzidloToSolrXsltFile(new File((String) context.getMergedJobDataMap().get(PARAM_XSL_FILE)));
-            config.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(config.getCzidloToSolrXsltFile().getAbsolutePath()));
+            //config.setCzi¬dloToSolrXsltFile(new File((String) context.getMergedJobDataMap().get(PARAM_XSL_FILE)));
+            //config.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(config.getCzidloToSolrXsltFile().getAbsolutePath()));
 
             //registration date range
             DateTime registrationStart = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_FROM, context, dateFormat);
@@ -111,8 +160,22 @@ public class IndexationJob extends AbstractJob {
             logger.info("Registration until: " + (registrationEnd == null ? null : registrationEnd.toString(dateTimeFormatter)));
 
 
-            logger.info("Running Solr Indexer");
-            solrIndexer = new SolrIndexer(config, buildReportLoggerOutputStream(),
+            logger.info("Running Indexer");
+
+            /*solrIndexer = new SolrIndexer(config, buildReportLoggerOutputStream(),
+                    new DataProvider() {
+                        @Override
+                        public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
+                            return Services.instanceOf().dataAccessService().digDocsByModificationDate(from, until);
+                        }
+
+                        @Override
+                        public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
+                            return Services.instanceOf().dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
+                        }
+                    }
+            );*/
+            esIndexer = new EsIndexer(config, buildReportLoggerOutputStream(),
                     new DataProvider() {
                         @Override
                         public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
@@ -125,7 +188,23 @@ public class IndexationJob extends AbstractJob {
                         }
                     }
             );
-            solrIndexer.setProgressListener(new ProgressListener() {
+
+
+            /*solrIndexer.setProgressListener(new ProgressListener() {
+                @Override
+                public void onProgress(int processed, int total) {
+                    if (processed % 100 == 0) {
+                        logger.info(String.format("Processed %d/%d", processed, total));
+                    }
+                }
+
+                @Override
+                public void onFinished(int processed, int total) {
+                    logger.info(String.format("Processed %d/%d", processed, total));
+                }
+            });*/
+
+            esIndexer.setProgressListener(new ProgressListener() {
                 @Override
                 public void onProgress(int processed, int total) {
                     if (processed % 100 == 0) {
@@ -140,13 +219,14 @@ public class IndexationJob extends AbstractJob {
             });
 
             if (!interrupted) {
-                solrIndexer.indexDocuments(registrationStart, registrationEnd);
+                //solrIndexer.indexDocuments(registrationStart, registrationEnd);
+                esIndexer.indexDocuments(registrationStart, registrationEnd);
             }
             if (interrupted) {
                 logger.info("Process killed");
                 context.setResult(ProcessState.KILLED);
             } else {
-                logger.info("Process finished, see export");
+                logger.info("Process finished, see report file");
                 context.setResult(ProcessState.FINISHED);
             }
         } catch (Throwable ex) {
@@ -168,8 +248,11 @@ public class IndexationJob extends AbstractJob {
 
     @Override
     void close() {
-        if (solrIndexer != null) {
+        /*if (solrIndexer != null) {
             solrIndexer.close();
+        }*/
+        if (esIndexer != null) {
+            esIndexer.close();
         }
     }
 

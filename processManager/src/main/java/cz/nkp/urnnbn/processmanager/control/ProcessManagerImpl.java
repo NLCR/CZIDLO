@@ -350,7 +350,7 @@ public class ProcessManagerImpl implements ProcessManager {
 
     private JobDetail buildJobDetail(Process process) {
         String id = process.getId().toString();
-        // System.err.println(parematersToString(process.getParams()));
+        System.err.println(parematersToString(process.getParams()));
         String[] params = process.getParams();
         int i = 0;
         switch (process.getType()) {
@@ -403,12 +403,23 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
                         .usingJobData(IndexationJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getCzidloApiBaseUrl())//
-                        .usingJobData(IndexationJob.PARAM_SOLR_BASE_URL, Configuration.getSolrIndexerSolrBaseUrl())//
+                        /*.usingJobData(IndexationJob.PARAM_SOLR_BASE_URL, Configuration.getSolrIndexerSolrBaseUrl())//
                         .usingJobData(IndexationJob.PARAM_SOLR_COLLECTION, Configuration.getSolrIndexerSolrCollection())
                         .usingJobData(IndexationJob.PARAM_SOLR_USE_HTTPS, Configuration.getSolrIndexerSolrUseHttps())
                         .usingJobData(IndexationJob.PARAM_SOLR_LOGIN, Configuration.getSolrIndexerSolrLogin())
                         .usingJobData(IndexationJob.PARAM_SOLR_PASSWORD, Configuration.getSolrIndexerSolrPassword())
-                        .usingJobData(IndexationJob.PARAM_XSL_FILE, Configuration.getSolrXsltFilename())
+                        .usingJobData(IndexationJob.PARAM_XSL_FILE, Configuration.getSolrXsltFilename())*/
+                        .usingJobData(IndexationJob.PARAM_ES_BASE_URL, Configuration.getIndexerEsBaseUrl())//
+                        .usingJobData(IndexationJob.PARAM_ES_LOGIN, Configuration.getIndexerEsLogin())
+                        .usingJobData(IndexationJob.PARAM_ES_PASSWORD, Configuration.getIndexerEsPassword())
+                        .usingJobData(IndexationJob.PARAM_ES_INDEX_SEARCH_NAME, Configuration.getIndexerEsIndexSearchName())
+                        .usingJobData(IndexationJob.PARAM_ES_INDEX_ASSIGN_NAME, Configuration.getIndexerEsIndexAssignName())
+                        .usingJobData(IndexationJob.PARAM_ES_INDEX_RESOLVE_NAME, Configuration.getIndexerEsIndexResolveName())
+
+                        .usingJobData(IndexationJob.PARAM_CZIDLO_DB_URL, Configuration.getIndexerCzidloDbUrl())
+                        .usingJobData(IndexationJob.PARAM_CZIDLO_DB_LOGIN, Configuration.getIndexerCzidloDbLogin())
+                        .usingJobData(IndexationJob.PARAM_CZIDLO_DB_PASSWORD, Configuration.getIndexerCzidloDbPassword())//
+
                         .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_FROM, params[i++])//
                         .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_TO, params[i++])//
                         /*
@@ -496,26 +507,25 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     @Override
-    public synchronized boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException,
-            InvalidStateException {
-        Process process = getProcess(login, processId);
-        if (process.getState() != ProcessState.RUNNING) {
-            throw new InvalidStateException(processId, process.getState());
-        }
-
+    public synchronized boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         try {
-            JobKey jobKey = new JobKey(processId.toString(), PROCESS_GROUP_JOBS);
-            if (scheduler.checkExists(jobKey)) {
-                // System.err.println("OK, running");
-                if (!AuthentizationUtils.isAdminOrOwner(login, process)) {
-                    throw new AccessRightException(login, processId);
-                }
-                scheduler.interrupt(jobKey);
-                return true;
-            } else {
-                throw new UnknownRecordException(Process.class.getName() + " with id " + processId);
-                // System.err.println("NOT RUNNING");
+            Process process = getProcess(login, processId);
+            // check access rights
+            if (!AuthentizationUtils.isAdminOrOwner(login, process)) {
+                throw new AccessRightException(login, processId);
             }
+            // check state
+            if (process.getState() != ProcessState.RUNNING) {
+                throw new InvalidStateException(processId, process.getState());
+            }
+            // check if job exists
+            JobKey jobKey = new JobKey(processId.toString(), PROCESS_GROUP_JOBS);
+            if (!scheduler.checkExists(jobKey)) {
+                throw new UnknownRecordException(Process.class.getName() + " with id " + processId);
+            }
+
+            scheduler.interrupt(jobKey);
+            return true;
         } catch (SchedulerException ex) {
             logger.log(Level.SEVERE, null, ex);
             return false;
@@ -523,9 +533,17 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     @Override
-    public synchronized boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException,
-            InvalidStateException {
+    public synchronized boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         Process process = processDao.getProcess(processId);
+        // check access rights
+        if (!AuthentizationUtils.isAdminOrOwner(login, process)) {
+            throw new AccessRightException(login, processId);
+        }
+        // check state
+        if (process.getState() != ProcessState.SCHEDULED) {
+            throw new InvalidStateException(processId, process.getState());
+        }
+
         // remove from queue
         boolean removedFromQueue = false;
         if (AuthentizationUtils.isAdmin(process.getOwnerLogin())) {
@@ -601,5 +619,32 @@ public class ProcessManagerImpl implements ProcessManager {
     private void logProcessDeleted(Process process, Long processId) {
         String log = String.format("Deleted process %s of user %s with id: %d.", process.getType(), process.getOwnerLogin(), processId);
         AdminLogger.getLogger().info(log);
+    }
+
+    public void shutdown() {
+        logger.info("Shutting down Process Manager...");
+        Scheduler scheduler = this.scheduler;
+        this.scheduler = null; // prevent další použití během shutdownu
+
+        if (scheduler != null) {
+            try {
+                if (!scheduler.isShutdown()) {
+                    // Volitelné: nejdřív zastavit nové spouštění triggerů
+                    scheduler.standby();
+
+                    // Řízené ukončení – počká na doběh jobů
+                    scheduler.shutdown(true);
+                }
+            } catch (SchedulerException e) {
+                logger.log(Level.SEVERE, "Failed to shutdown Quartz scheduler", e);
+            }
+        }
+    }
+
+    public static synchronized void shutdownInstance() {
+        if (instance != null) {
+            instance.shutdown();
+            instance = null;
+        }
     }
 }

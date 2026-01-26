@@ -68,7 +68,9 @@ public class UrnNbnCsvExportJob extends AbstractJob {
     private static final String HEADER_UNR_ACTIVE = "Aktivní";
     private static final String HEADER_NUM_OF_DIG_INSTANCES = "Počet instancí";
 
-    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy");
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+
     private PrintWriter csvWriter;
     private Services services;
 
@@ -111,7 +113,6 @@ public class UrnNbnCsvExportJob extends AbstractJob {
 
     private UrnNbnExportFilter extractFilter(JobExecutionContext context) throws ParseException {
         UrnNbnExportFilter result = new UrnNbnExportFilter();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d. M. yyyy");
         // registration datestamps
         result.setRegistrationStart(parseDatetimeOrNullFromContext(PARAM_REGISTRATION_START, context, dateFormat));
         result.setRegistrationEnd(parseDatetimeOrNullFromContext(PARAM_REGISTRATION_END, context, dateFormat));
@@ -222,20 +223,24 @@ public class UrnNbnCsvExportJob extends AbstractJob {
                 if (export.getSubtitle() != null) {
                     builder.append(" (").append(export.getSubtitle()).append(')');
                 }
-                return builder.toString();
+                return escapeQuotes(builder.toString());
             case MONOGRAPH_VOLUME:
             case PERIODICAL_VOLUME:
                 builder.append(export.getTitle());
                 builder.append(", ").append(export.getVolumeTitle());
-                return builder.toString();
+                return escapeQuotes(builder.toString());
             case PERIODICAL_ISSUE:
                 builder.append(export.getTitle());
                 builder.append(", ").append(export.getVolumeTitle());
                 builder.append(", ").append(export.getIssueTitle());
-                return builder.toString();
+                return escapeQuotes(builder.toString());
             default:
                 return "";
         }
+    }
+
+    private String escapeQuotes(String string) {
+        return string.replace("\"", "\"\"");
     }
 
 }

@@ -46,4 +46,10 @@ SELECT
   registrarcode,
   resolved
 FROM
-  RowGenerator
+  RowGenerator;
+
+
+-- Drop old table urnnbn_resolvation_statistics
+DROP TABLE IF EXISTS urnnbn_resolvation_statistics;
+DROP TABLE IF EXISTS urnnbn_assignment_statistics_preprocessed;
+DROP VIEW IF EXISTS urnnbn_assignment_statistics_view;

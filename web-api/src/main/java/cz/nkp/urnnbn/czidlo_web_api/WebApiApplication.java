@@ -44,6 +44,8 @@ public class WebApiApplication extends org.glassfish.jersey.server.ResourceConfi
                 "json:application/json, xml:application/xml"
         );
 
+        register(LastModifiedSanitizingFilter.class);
+
         // Register Swagger resources
         register(io.swagger.v3.jaxrs2.integration.resources.OpenApiResource.class);
         register(io.swagger.v3.jaxrs2.integration.resources.AcceptHeaderOpenApiResource.class);

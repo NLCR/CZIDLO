@@ -263,8 +263,8 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            boolean p = processManager.killRunningProcess(user, id);
-            return Response.ok(p).build();
+            boolean killed = processManager.killRunningProcess(user, id);
+            return Response.ok(killed).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
         } catch (AccessRightException e) {

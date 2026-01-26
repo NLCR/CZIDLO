@@ -44,9 +44,11 @@ public class PropertyKeys {
     public static final String INDEXER_SOLR_PASSWORD = "indexer.solr.password";
 
     public static final String INDEXER_ES_BASE_URL = "indexer.es.baseUrl";
-    public static final String INDEXER_ES_INDEX_NAME = "indexer.es.index";
     public static final String INDEXER_ES_LOGIN = "indexer.es.login";
     public static final String INDEXER_ES_PASSWORD = "indexer.es.password";
+    public static final String INDEXER_ES_INDEX_SEARCH_NAME = "indexer.es.index_search";
+    public static final String INDEXER_ES_INDEX_ASSIGN_NAME = "indexer.es.index_assign";
+    public static final String INDEXER_ES_INDEX_RESOLVE_NAME = "indexer.es.index_resolve";
 
     public static final String INDEXER_DB_URL = "indexer.db.url";
     public static final String INDEXER_DB_LOGIN = "indexer.db.login";
