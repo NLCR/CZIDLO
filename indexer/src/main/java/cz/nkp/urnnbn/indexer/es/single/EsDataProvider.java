@@ -63,6 +63,11 @@ public class EsDataProvider {
     }
 
     private SearchingIdx convertSearching(Long ddId) throws SQLException, JsonProcessingException, IllegalArgumentException {
+        if (ddId == null) {
+            log.warn("ddId is null, cannot convert SearchingIdx");
+            return null;
+        }
+
         String query = new SearchQueryBuilder()
                 .withAlias("resulting_json")
                 .where("dd.id = ?")
@@ -87,6 +92,11 @@ public class EsDataProvider {
     }
 
     private AssigningIdx convertAssigning(Long ddId) throws SQLException, JsonProcessingException, IllegalArgumentException {
+        if (ddId == null) {
+            log.warn("ddId is null, cannot convert AssigningIdx");
+            return null;
+        }
+
         String query = new AssigningQueryBuilder()
                 .withAlias("resulting_json")
                 .where("dd.id = ?")
