@@ -9,6 +9,7 @@ public class Assigning {
 
     public List<UrnNbn> urnnbn;
     public String entitytype;
+    public Boolean digitalborn;
     public Registrar registrar;
     public Archiver archiver;
 

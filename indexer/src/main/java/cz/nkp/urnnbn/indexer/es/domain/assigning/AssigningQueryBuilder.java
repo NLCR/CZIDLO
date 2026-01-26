@@ -8,6 +8,7 @@ public class AssigningQueryBuilder {
                 jsonb_build_object(
                    'urnnbn', urnnbns.json_list,
                    'entitytype', ie.entitytype,
+                   'digitalborn', ie.digitalborn,
                    'archiver', archiver_json.obj,
                    'registrar', registrar_json.obj
                )

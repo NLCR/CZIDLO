@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.indexer.es.domain.searching;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ public class Searching {
 
     public List<UrnNbn> urnnbn;
     public String entitytype;
+    public Boolean digitalborn;
     public String otheroriginator;
 
     public Map<String, List<String>> ieidentifiers;
@@ -22,6 +24,7 @@ public class Searching {
         public String registrarcode;
         public String documentcode;
         public Boolean active;
+        public LocalDateTime registered;
 
         public String getUrnnbn() {
             if (registrarcode == null || documentcode == null) {

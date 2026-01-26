@@ -3,6 +3,7 @@ package cz.nkp.urnnbn.indexer.es.domain.searching;
 
 import cz.nkp.urnnbn.indexer.es.domain.DomainIdx;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ public class SearchingIdx implements DomainIdx {
     // searching
     public Long id;
     public String entitytype;
+    public Boolean digitalborn;
     public String otheroriginator;
 
     // urnnbn
@@ -19,6 +21,7 @@ public class SearchingIdx implements DomainIdx {
     public String documentcode;
     public String registrarcode;
     public Boolean active;
+    public LocalDateTime registered;
 
     // ieidentifiers
     public String title;
@@ -53,6 +56,7 @@ public class SearchingIdx implements DomainIdx {
 
         idx.id = searching.id;
         idx.entitytype = searching.entitytype;
+        idx.digitalborn = searching.digitalborn;
         idx.otheroriginator = searching.otheroriginator;
 
         Searching.UrnNbn urnnbn = searching.urnnbn.getFirst();
@@ -60,20 +64,8 @@ public class SearchingIdx implements DomainIdx {
         idx.documentcode = urnnbn.documentcode;
         idx.registrarcode = urnnbn.registrarcode;
         idx.active = urnnbn.active;
+        idx.registered = urnnbn.registered;
 
-        Map<String, List<String>> ieidentifiers = searching.ieidentifiers;
-        if (ieidentifiers.containsKey(TITLE)) {
-            idx.title = ieidentifiers.get(TITLE).getFirst();
-        }
-        if (ieidentifiers.containsKey(SUB_TITLE)) {
-            idx.subtitle = ieidentifiers.get(SUB_TITLE).getFirst();
-        }
-        if (ieidentifiers.containsKey(ISSUE_TITLE)) {
-            idx.issuetitle = ieidentifiers.get(ISSUE_TITLE).getFirst();
-        }
-        if (ieidentifiers.containsKey(VOLUME_TITLE)) {
-            idx.volumetitle = ieidentifiers.get(VOLUME_TITLE).getFirst();
-        }
         Map<String, List<String>> rsidentifiers = searching.rsidentifiers;
         if (rsidentifiers != null) {
             //each item as $value
@@ -98,6 +90,30 @@ public class SearchingIdx implements DomainIdx {
             idx.issn = sourceDocument.issn;
             idx.otherid = sourceDocument.otherid;
         }
+
+        Map<String, List<String>> ieidentifiers = searching.ieidentifiers;
+        if (ieidentifiers.containsKey(TITLE)) {
+            idx.title = ieidentifiers.get(TITLE).getFirst();
+        }
+        if (ieidentifiers.containsKey(SUB_TITLE)) {
+            idx.subtitle = ieidentifiers.get(SUB_TITLE).getFirst();
+        }
+        if (ieidentifiers.containsKey(ISSUE_TITLE)) {
+            idx.issuetitle = ieidentifiers.get(ISSUE_TITLE).getFirst();
+        }
+        if (ieidentifiers.containsKey(VOLUME_TITLE)) {
+            idx.volumetitle = ieidentifiers.get(VOLUME_TITLE).getFirst();
+        }
+        if (idx.ccnb == null && ieidentifiers.containsKey(CCNB)) {
+            idx.ccnb = ieidentifiers.get(CCNB).getFirst();
+        }
+        if (idx.isbn == null && ieidentifiers.containsKey(ISBN)) {
+            idx.isbn = ieidentifiers.get(ISBN).getFirst();
+        }
+        if (idx.issn == null && ieidentifiers.containsKey(ISSN)) {
+            idx.issn = ieidentifiers.get(ISSN).getFirst();
+        }
+
         if (searching.originator != null) {
             Searching.Originator originator = searching.originator.get(0);
             idx.originatortype = originator.type;
@@ -119,7 +135,9 @@ public class SearchingIdx implements DomainIdx {
                 "documentcode='" + documentcode + '\'' +
                 ", registrarcode='" + registrarcode + '\'' +
                 ", entitytype='" + entitytype + '\'' +
+                ", digitalborn=" + digitalborn +
                 ", active=" + active +
+                ", registered=" + registered +
                 ", title='" + title + '\'' +
                 ", subtitle='" + subtitle + '\'' +
                 ", volumetitle='" + volumetitle + '\'' +
