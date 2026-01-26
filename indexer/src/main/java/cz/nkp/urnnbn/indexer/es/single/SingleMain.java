@@ -40,9 +40,8 @@ public class SingleMain {
             //System.out.println(conversionResult.getSearch());
             //System.out.println(conversionResult.getAssignment());
             //System.out.println(conversionResolvingResult.getResolve());
-            //indexData(elasticClient, conversionResult); //index search + assign
-            //indexData(elasticClient, conversionResolvingResult); //index resolving
             indexData(elasticClient, conversionResult, indexSearch, indexAssign);
+            indexData(elasticClient, conversionResolvingResult, indexResolve);
         } finally {
             Utils.stopElasticsearchClient(elasticClient);
         }
@@ -73,10 +72,21 @@ public class SingleMain {
                         .document(conversionResult.getAssignment())
                 );
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void indexData(ElasticsearchClient esClient, DdEsConversionResult conversionResult, String indexResolve) {
+        try {
+            if (Config.DISABLE_INDEXING) {
+                System.out.println("Indexing is disabled, skipping indexing step.");
+                return;
+            }
 
             if (conversionResult.getResolve() != null) {
                 esClient.index(idx -> idx
-                        .index(Config.INDEX_RESOLVE)
+                        .index(indexResolve)
                         .id(conversionResult.getResolve().getId())
                         .document(conversionResult.getResolve())
                 );
