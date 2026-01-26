@@ -16,8 +16,8 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
-import cz.nkp.urnnbn.apiClient.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
@@ -26,7 +26,6 @@ import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.indexer.DataProvider;
 import cz.nkp.urnnbn.indexer.IndexerConfig;
 import cz.nkp.urnnbn.indexer.ProgressListener;
-import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -159,27 +158,16 @@ public class IndexationJob extends AbstractJob {
             DateTime registrationEnd = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_TO, context, dateFormat);
             logger.info("Registration until: " + (registrationEnd == null ? null : registrationEnd.toString(dateTimeFormatter)));
 
-
-            logger.info("Running Indexer");
-
-            /*solrIndexer = new SolrIndexer(config, buildReportLoggerOutputStream(),
-                    new DataProvider() {
-                        @Override
-                        public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
-                            return Services.instanceOf().dataAccessService().digDocsByModificationDate(from, until);
-                        }
-
-                        @Override
-                        public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
-                            return Services.instanceOf().dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
-                        }
-                    }
-            );*/
             esIndexer = new EsIndexer(config, buildReportLoggerOutputStream(),
                     new DataProvider() {
                         @Override
                         public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
                             return Services.instanceOf().dataAccessService().digDocsByModificationDate(from, until);
+                        }
+
+                        @Override
+                        public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until) {
+                            return Services.instanceOf().dataAccessService().resolvationLogsByDate(from, until);
                         }
 
                         @Override
@@ -189,21 +177,7 @@ public class IndexationJob extends AbstractJob {
                     }
             );
 
-
-            /*solrIndexer.setProgressListener(new ProgressListener() {
-                @Override
-                public void onProgress(int processed, int total) {
-                    if (processed % 100 == 0) {
-                        logger.info(String.format("Processed %d/%d", processed, total));
-                    }
-                }
-
-                @Override
-                public void onFinished(int processed, int total) {
-                    logger.info(String.format("Processed %d/%d", processed, total));
-                }
-            });*/
-
+            logger.info("\nIndexing digital documents");
             esIndexer.setProgressListener(new ProgressListener() {
                 @Override
                 public void onProgress(int processed, int total) {
@@ -217,11 +191,28 @@ public class IndexationJob extends AbstractJob {
                     logger.info(String.format("Processed %d/%d", processed, total));
                 }
             });
-
             if (!interrupted) {
-                //solrIndexer.indexDocuments(registrationStart, registrationEnd);
-                esIndexer.indexDocuments(registrationStart, registrationEnd);
+                esIndexer.indexDigitalDocuments(registrationStart, registrationEnd);
             }
+
+            logger.info("\nIndexing resolvation logs");
+            esIndexer.setProgressListener(new ProgressListener() {
+                @Override
+                public void onProgress(int processed, int total) {
+                    if (processed % 100 == 0) {
+                        logger.info(String.format("Processed %d/%d", processed, total));
+                    }
+                }
+
+                @Override
+                public void onFinished(int processed, int total) {
+                    logger.info(String.format("Processed %d/%d", processed, total));
+                }
+            });
+            if (!interrupted) {
+                esIndexer.indexResolvationLogs(registrationStart, registrationEnd);
+            }
+
             if (interrupted) {
                 logger.info("Process killed");
                 context.setResult(ProcessState.KILLED);

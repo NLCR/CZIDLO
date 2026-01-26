@@ -18,7 +18,6 @@ import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.*;
-import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +82,7 @@ public class DigitalDocumentRegistrar {
 
     private void indexToSolr(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
         try {
-            esIndexer.indexDocument(digDocId);
+            esIndexer.indexDigitalDocument(digDocId);
             logger.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {
             logger.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);

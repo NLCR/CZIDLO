@@ -54,9 +54,7 @@ public class EsDataProvider {
             return new DdEsConversionResult(null);
         }
         try {
-            return new DdEsConversionResult(
-                    convertResolving(urId)
-            );
+            return new DdEsConversionResult(convertResolving(urId));
         } catch (SQLException | JsonProcessingException | IllegalArgumentException e) {
             throw new RuntimeException("Failed conversion for urId: " + urId, e);
         }
@@ -136,7 +134,7 @@ public class EsDataProvider {
             }
 
             String json = resultSet.getString("resulting_json");
-            System.out.println(json);
+            //System.out.println(json);
             Resolving resolving = mapper.readValue(json, Resolving.class);
 
             //validate

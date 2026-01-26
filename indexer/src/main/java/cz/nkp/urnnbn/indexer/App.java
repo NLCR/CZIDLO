@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.indexer;
 
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import org.joda.time.DateTime;
@@ -37,11 +38,16 @@ public class App {
             }
 
             @Override
+            public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until) {
+                return null;
+            }
+
+            @Override
             public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
                 CountryCode.initialize("cz");
                 return UrnNbn.valueOf("urn:nbn:cz:pna001-001k7x");
             }
         });
-        indexer.indexDocument(1823067);
+        indexer.indexDigitalDocument(1823067);
     }
 }

@@ -127,7 +127,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
         try {
             //solrIndexer.indexDocument(digDocId);
-            esIndexer.indexDocument(digDocId);
+            esIndexer.indexDigitalDocument(digDocId);
             LOGGER.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);

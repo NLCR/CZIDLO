@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.indexer.es.EsIndexer;
@@ -74,6 +75,11 @@ public class Services {
                         @Override
                         public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
                             return dataAccessService().digDocsByModificationDate(from, until);
+                        }
+
+                        @Override
+                        public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until) {
+                            return dataAccessService().resolvationLogsByDate(from, until);
                         }
 
                         @Override

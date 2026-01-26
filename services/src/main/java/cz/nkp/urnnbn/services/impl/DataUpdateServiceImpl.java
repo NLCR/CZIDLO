@@ -105,7 +105,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the update itself
         try {
-            esIndexer.indexDocument(digDocId);
+            esIndexer.indexDigitalDocument(digDocId);
             LOGGER.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);

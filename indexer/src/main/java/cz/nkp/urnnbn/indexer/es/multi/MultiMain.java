@@ -11,6 +11,7 @@ import cz.nkp.urnnbn.indexer.es.Config;
 import cz.nkp.urnnbn.indexer.es.Utils;
 import cz.nkp.urnnbn.indexer.es.domain.DomainIdx;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,9 +24,9 @@ public class MultiMain {
     private static final int LOG_EVERY_N_RECORDS = 10000;
 
     //indexy hardcoded jen pro testování
-    private static final String INDEX_SEARCH = "czidlo_multimain_search_1";
-    private static final String INDEX_RESOLVE = "czidlo_multimain_resolve_1";
-    private static final String INDEX_ASSIGN = "czidlo_multimain_assign_1";
+    private static final String INDEX_SEARCH = "czidlo_search_2";
+    private static final String INDEX_ASSIGN = "czidlo_assign_2";
+    private static final String INDEX_RESOLVE = "czidlo_resolve_2";
 
     public static void main(String[] args) throws SQLException {
         Properties props = Utils.loadProperties();
@@ -36,7 +37,7 @@ public class MultiMain {
 
         try (Connection conn = Utils.createConnection(props)) {
 
-            if (true) { // set to false to skip Searching migration
+            if (false) { // set to false to skip Searching migration
                 System.out.println();
                 System.out.println("-------------------");
                 System.out.println("Migrating Searching");
@@ -53,7 +54,7 @@ public class MultiMain {
                 System.out.println("Total Searching items migrated: " + counterSearching.get());
             }
 
-            if (true) { // set to false to skip Assigning migration
+            if (false) { // set to false to skip Assigning migration
                 System.out.println();
                 System.out.println("-------------------");
                 System.out.println("Migrating Assigning");
@@ -70,7 +71,7 @@ public class MultiMain {
                 System.out.println("Total Assigning items migrated: " + counterAssigning.get());
             }
 
-            if (true) { // set to false to skip Resolving migration
+            if (false) { // set to false to skip Resolving migration
                 System.out.println();
                 System.out.println("-------------------");
                 System.out.println("Migrating Resolving");

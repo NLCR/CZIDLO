@@ -10,4 +10,6 @@ public interface StatisticService extends BusinessService {
      */
     public void logResolvationAccess(String registrarCode, String documentCode);
 
+
+
 }

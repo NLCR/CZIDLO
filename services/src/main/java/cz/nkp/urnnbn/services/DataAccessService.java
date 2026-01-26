@@ -76,6 +76,8 @@ public interface DataAccessService extends BusinessService {
 
     public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until);
 
+    public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until);
+
     public long digitalInstancesCount();
 
     public DigitalInstance digInstanceByInternalId(long id);
