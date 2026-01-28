@@ -14,8 +14,13 @@ public class ResolvingIdx implements DomainIdx {
     //urnnbn
     public Boolean active;
 
-    //digitaldocument
+    //intelectualentity
     public Boolean digitalborn;
+    public String entitytype;
+
+    //archiver
+    public String registrarname;
+
 
     public static ResolvingIdx fromDb(Resolving resolving) {
         ResolvingIdx idx = new ResolvingIdx();
@@ -25,12 +30,16 @@ public class ResolvingIdx implements DomainIdx {
         idx.documentcode = resolving.documentcode;
         idx.resolved = resolving.resolved;
         idx.digitalborn = resolving.digitalborn;
+        idx.entitytype = resolving.entitytype;
 
         Resolving.UrnNbn urnNbn = null;
         if (resolving.urnnbn != null && !resolving.urnnbn.isEmpty()) {
             urnNbn = resolving.urnnbn.getFirst();
         }
         idx.active = urnNbn == null ? null : urnNbn.active;
+
+        Resolving.Registrar registrar = resolving.registrar;
+        idx.registrarname = registrar == null ? null : registrar.name;
 
         return idx;
     }
@@ -42,9 +51,11 @@ public class ResolvingIdx implements DomainIdx {
                 "id=" + id +
                 ", documentcode='" + documentcode + '\'' +
                 ", registrarcode='" + registrarcode + '\'' +
+                ", registrarname='" + registrarname + '\'' +
                 ", resolved=" + resolved +
                 ", active=" + active +
                 ", digitalborn=" + digitalborn +
+                ", entitytype='" + entitytype + '\'' +
                 '}';
     }
 
