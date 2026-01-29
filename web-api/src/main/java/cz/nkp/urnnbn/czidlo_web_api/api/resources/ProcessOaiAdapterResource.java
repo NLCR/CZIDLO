@@ -6,7 +6,6 @@ import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnauthorizedException;
-import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
 import cz.nkp.urnnbn.processmanager.core.XmlTransformation;
 import cz.nkp.urnnbn.processmanager.core.XmlTransformationType;
 import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
@@ -26,13 +25,12 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-import org.springframework.security.core.parameters.P;
 
-import javax.persistence.PostRemove;
 import java.io.StringReader;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 //see TransformationsResource
 /*
@@ -116,9 +114,9 @@ public class ProcessOaiAdapterResource extends AbstractResource {
     }
 
     @Operation(
-            summary = "Retrieve transformation for OAI-PMH adapter",
+            summary = "Retrieve all my transformations for OAI-PMH adapter",
             tags = {"Processes", "OAI-Adapter"},
-            description = "Returns transformation for OAI-PMH adapter process without the XSLT content",
+            description = "Returns transformations owned by this user; for OAI-PMH adapter process without the XSLT content",
             responses = {
                     @ApiResponse(
                             responseCode = "200", description = "Transformation retrieved",
@@ -135,7 +133,7 @@ public class ProcessOaiAdapterResource extends AbstractResource {
     )
     @GET
     @Path("transformations/{id}")
-    public Response getTransformation(@PathParam("id") String id) throws UnauthorizedException, InsufficientRightsException, cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException {
+    public Response getMyTransformations(@PathParam("id") String id) throws UnauthorizedException, InsufficientRightsException, cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException {
         //authorization: must be logged in
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
@@ -148,6 +146,34 @@ public class ProcessOaiAdapterResource extends AbstractResource {
         //respond
         return Response.ok()
                 .entity(toTransformationResult(transformationFetched))
+                .build();
+    }
+
+    @Operation(
+            summary = "Retrieve transformation for OAI-PMH adapter",
+            tags = {"Processes", "OAI-Adapter"},
+            description = "Returns transformation for OAI-PMH adapter process without the XSLT content",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200", description = "Transformation retrieved",
+                            content = @Content(schema = @Schema(implementation = TransformationResultList.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @GET
+    @Path("transformations")
+    public Response getTransformation(@PathParam("id") String id) throws UnauthorizedException, InsufficientRightsException, cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException {
+        //authorization: must be logged in
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        //fetch transformations
+        List<XmlTransformation> transformationsOfUser = xmlTransformationDao.getTransformationsOfUser(user.getLogin());
+        //respond
+        return Response.ok()
+                .entity(toTransformationsResult(transformationsOfUser))
                 .build();
     }
 
@@ -300,6 +326,14 @@ public class ProcessOaiAdapterResource extends AbstractResource {
         );
     }
 
+    private Object toTransformationsResult(List<XmlTransformation> transformationsOfUser) {
+        List<TransformationResult> transformationResults = new ArrayList<>();
+        for (XmlTransformation t : transformationsOfUser) {
+            transformationResults.add(toTransformationResult(t));
+        }
+        return new TransformationResultList(transformationResults);
+    }
+
     private XmlTransformationType parseTransformationType(JsonObject root, String paramName) throws
             BadArgumentException {
         if (!root.containsKey(paramName)) {
@@ -321,6 +355,9 @@ public class ProcessOaiAdapterResource extends AbstractResource {
                                        @NotNull String name,
                                        String description,
                                        @NotNull String created) {
+    }
+
+    public record TransformationResultList(@NotNull java.util.List<TransformationResult> transformations) {
     }
 
 }
