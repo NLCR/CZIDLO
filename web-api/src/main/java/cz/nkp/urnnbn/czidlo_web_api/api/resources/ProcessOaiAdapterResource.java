@@ -51,7 +51,7 @@ public class ProcessOaiAdapterResource extends AbstractResource {
 
     @Operation(
             summary = "Create new transformation for OAI-PMH adapter",
-            tags = "Processes",
+            tags = {"Processes", "OAI-Adapter"},
             description = "Creates a new transformation record (without xslt yet)",
             responses = {
                     @ApiResponse(
@@ -115,7 +115,7 @@ public class ProcessOaiAdapterResource extends AbstractResource {
 
     @Operation(
             summary = "Retrieve transformation for OAI-PMH adapter",
-            tags = "Processes",
+            tags = {"Processes", "OAI-Adapter"},
             description = "Returns transformation for OAI-PMH adapter process without the XSLT content",
             responses = {
                     @ApiResponse(
@@ -146,6 +146,46 @@ public class ProcessOaiAdapterResource extends AbstractResource {
         //respond
         return Response.ok()
                 .entity(toTransformationResult(transformationFetched))
+                .build();
+    }
+
+    @Operation(
+            summary = "Upload XSLT for OAI-PMH adapter transformation",
+            tags = {"Processes", "OAI-Adapter"},
+            description = "Uploads XSLT content for the transformation for OAI-PMH adapter process",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200", description = "XSLT uploaded",
+                            content = @Content(schema = @Schema(implementation = TransformationResult.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights (user is not the owner of the transformation)",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @PUT
+    @Path("transformations/{id}/xslt")
+    public Response setTransformationXslt(@PathParam("id") String id) throws UnauthorizedException, InsufficientRightsException, cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException {
+        //authorization: must be logged in
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        //fetch transformation
+        XmlTransformation transformationFetched = getTransformationById(id);
+        //check rights: only owner
+        if (!transformationFetched.getOwnerLogin().equals(user.getLogin())) {
+            throw new InsufficientRightsException("Only owner can upload XSLT for the transformation");
+        }
+        //TODO: update xslt from body - currently just a test xslt is set
+        String testXslt = buildTestXslt();
+        transformationFetched.setXslt(testXslt);
+        XmlTransformation updated = xmlTransformationDao.saveTransformation(transformationFetched);
+        //respond
+        return Response.ok()
+                .entity(toTransformationResult(updated))
                 .build();
     }
 
