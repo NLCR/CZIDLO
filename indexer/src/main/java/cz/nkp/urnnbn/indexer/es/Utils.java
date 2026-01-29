@@ -11,6 +11,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -64,6 +65,15 @@ public class Utils {
     }
 
     public static Properties loadProperties() {
+        /*Properties props = new Properties();
+        File propFile = new File("/Users/martinrehanek/.czidlo/indexer-test.properties");
+        try {
+            props.load(java.nio.file.Files.newInputStream(propFile.toPath()));
+            return props;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }*/
+
         Properties props = new Properties();
         try (InputStream input = Utils.class.getClassLoader().getResourceAsStream("config.properties")) {
             if (input == null) {

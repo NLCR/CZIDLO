@@ -177,9 +177,9 @@ public class ProcessesResource extends AbstractResource {
     }
 
     @Operation(
-            summary = "Get all processes",
+            summary = "Get all processes (for admin) or own processes (for regular user)",
             tags = "Processes",
-            description = "Returns a list of all processes.",
+            description = "Returns a list of all processes for admin user or all own processes for regular user.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of processes",
                             content = @Content(schema = @Schema(implementation = ProcessList.class))),
