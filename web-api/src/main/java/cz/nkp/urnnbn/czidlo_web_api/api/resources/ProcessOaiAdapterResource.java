@@ -26,7 +26,9 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
+import org.springframework.security.core.parameters.P;
 
+import javax.persistence.PostRemove;
 import java.io.StringReader;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -150,6 +152,43 @@ public class ProcessOaiAdapterResource extends AbstractResource {
     }
 
     @Operation(
+            summary = "Retrieve transformation XSLT (for OAI-PMH adapter)",
+            tags = {"Processes", "OAI-Adapter"},
+            description = "Returns transformation's XSLT content (for OAI-PMH adapter process)",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200", description = "Transformation retrieved",
+                            content = @Content(schema = @Schema(implementation = TransformationResult.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid transformation ID format",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights (user is not the owner of the transformation or admin)",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @GET
+    @Path("transformations/{id}/xslt")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response getTransformationXslt(@PathParam("id") String id) throws UnauthorizedException, InsufficientRightsException, cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException {
+        //authorization: must be logged in
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        //fetch transformation
+        XmlTransformation transformationFetched = getTransformationById(id);
+        //check rights: only owner or admin can access
+        if (!transformationFetched.getOwnerLogin().equals(user.getLogin()) && !user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin or owner can access the transformation");
+        }
+        //respond
+        return Response.ok()
+                .entity(transformationFetched.getXslt())
+                .build();
+    }
+
+    @Operation(
             summary = "Upload XSLT for OAI-PMH adapter transformation",
             tags = {"Processes", "OAI-Adapter"},
             description = "Uploads XSLT content for the transformation for OAI-PMH adapter process",
@@ -188,7 +227,12 @@ public class ProcessOaiAdapterResource extends AbstractResource {
         }
         // žádná validace/parsing – jen uložit raw text
         transformationFetched.setXslt(xslt);
-        XmlTransformation updated = xmlTransformationDao.saveTransformation(transformationFetched);
+        XmlTransformation updated = null;
+        try {
+            updated = xmlTransformationDao.updateTransformation(transformationFetched);
+        } catch (UnknownRecordException e) {
+            throw new cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException(e.getMessage());
+        }
         //respond
         return Response.ok()
                 .entity(toTransformationResult(updated))

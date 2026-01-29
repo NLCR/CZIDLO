@@ -56,6 +56,23 @@ public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransfor
         return newTransformation;
     }
 
+    public XmlTransformation updateTransformation(XmlTransformation transformation) throws UnknownRecordException {
+        Session session = factory.openSession();
+        try {
+            session.beginTransaction();
+            session.update(transformation);
+            session.getTransaction().commit();
+            // logger.log(Level.INFO, "updated {0}", transformation);
+            return transformation;
+        } catch (StaleStateException ex) {
+            logger.log(Level.WARNING, "trying to update non-existing transformation {0}", transformation);
+            session.getTransaction().rollback();
+            throw new UnknownRecordException(ex);
+        } finally {
+            session.close();
+        }
+    }
+
     public XmlTransformation getTransformation(Long transformationId) throws UnknownRecordException {
         Session session = factory.openSession();
         session.beginTransaction();

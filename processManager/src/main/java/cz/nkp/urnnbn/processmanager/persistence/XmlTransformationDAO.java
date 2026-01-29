@@ -18,6 +18,7 @@ package cz.nkp.urnnbn.processmanager.persistence;
 
 import cz.nkp.urnnbn.processmanager.core.XmlTransformation;
 import cz.nkp.urnnbn.processmanager.core.XmlTransformationType;
+
 import java.util.List;
 
 /**
@@ -27,6 +28,8 @@ import java.util.List;
 public interface XmlTransformationDAO {
 
     public XmlTransformation saveTransformation(XmlTransformation newTransformation);
+
+    public XmlTransformation updateTransformation(XmlTransformation transformation) throws UnknownRecordException;
 
     public XmlTransformation getTransformation(Long transformationId) throws UnknownRecordException;
 
