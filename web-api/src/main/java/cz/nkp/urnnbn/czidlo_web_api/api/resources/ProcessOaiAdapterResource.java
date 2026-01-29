@@ -4,6 +4,7 @@ import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
 import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnauthorizedException;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
 import cz.nkp.urnnbn.processmanager.core.XmlTransformation;
@@ -72,7 +73,7 @@ public class ProcessOaiAdapterResource extends AbstractResource {
             description = "JSON object representing new transformation",
             required = true
     ) String body) throws UnauthorizedException, BadArgumentException {
-
+        //authorization: must be logged in
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
 
@@ -110,6 +111,53 @@ public class ProcessOaiAdapterResource extends AbstractResource {
         return Response.status(Response.Status.CREATED)
                 .entity(toTransformationResult(transformationCreated))
                 .build();
+    }
+
+    @Operation(
+            summary = "Retrieve transformation for OAI-PMH adapter",
+            tags = "Processes",
+            description = "Returns transformation for OAI-PMH adapter process without the XSLT content",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200", description = "Transformation retrieved",
+                            content = @Content(schema = @Schema(implementation = TransformationResult.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid transformation ID format",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights (user is not the owner of the transformation or admin)",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @GET
+    @Path("transformations/{id}")
+    public Response getTransformation(@PathParam("id") String id) throws UnauthorizedException, InsufficientRightsException, cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException {
+        //authorization: must be logged in
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        //fetch transformation
+        XmlTransformation transformationFetched = getTransformationById(id);
+        //check rights: only owner or admin can access
+        if (!transformationFetched.getOwnerLogin().equals(user.getLogin()) && !user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin or owner can access the transformation");
+        }
+        //respond
+        return Response.ok()
+                .entity(toTransformationResult(transformationFetched))
+                .build();
+    }
+
+    private XmlTransformation getTransformationById(String idStr) throws cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException, BadRequestException {
+        try {
+            Long id = Long.valueOf(idStr);
+            return xmlTransformationDao.getTransformation(id);
+        } catch (UnknownRecordException ex) {
+            throw new cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException("Transformation with id " + idStr + " not found: " + ex.getMessage());
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Invalid transformation ID format: " + idStr);
+        }
     }
 
     private TransformationResult toTransformationResult(XmlTransformation transformation) {
@@ -150,9 +198,6 @@ public class ProcessOaiAdapterResource extends AbstractResource {
     record TransformationCreate(@NotNull XmlTransformationType type,
                                 @NotNull String name, String description) {
     }
-
-    /*record TransformationUpdate(@NotNull String name, String description) {
-    }*/
 
     public record TransformationResult(@NotNull Long id, @NotNull String ownerLogin, @NotNull String type,
                                        @NotNull String name,

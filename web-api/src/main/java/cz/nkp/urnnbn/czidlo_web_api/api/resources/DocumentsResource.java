@@ -115,7 +115,7 @@ public class DocumentsResource extends AbstractResource {
     @Path("{urn}")
     public Response getDocumentByUrnNbn(
             @Parameter(description = "URN:NBN identifier of the digital document", required = true)
-            @PathParam("urn") String urn) throws UnknownRecordException {
+            @PathParam("urn") String urn) throws UnknownRecordException, BadRequestException {
         //authorization: none
 
         UrnNbn urnNbn;
