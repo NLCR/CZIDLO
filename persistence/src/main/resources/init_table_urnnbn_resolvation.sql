@@ -51,5 +51,13 @@ FROM
 
 -- Drop old table urnnbn_resolvation_statistics
 DROP TABLE IF EXISTS urnnbn_resolvation_statistics;
-DROP TABLE IF EXISTS urnnbn_assignment_statistics_preprocessed;
 DROP VIEW IF EXISTS urnnbn_assignment_statistics_view;
+DROP TABLE IF EXISTS urnnbn_assignment_statistics_preprocessed;
+DROP INDEX IF EXISTS public.urnnbn_registrar_code_year_month_active_idx;
+
+DROP TRIGGER IF EXISTS update_urnnbn_assignment_tg ON public.urnnbn;
+DROP FUNCTION IF EXISTS public.update_urnnbn_assignment() CASCADE;
+DROP FUNCTION IF EXISTS public.update_urnnbn_assignment(varchar, timestamp) CASCADE;
+DROP FUNCTION IF EXISTS public.update_urnnbn_assignment(varchar, numeric, numeric, boolean) CASCADE;
+DROP FUNCTION IF EXISTS public.to_month(timestamp) CASCADE;
+DROP FUNCTION IF EXISTS public.to_year(timestamp) CASCADE;

@@ -1,5 +1,5 @@
 -- Description: Insert sample data into urnnbn_resolvation table for testing purposes
--- Usage: psql -d czidlo_core -U czidlo -v ON_ERROR_STOP=1 -f insert_sample_resolving_data.sql
+-- Usage: psql -d czidlo_core -U czidlo -v ON_ERROR_STOP=1 -f init_table_urnnbn_resolvation_insert_sample_resolving_data.sql
 
 INSERT INTO urnnbn_resolvation ("id", registrarcode, documentcode, resolved)
 VALUES (2259946,'aba007','0009a3','2026-01-01 12:13:14'),
