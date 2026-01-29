@@ -69,7 +69,7 @@ public class EsIndexer {
 
     public void indexResolvation(ResolvationLog resolvationLog) {
         try {
-            esConnector.indexResolvation(resolvationLog, dbUrl, dbLogin, dbPassword);
+            esConnector.indexResolvation(resolvationLog.getId(), dbUrl, dbLogin, dbPassword, reportLogger);
         } catch (SQLException e) {
             report(" SQL error", e);
         } catch (IOException e) {
@@ -77,18 +77,18 @@ public class EsIndexer {
         }
     }
 
-    public void indexDocument(long ddInternalId) {
-        indexDocument(ddInternalId, new Counters(1), true);
+    public void indexDigitalDocument(long ddInternalId) {
+        indexDigitalDocument(ddInternalId, new Counters(1), true);
     }
 
-    private void indexDocument(long ddInternalId, Counters counters, boolean explicitCommit) {
+    private void indexDigitalDocument(long ddInternalId, Counters counters, boolean explicitCommit) {
         UrnNbn urnNbn = dataProvider.urnByDigDocId(ddInternalId, false);
         if (urnNbn == null) {
             report(" digital document with id " + ddInternalId + " is missing URN:NBN");
         } else {
             //report(" processing " + urnNbn);
             try {
-                esConnector.indexDocument(ddInternalId, dbUrl, dbLogin, dbPassword, reportLogger);
+                esConnector.indexDigitalDocument(ddInternalId, dbUrl, dbLogin, dbPassword, reportLogger);
                 counters.incrementIndexed();
             } catch (IOException e) {
                 counters.incrementErrors();
@@ -109,12 +109,12 @@ public class EsIndexer {
         }
     }
 
-    public void indexDocuments(DateTime from, DateTime to) {
+    public void indexDigitalDocuments(DateTime from, DateTime to) {
         long start = System.currentTimeMillis();
         report("Indexing documents from " + from.toString() + " to " + to.toString());
         List<DigitalDocument> digitalDocuments = dataProvider.digDocsByModificationDate(from, to);
         Counters counters = new Counters(digitalDocuments.size());
-        report("Processing " + counters.getFound() + " records");
+        report("Processing " + counters.getFound() + " digital documents");
         Integer limit = null; // for testing, set to null for production
         int iterationCount = 0;
         report("==============================");
@@ -127,7 +127,7 @@ public class EsIndexer {
                 report(" limit of " + limit + " reached, stopping (for testing purposes) ");
                 break;
             }
-            indexDocument(doc.getId(), counters, false);
+            indexDigitalDocument(doc.getId(), counters, false);
         }
         commit(); //one explicit commit at the very end
         report(" ");
@@ -142,6 +142,65 @@ public class EsIndexer {
         report(" records processing duration: " + formatTime(System.currentTimeMillis() - start));
         if (progressListener != null) {
             progressListener.onFinished(counters.getProcessed(), counters.getFound());
+        }
+    }
+
+    public void indexResolvationLogs(DateTime from, DateTime to) {
+        long start = System.currentTimeMillis();
+        report("Indexing documents from " + from.toString() + " to " + to.toString());
+        List<ResolvationLog> resolvationLogs = dataProvider.resolvationLogsByDate(from, to);
+        Counters counters = new Counters(resolvationLogs.size());
+        report("Processing " + counters.getFound() + " resolvation logs");
+        Integer limit = null; // for testing, set to null for production
+        int iterationCount = 0;
+        report("==============================");
+        for (ResolvationLog log : resolvationLogs) {
+            if (stopped) {
+                report(" stopped ");
+                break;
+            }
+            if (limit != null && iterationCount++ >= limit) {
+                report(" limit of " + limit + " reached, stopping (for testing purposes) ");
+                break;
+            }
+            indexResolvationLog(log, counters, false);
+        }
+        commit(); //one explicit commit at the very end
+        report(" ");
+
+        report("Summary");
+        report("=====================================================");
+        report(" records found    : " + counters.getFound());
+        report(" records processed: " + counters.getProcessed());
+        report(" records indexed  : " + counters.getIndexed());
+        report(" records erroneous: " + counters.getErrors());
+        report(" initialization duration: " + formatTime(initTime));
+        report(" records processing duration: " + formatTime(System.currentTimeMillis() - start));
+        if (progressListener != null) {
+            progressListener.onFinished(counters.getProcessed(), counters.getFound());
+        }
+    }
+
+    private void indexResolvationLog(ResolvationLog resolvationLog, Counters counters, boolean explicitCommit) {
+        //report(" processing " + resolvationLog);
+        try {
+            esConnector.indexResolvation(resolvationLog.getId(), dbUrl, dbLogin, dbPassword, reportLogger);
+            counters.incrementIndexed();
+        } catch (IOException e) {
+            counters.incrementErrors();
+            report(" I/O error", e);
+        } catch (SolrException e) {
+            counters.incrementErrors();
+            report(" Solr error", e);
+        } catch (SQLException e) {
+            counters.incrementErrors();
+            report(" SQL error", e);
+        } catch (Throwable e) {
+            counters.incrementErrors();
+            report(" Unexpected error", e);
+        }
+        if (progressListener != null) {
+            progressListener.onProgress(counters.getProcessed(), counters.getFound());
         }
     }
 

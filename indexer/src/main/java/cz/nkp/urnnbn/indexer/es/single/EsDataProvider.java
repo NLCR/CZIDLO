@@ -54,15 +54,18 @@ public class EsDataProvider {
             return new DdEsConversionResult(null);
         }
         try {
-            return new DdEsConversionResult(
-                    convertResolving(urId)
-            );
+            return new DdEsConversionResult(convertResolving(urId));
         } catch (SQLException | JsonProcessingException | IllegalArgumentException e) {
             throw new RuntimeException("Failed conversion for urId: " + urId, e);
         }
     }
 
     private SearchingIdx convertSearching(Long ddId) throws SQLException, JsonProcessingException, IllegalArgumentException {
+        if (ddId == null) {
+            log.warn("ddId is null, cannot convert SearchingIdx");
+            return null;
+        }
+
         String query = new SearchQueryBuilder()
                 .withAlias("resulting_json")
                 .where("dd.id = ?")
@@ -87,6 +90,11 @@ public class EsDataProvider {
     }
 
     private AssigningIdx convertAssigning(Long ddId) throws SQLException, JsonProcessingException, IllegalArgumentException {
+        if (ddId == null) {
+            log.warn("ddId is null, cannot convert AssigningIdx");
+            return null;
+        }
+
         String query = new AssigningQueryBuilder()
                 .withAlias("resulting_json")
                 .where("dd.id = ?")
@@ -126,7 +134,7 @@ public class EsDataProvider {
             }
 
             String json = resultSet.getString("resulting_json");
-            System.out.println(json);
+            //System.out.println(json);
             Resolving resolving = mapper.readValue(json, Resolving.class);
 
             //validate

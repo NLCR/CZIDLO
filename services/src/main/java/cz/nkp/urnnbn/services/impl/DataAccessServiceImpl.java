@@ -362,6 +362,15 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
+    public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until) {
+        try {
+            return factory.urnNbnResolvationLogsDao().getResolvationLogsByTimestamps(from, until);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
     public long digitalInstancesCount() {
         try {
             return factory.digInstDao().getTotalCount();

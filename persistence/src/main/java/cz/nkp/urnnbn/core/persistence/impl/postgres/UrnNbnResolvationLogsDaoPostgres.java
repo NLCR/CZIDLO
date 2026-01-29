@@ -10,12 +10,16 @@ import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ResolvationLogRT;
+import org.joda.time.DateTime;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,12 +45,27 @@ public class UrnNbnResolvationLogsDaoPostgres extends AbstractDAO implements Urn
         }
     }
 
+    @Override
+    public List<ResolvationLog> getResolvationLogsByTimestamps(DateTime from, DateTime until) throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_RESOLVED, from, until);
+            DaoOperation operation = new MultipleResultsOperation(st, new ResolvationLogRT());
+            return (List<ResolvationLog>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            // cannot happen
+            LOGGER.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
     private StatementWrapper buildInsertStatement(String registrarCode, String documentCode, Timestamp now) {
         return new StatementWrapper() {
 
             @Override
             public String preparedStatement() {
-                return "INSERT into " + TABLE_RESOLVATIONS_NAME//
+                return "INSERT into " + TABLE_NAME//
                         + "(" + ATTR_REGISTRAR_CODE//
                         + "," + ATTR_DOCUMENT_CODE//
                         + "," + ATTR_RESOLVED//

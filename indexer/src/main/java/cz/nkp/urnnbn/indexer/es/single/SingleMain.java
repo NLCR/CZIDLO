@@ -32,9 +32,12 @@ public class SingleMain {
         //Long resolvingId = 2259948L; //urn:nbn:cz:aba001-0007l0 resolved at 2026-01-03 14:15:16
 
         //ccnb, issn (not in source-document)
-        Long digitalDocumentId = 3525443L;//urn:nbn:cz:ope301-00038f, not resolved
-        Long resolvingId = null;
+        //Long digitalDocumentId = 3525443L;//urn:nbn:cz:ope301-00038f, not resolved
+        //Long resolvingId = null;
 
+        //Resolving id without document code (old data)
+        Long digitalDocumentId = null;
+        Long resolvingId = 710L; //aba001 from 2025-08-01 12:00:00 (i.e. something from august 2025)
 
         Properties props = Utils.loadProperties();
         ObjectMapper mapper = Config.getObjectMapper();

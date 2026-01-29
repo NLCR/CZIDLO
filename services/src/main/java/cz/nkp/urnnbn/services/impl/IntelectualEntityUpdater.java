@@ -47,7 +47,7 @@ public class IntelectualEntityUpdater {
 
     private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
         try {
-            esIndexer.indexDocument(digDocId);
+            esIndexer.indexDigitalDocument(digDocId);
             logger.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {
             logger.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);
