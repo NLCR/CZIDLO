@@ -10,6 +10,8 @@ public class Resolving{
     public String documentcode;
     public LocalDateTime resolved;
     public Boolean digitalborn;
+    public String entitytype;
+    public Registrar registrar;
     public List<UrnNbn> urnnbn;
 
     public static class UrnNbn {
@@ -34,5 +36,9 @@ public class Resolving{
                 + (limit != null ? "LIMIT " + limit : "")
                 + (offset != null ? "OFFSET " + offset : "");
 
+    }
+
+    public static class Registrar {
+        public String name;
     }
 }

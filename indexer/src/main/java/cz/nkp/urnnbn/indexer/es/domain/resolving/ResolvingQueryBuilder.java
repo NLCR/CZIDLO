@@ -7,7 +7,9 @@ public class ResolvingQueryBuilder {
                 to_jsonb(ur.*) ||
                 jsonb_build_object(
                    'urnnbn', urnnbns.json_list,
-                   'digitalborn', ie.digitalborn
+                   'digitalborn', ie.digitalborn,
+                   'entitytype', ie.entitytype,
+                   'registrar', archivers
                )
             """;
 
@@ -27,6 +29,15 @@ public class ResolvingQueryBuilder {
             LEFT JOIN digitaldocument dd ON dd.id = u2.digitaldocumentid
             
             LEFT JOIN intelectualentity ie ON ie.id = dd.intelectualentityid
+            
+            LEFT JOIN registrar r ON r.code = ur.registrarcode
+            
+            -- LATERAL for Archiver
+            LEFT JOIN LATERAL (
+                 SELECT ar.name
+                 FROM archiver ar
+                 WHERE ar.id = r.id
+            ) archivers ON TRUE
             """;
 
     private String outputAlias = "resulting_json";
