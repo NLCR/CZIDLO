@@ -169,7 +169,11 @@ public class ProcessOaiAdapterResource extends AbstractResource {
     )
     @PUT
     @Path("transformations/{id}/xslt")
-    public Response setTransformationXslt(@PathParam("id") String id) throws UnauthorizedException, InsufficientRightsException, cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException {
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response setTransformationXslt(@PathParam("id") String id,
+                                          @RequestBody(content = @Content(schema = @Schema(type = "string", description = "Raw XSLT content (UTF-8 text)"))
+                                          ) String xslt)
+            throws UnauthorizedException, InsufficientRightsException, cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException, BadArgumentException {
         //authorization: must be logged in
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
@@ -179,9 +183,11 @@ public class ProcessOaiAdapterResource extends AbstractResource {
         if (!transformationFetched.getOwnerLogin().equals(user.getLogin())) {
             throw new InsufficientRightsException("Only owner can upload XSLT for the transformation");
         }
-        //TODO: update xslt from body - currently just a test xslt is set
-        String testXslt = buildTestXslt();
-        transformationFetched.setXslt(testXslt);
+        if (xslt == null || xslt.isEmpty()) {
+            throw new BadArgumentException("XSLT content cannot be empty");
+        }
+        // žádná validace/parsing – jen uložit raw text
+        transformationFetched.setXslt(xslt);
         XmlTransformation updated = xmlTransformationDao.saveTransformation(transformationFetched);
         //respond
         return Response.ok()
@@ -221,18 +227,6 @@ public class ProcessOaiAdapterResource extends AbstractResource {
         } catch (IllegalArgumentException | NullPointerException e) {
             throw new BadArgumentException("Invalid transformation type: " + typeStr);
         }
-    }
-
-    private String buildTestXslt() {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n" +
-                "    <xsl:output method=\"xml\" indent=\"yes\"/>\n" +
-                "    <xsl:template match=\"/\">\n" +
-                "        <transformed>\n" +
-                "            <xsl:copy-of select=\"*\"/>\n" +
-                "        </transformed>\n" +
-                "    </xsl:template>\n" +
-                "</xsl:stylesheet>";
     }
 
     record TransformationCreate(@NotNull XmlTransformationType type,
