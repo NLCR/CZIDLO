@@ -239,7 +239,46 @@ public class ProcessOaiAdapterResource extends AbstractResource {
                 .build();
     }
 
-    private XmlTransformation getTransformationById(String idStr) throws cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException, BadRequestException {
+    //delete transformation – not implemented
+    @Operation(
+            summary = "Delete transformation for OAI-PMH adapter",
+            tags = {"Processes", "OAI-Adapter"},
+            description = "Deletes transformation for OAI-PMH adapter process including its XSLT",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200", description = "Transformation deleted",
+                            content = @Content(schema = @Schema(implementation = TransformationResult.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid transformation ID format",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights (user is not the owner of the transformation)",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @DELETE
+    @Path("transformations/{id}")
+    public Response deleteTransformation(@PathParam("id") String id)
+            throws UnauthorizedException, InsufficientRightsException, cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException, BadArgumentException {
+        //authorization: must be logged in
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        //fetch transformation
+        XmlTransformation transformationFetched = getTransformationById(id);
+        //check rights: only owner
+        if (!transformationFetched.getOwnerLogin().equals(user.getLogin())) {
+            throw new InsufficientRightsException("Only owner can delete the transformation");
+        }
+        //delete
+        xmlTransformationDao.deleteTransformation(transformationFetched.getId());
+        //respond
+        return Response.ok(toTransformationResult(transformationFetched)).build();
+    }
+
+    private XmlTransformation getTransformationById(String idStr) throws
+            cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException, BadRequestException {
         try {
             Long id = Long.valueOf(idStr);
             return xmlTransformationDao.getTransformation(id);
@@ -261,7 +300,8 @@ public class ProcessOaiAdapterResource extends AbstractResource {
         );
     }
 
-    private XmlTransformationType parseTransformationType(JsonObject root, String paramName) throws BadArgumentException {
+    private XmlTransformationType parseTransformationType(JsonObject root, String paramName) throws
+            BadArgumentException {
         if (!root.containsKey(paramName)) {
             throw new BadArgumentException("Missing mandatory parameter: " + paramName);
         }
