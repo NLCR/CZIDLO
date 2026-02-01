@@ -36,15 +36,6 @@ public class EsIndexer implements AutoCloseable {
     private final IndexerConfig config;
 
     public EsIndexer(IndexerConfig config, OutputStream reportLoggerStream, DataProvider dataProvider) {
-        boolean disabled = false;
-        if (disabled) {
-            logger.info("Initializing EsIndexer disabled!");
-            this.config = null;
-            this.dataProvider = null;
-            this.reportLogger = null;
-            return;
-        }
-
         long start = System.currentTimeMillis();
         this.reportLogger = new ReportLogger(reportLoggerStream);
         this.dataProvider = dataProvider;
@@ -75,6 +66,11 @@ public class EsIndexer implements AutoCloseable {
         }
         if (czidloApiConnector != null) {
             czidloApiConnector.close();
+            czidloApiConnector = null;
+        }
+        if (esConnector != null) {
+            esConnector.close();
+            esConnector = null;
         }
     }
 

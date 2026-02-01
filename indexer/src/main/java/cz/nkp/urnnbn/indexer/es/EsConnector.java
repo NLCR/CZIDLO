@@ -20,16 +20,34 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class EsConnector {
+public class EsConnector implements AutoCloseable {
 
     private static final Logger log = LoggerFactory.getLogger(EsConnector.class);
+    private final RestClient restClient;
+    private final ElasticsearchTransport transport;
     private final ElasticsearchClient esClient;
     private final String indexSearch;
     private final String indexAssign;
     private final String indexResolve;
 
     public EsConnector(String baseurl, String login, String password, String indexSearch, String indexAssign, String indexResolve) {
-        this.esClient = initEsClient(baseurl, login, password);
+        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        if (login != null && !login.isEmpty()) {
+            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(login, password));
+        }
+
+        this.restClient = RestClient.builder(HttpHost.create(baseurl))
+                .setHttpClientConfigCallback(httpClientBuilder ->
+                        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+                )
+                .build();
+
+        this.transport = new RestClientTransport(
+                this.restClient,
+                new JacksonJsonpMapper(Config.getObjectMapper())
+        );
+
+        this.esClient = new ElasticsearchClient(this.transport);
         this.indexSearch = indexSearch;
         this.indexAssign = indexAssign;
         this.indexResolve = indexResolve;
@@ -108,6 +126,19 @@ public class EsConnector {
         }
     }
 
+    @Override
+    public void close() {
+        try { //closing transport as well to be sure
+            transport.close();
+        } catch (Exception e) {
+            log.warn("Failed to close Elasticsearch transport", e);
+        }
+        try {
+            restClient.close();
+        } catch (IOException e) {
+            log.warn("Failed to close Elasticsearch RestClient", e);
+        }
+    }
 }
 
 
