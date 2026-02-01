@@ -13,6 +13,7 @@ import cz.nkp.urnnbn.processmanager.scheduler.jobs.DiUrlAvailabilityCheckJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.IndexationJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.OaiAdapterJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.UrnNbnCsvExportJob;
+import org.quartz.SchedulerException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,13 +28,24 @@ import static cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState.*;
 
 public class ProcessManagerImpl implements ProcessManager {
 
+    private cz.nkp.urnnbn.processmanager.control.ProcessManager rawProcessManager = null;
+
     private cz.nkp.urnnbn.processmanager.control.ProcessManager rawProcessManager() {
-        return cz.nkp.urnnbn.processmanager.control.ProcessManagerImpl.instanceOf();
+        if (rawProcessManager == null) {
+            try {
+                rawProcessManager = new cz.nkp.urnnbn.processmanager.control.ProcessManagerImpl();
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return rawProcessManager;
     }
 
     @Override
     public void shutdown(boolean waitForJobsToFinish) {
-        rawProcessManager().shutdown(waitForJobsToFinish);
+        if (rawProcessManager != null) {
+            rawProcessManager.shutdown(waitForJobsToFinish);
+        }
     }
 
     @Override

@@ -39,13 +39,34 @@ public class App {
         // scheduleWaitKill();
         // sleep(25000);
         // shutdownProcessManager(true);
+        shutdownProcessManager();
+    }
+
+    private static ProcessManager processManager = null;
+
+    private static ProcessManager getProcessManager() {
+        if (processManager == null) {
+            try {
+                processManager = new ProcessManagerImpl();
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return processManager;
+    }
+
+    private static void shutdownProcessManager() {
+        if (processManager != null) {
+            processManager.shutdown(true);
+            processManager = null;
+        }
     }
 
     private static Process scheduledTestProcess(String login) {
         Process process = new Process();
         process.setOwnerLogin(login);
         process.setType(ProcessType.TEST);
-        process.setParams(new String[] {});
+        process.setParams(new String[]{});
         process.setState(ProcessState.SCHEDULED);
         return process;
     }
@@ -54,7 +75,7 @@ public class App {
         Process process = new Process();
         process.setOwnerLogin(login);
         process.setType(ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT);
-        process.setParams(new String[] { "tst02" });
+        process.setParams(new String[]{"tst02"});
         process.setState(ProcessState.SCHEDULED);
         return process;
     }
@@ -87,14 +108,14 @@ public class App {
         // process.setScheduled(new Date());
         // processDao.saveProcess(process);
 
-        ProcessManager manager = ProcessManagerImpl.instanceOf();
+        ProcessManager manager = getProcessManager();
         for (int i = 0; i < count; i++) {
-            manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[] { registrarCode });
+            manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{registrarCode});
         }
     }
 
     private static void scheduleOaiAdapter() throws SchedulerException {
-        ProcessManager manager = ProcessManagerImpl.instanceOf();
+        ProcessManager manager = getProcessManager();
         int procesess = 5;
         // for (int i = 0; i < procesess; i++) {
         // //manager.scheduleNewProcess("Martin", ProcessType.TEST, new String[]{});
@@ -102,11 +123,11 @@ public class App {
         // manager.scheduleNewProcess("superAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst02"});
         // }
         // manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
-        manager.scheduleNewProcess("superAdmin", ProcessType.OAI_ADAPTER, new String[] { "oaiAdapter-rehan-test", "dlhIob5z",
+        manager.scheduleNewProcess("superAdmin", ProcessType.OAI_ADAPTER, new String[]{"oaiAdapter-rehan-test", "dlhIob5z",
                 UrnNbnRegistrationMode.BY_REGISTRAR.toString(), "duha", "http://duha.mzk.cz/oai", "oai_dc", null,
                 "oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_import.xsl",
                 "oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_digital_instance.xsl",
-                "~/tmp/oaiAdapter/report.txt" });
+                "~/tmp/oaiAdapter/report.txt"});
         // int checks = 100;
         // int checks = 3;
         // for (int i = 0; i < checks; i++) {
@@ -120,17 +141,17 @@ public class App {
     }
 
     private static void justStartProcessManager() {
-        ProcessManager manager = ProcessManagerImpl.instanceOf();
+        ProcessManager manager = getProcessManager();
     }
 
     private static void shutdownProcessManager(boolean wait) {
-        ProcessManager manager = ProcessManagerImpl.instanceOf();
+        ProcessManager manager = getProcessManager();
         manager.shutdown(true);
     }
 
     private static void scheduleAndCancel() {
-        ProcessManager manager = ProcessManagerImpl.instanceOf();
-        Process process = manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[] { "tst01" });
+        ProcessManager manager = getProcessManager();
+        Process process = manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
         try {
             manager.cancelScheduledProcess("nkpAdmin", process.getId());
         } catch (UnknownRecordException ex) {
@@ -144,8 +165,8 @@ public class App {
 
     private static void scheduleWaitKill() {
         try {
-            ProcessManager manager = ProcessManagerImpl.instanceOf();
-            Process process = manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[] { "tst01" });
+            ProcessManager manager = getProcessManager();
+            Process process = manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
             sleep(7000);
             boolean killed = manager.killRunningProcess("nkpAdmin", process.getId());
             System.err.println("killed: " + killed);

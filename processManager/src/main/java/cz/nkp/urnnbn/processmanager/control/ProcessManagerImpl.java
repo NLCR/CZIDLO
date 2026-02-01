@@ -48,7 +48,7 @@ public class ProcessManagerImpl implements ProcessManager {
     private static final Logger logger = Logger.getLogger(ProcessManagerImpl.class.getName());
     private static final String PROCESS_GROUP_JOBS = "process";
     private static final String PROCESS_GROUP_SYSTEM = "system";
-    private static volatile ProcessManagerImpl instance;
+    //private static volatile ProcessManagerImpl instance;
     private final int maxAdminJobsRunning;
     private final int maxUserJobsRunning;
     private static final String ADMIN_PROCESS_QUEUE_NAME = "admin-job-queue";
@@ -58,18 +58,7 @@ public class ProcessManagerImpl implements ProcessManager {
     private final AuthorizingProcessDAO processDao = AuthorizingProcessDAOImpl.instanceOf();
     private Scheduler scheduler;
 
-    public static synchronized ProcessManagerImpl instanceOf() {
-        try {
-            if (instance == null) {
-                instance = new ProcessManagerImpl();
-            }
-            return instance;
-        } catch (SchedulerException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private ProcessManagerImpl() throws SchedulerException {
+    public ProcessManagerImpl() throws SchedulerException {
         logger.info("initializing Process manager");
         this.maxAdminJobsRunning = Configuration.getMaxRunningAdminProcesses();
         logger.log(Level.INFO, "max number of adming jobs running: {0}", this.maxAdminJobsRunning);
@@ -107,7 +96,11 @@ public class ProcessManagerImpl implements ProcessManager {
         JobKey key = new JobKey(JobCheckerJob.JOB_NAME, PROCESS_GROUP_SYSTEM);
         if (!scheduler.checkExists(key)) {
             logger.log(Level.INFO, "scheduling {0}", JobCheckerJob.class.getSimpleName());
-            JobDetail job = newJob(JobCheckerJob.class).withIdentity(key).build();
+            JobDetail job = newJob(JobCheckerJob.class)
+                    .withIdentity(key)
+                    .usingJobData(new JobDataMap())
+                    .build();
+            job.getJobDataMap().put(JobCheckerJob.PM_KEY, this); // pass ProcessManagerImpl instance to the job
 
             Random rand = new Random();
             Date soon = new Date(new Date().getTime() + 1000 + rand.nextInt(2000));
@@ -643,10 +636,10 @@ public class ProcessManagerImpl implements ProcessManager {
         }
     }
 
-    public static synchronized void shutdownInstance() {
+   /* public static synchronized void shutdownInstance() {
         if (instance != null) {
             instance.shutdown();
             instance = null;
         }
-    }
+    }*/
 }

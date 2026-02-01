@@ -16,6 +16,7 @@
  */
 package cz.nkp.urnnbn.processmanager.control;
 
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -24,11 +25,17 @@ import org.quartz.JobExecutionException;
  *
  * @author Martin Řehánek
  */
+@DisallowConcurrentExecution
 public class JobCheckerJob implements Job {
 
     public static final String JOB_NAME = "job-checker";
+    public static final String PM_KEY = "processManager";
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        ProcessManagerImpl.instanceOf().runScheduledProcessIfPossible();
+        Object o = context.getMergedJobDataMap().get(PM_KEY);
+        if (!(o instanceof ProcessManagerImpl pm)) {
+            throw new JobExecutionException("ProcessManager not provided in JobDataMap under key=" + PM_KEY);
+        }
+        pm.runScheduledProcessIfPossible();
     }
 }

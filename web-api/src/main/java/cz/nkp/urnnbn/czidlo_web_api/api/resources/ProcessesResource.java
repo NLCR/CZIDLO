@@ -1,13 +1,13 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
 import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.czidlo_web_api.ProcessManagerBootstrap;
 import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
 import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessOutputFile;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessManager;
-import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessManagerImpl;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessList;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.json.*;
 import jakarta.json.stream.JsonParsingException;
+import jakarta.servlet.ServletContext;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -37,8 +38,12 @@ public class ProcessesResource extends AbstractResource {
     @Context
     private SecurityContext securityContext;
 
-    private static final ProcessManager processManager = new ProcessManagerImpl();
-    //private static final ProcessManager processManager = new ProcessManagerMockInMemory();
+    @Context
+    private ServletContext servletContext;
+
+    private ProcessManager processManager() {
+        return (ProcessManager) servletContext.getAttribute(ProcessManagerBootstrap.ATTR);
+    }
 
     @Operation(
             summary = "Create process",
@@ -113,7 +118,7 @@ public class ProcessesResource extends AbstractResource {
         */
 
         Map<String, Object> paramsMap = paramsToMap(params);
-        Process p = processManager.scheduleNewProcess(user.getLogin(), type, paramsMap);
+        Process p = processManager().scheduleNewProcess(user.getLogin(), type, paramsMap);
         return Response.ok(p).build();
     }
 
@@ -165,7 +170,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            Process p = processManager.getProcess(user, id);
+            Process p = processManager().getProcess(user, id);
             return Response.ok(p).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
@@ -196,8 +201,8 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         List<Process> p = user.isAdmin()
-                ? processManager.getAllProcesses() // all processes for admin
-                : processManager.getProcessesByOwner(user.getLogin()); // only own processes for regular user
+                ? processManager().getAllProcesses() // all processes for admin
+                : processManager().getProcessesByOwner(user.getLogin()); // only own processes for regular user
         return Response.ok(new ProcessList(p)).build();
     }
 
@@ -225,7 +230,7 @@ public class ProcessesResource extends AbstractResource {
         if (!user.isAdmin()) {
             throw new InsufficientRightsException("Only admin can access processes by owner");
         }
-        List<Process> p = processManager.getProcessesByOwner(owner);
+        List<Process> p = processManager().getProcessesByOwner(owner);
         return Response.ok(p).build();
     }
 
@@ -263,7 +268,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            boolean killed = processManager.killRunningProcess(user, id);
+            boolean killed = processManager().killRunningProcess(user, id);
             return Response.ok(killed).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
@@ -304,7 +309,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            boolean p = processManager.cancelScheduledProcess(user, id);
+            boolean p = processManager().cancelScheduledProcess(user, id);
             return Response.ok(p).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
@@ -344,7 +349,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            processManager.deleteProcess(user, id);
+            processManager().deleteProcess(user, id);
             return Response.noContent().build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
@@ -381,7 +386,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            FileInputStream processLog = processManager.getProcessLog(user, id);
+            FileInputStream processLog = processManager().getProcessLog(user, id);
             return Response.ok(processLog, MediaType.TEXT_PLAIN).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
@@ -421,7 +426,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            ProcessOutputFile outputFile = processManager.getProcessOutput(user, id);
+            ProcessOutputFile outputFile = processManager().getProcessOutput(user, id);
             Response.ResponseBuilder builder = Response.ok(outputFile.getFileWithData(), outputFile.getOutMimeType());
             builder.header("Content-Disposition", "attachment; filename=\"" + outputFile.getOutFileName() + "\"");
             return builder.build();
