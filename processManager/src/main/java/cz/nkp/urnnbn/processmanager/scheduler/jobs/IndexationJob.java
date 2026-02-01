@@ -48,23 +48,6 @@ public class IndexationJob extends AbstractJob {
 
     //report file
     public static final String PARAM_REPORT_FILE = "report.txt";
-    //czidlo api
-    public static final String PARAM_CZIDLO_API_BASE_URL = "czidloApiBaseUrl";
-    //solr
-    //public static final String PARAM_SOLR_BASE_URL = "solrBaseUrl";
-    //public static final String PARAM_SOLR_COLLECTION = "solrCollection";
-    //public static final String PARAM_SOLR_USE_HTTPS = "solrUseHttps";
-    //public static final String PARAM_SOLR_LOGIN = "solrLogin";
-    //public static final String PARAM_SOLR_PASSWORD = "solrPassword";
-
-    /*public static final String INDEXER_ES_BASE_URL = "indexer.es.baseUrl";
-    public static final String INDEXER_ES_INDEX_NAME = "indexer.es.index";
-    public static final String INDEXER_ES_LOGIN = "indexer.es.login";
-    public static final String INDEXER_ES_PASSWORD = "indexer.es.password";
-
-    public static final String INDEXER_DB_URL = "indexer.db.url";
-    public static final String INDEXER_DB_LOGIN = "indexer.db.login";
-    public static final String INDEXER_DB_PASSWORD = "indexer.db.password";*/
 
     //elasticsearch
     public static final String PARAM_ES_BASE_URL = "esBaseUrl";
@@ -79,9 +62,6 @@ public class IndexationJob extends AbstractJob {
     public static final String PARAM_CZIDLO_DB_LOGIN = "dbLogin";
     public static final String PARAM_CZIDLO_DB_PASSWORD = "dbPassword";
 
-    //xslt
-    //public static final String PARAM_XSL_FILE = "xslFile";
-
     //date range
     public static final String PARAM_MODIFICATION_DATE_FROM = "mod_date_from";
     public static final String PARAM_MODIFICATION_DATE_TO = "mod_date_to";
@@ -95,9 +75,6 @@ public class IndexationJob extends AbstractJob {
     @Override
     public void interrupt() throws UnableToInterruptJobException {
         super.interrupt();
-        /*if (solrIndexer != null) {
-            solrIndexer.stop();
-        }*/
         if (esIndexer != null) {
             esIndexer.stop();
         }
@@ -111,21 +88,6 @@ public class IndexationJob extends AbstractJob {
             logger.info("Executing " + IndexationJob.class.getSimpleName());
 
             IndexerConfig config = new IndexerConfig();
-
-            // czidlo api
-            config.setCzidloApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL));
-            logger.info("Czidlo API base url: " + config.getCzidloApiBaseUrl());
-            config.setCzidloApiUseHttps(false);
-
-            //solr
-            /*config.setSolrApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_SOLR_BASE_URL));
-            logger.info("Solr base url: " + config.getSolrApiBaseUrl());
-            config.setSolrApiCollection((String) context.getMergedJobDataMap().get(PARAM_SOLR_COLLECTION));
-            logger.info("Solr collection: " + config.getSolrApiCollection());
-            config.setSolrApiLogin((String) context.getMergedJobDataMap().get(PARAM_SOLR_LOGIN));
-            config.setSolrApiPassword((String) context.getMergedJobDataMap().get(PARAM_SOLR_PASSWORD));
-            config.setSolrApiUseHttps((Boolean) context.getMergedJobDataMap().get(PARAM_SOLR_USE_HTTPS));
-            logger.info("Solr use https: " + config.getSolrApiUseHttps());*/
 
             //elasticsearch
             config.setEsApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_ES_BASE_URL));
@@ -146,10 +108,6 @@ public class IndexationJob extends AbstractJob {
             config.setDbLogin((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_DB_LOGIN));
             config.setDbPassword((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_DB_PASSWORD));
             //logger.info("Database login: " + config.getDbLogin() + ", password:" +  config.getDbPassword());
-
-            //xslt
-            //config.setCzi¬dloToSolrXsltFile(new File((String) context.getMergedJobDataMap().get(PARAM_XSL_FILE)));
-            //config.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(config.getCzidloToSolrXsltFile().getAbsolutePath()));
 
             //registration date range
             DateTime registrationStart = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_FROM, context, dateFormat);

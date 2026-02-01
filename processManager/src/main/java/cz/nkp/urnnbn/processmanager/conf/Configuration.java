@@ -40,21 +40,14 @@ public class Configuration {
     //oai adapter
     private static String oaiAdapterDigDocRegistrationXsdUrl;
     private static String oaiAdapterDigInstImportXsdUrl;
-    //solr indexer
-    /*private static String solrIndexerSolrBaseUrl;
-    private static String solrIndexerSolrCollection;
-    private static Boolean solrIndexerSolrUseHttps;
-    private static String solrIndexerSolrLogin;
-    private static String solrIndexerSolrPassword;
-    private static File solrIndexerCzidloToSolrXslt;*/
-
+    //indexer - Elasticsearch
     private static String indexerEsBaseUrl;
     private static String indexerEsLogin;
     private static String indexerEsPassword;
     private static String indexerEsIndexSearchName;
     private static String indexerEsIndexAssignName;
     private static String indexerEsIndexResolveName;
-
+    //indexer - czidlo db
     private static String indexerCzidloDbUrl;
     private static String indexerCzidloDbLogin;
     private static String indexerCzidloDbPassword;
@@ -77,37 +70,20 @@ public class Configuration {
         // oai adapter
         oaiAdapterDigDocRegistrationXsdUrl = loader.loadString(PropertyKeys.OAI_ADAPTER_DD_REGISTRATION_XSD_URL);
         oaiAdapterDigInstImportXsdUrl = loader.loadString(PropertyKeys.OAI_ADAPTER_DI_IMPORT_XSD_URL);
-        // solr indexer
-        /*solrIndexerSolrBaseUrl = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_BASE_URL);
-        solrIndexerSolrCollection = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_COLLECTION);
-        solrIndexerSolrUseHttps = loader.loadBoolean(PropertyKeys.SOLR_INDEXER_SOLR_USE_HTTPS, false);
-        solrIndexerSolrLogin = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_LOGIN);
-        solrIndexerSolrPassword = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_PASSWORD);*/
-
-        //indexer
+        //indexer - Elasticsearch
         indexerEsBaseUrl = loader.loadString(PropertyKeys.INDEXER_ES_BASE_URL);
         indexerEsLogin = loader.loadString(PropertyKeys.INDEXER_ES_LOGIN);
         indexerEsPassword = loader.loadString(PropertyKeys.INDEXER_ES_PASSWORD);
         indexerEsIndexSearchName = loader.loadString(PropertyKeys.INDEXER_ES_INDEX_SEARCH_NAME);
         indexerEsIndexAssignName = loader.loadString(PropertyKeys.INDEXER_ES_INDEX_ASSIGN_NAME);
         indexerEsIndexResolveName = loader.loadString(PropertyKeys.INDEXER_ES_INDEX_RESOLVE_NAME);
-
+        // indexer - czidlo db
         indexerCzidloDbUrl = loader.loadString(PropertyKeys.INDEXER_DB_URL);
         indexerCzidloDbLogin = loader.loadString(PropertyKeys.INDEXER_DB_LOGIN);
         indexerCzidloDbPassword = loader.loadString(PropertyKeys.INDEXER_DB_PASSWORD);
 
-        /*IndexerConfig indexerConfig = new IndexerConfig();
-        indexerConfig.setCzidloApiBaseUrl(czidloApiBaseUrl);
-        indexerConfig.setCzidloApiUseHttps(false);
-        */
-
         Services.init(new PostgresPooledConnector(), null);
     }
-
-    /*public static void initFileResources(File czidloToSolrXslt) {
-        logger.info("initFileResources");
-        Configuration.solrIndexerCzidloToSolrXslt = czidloToSolrXslt;
-    }*/
 
     public static File getJobsDir() {
         return jobsDir;
@@ -132,30 +108,6 @@ public class Configuration {
     public static String getCzidloApiBaseUrl() {
         return czidloApiBaseUrl;
     }
-
-    /*public static String getSolrIndexerSolrBaseUrl() {
-        return solrIndexerSolrBaseUrl;
-    }
-
-    public static String getSolrIndexerSolrCollection() {
-        return solrIndexerSolrCollection;
-    }
-
-    public static Boolean getSolrIndexerSolrUseHttps() {
-        return solrIndexerSolrUseHttps;
-    }
-
-    public static String getSolrIndexerSolrLogin() {
-        return solrIndexerSolrLogin;
-    }
-
-    public static String getSolrIndexerSolrPassword() {
-        return solrIndexerSolrPassword;
-    }
-
-    public static String getSolrXsltFilename() {
-        return solrIndexerCzidloToSolrXslt.getAbsolutePath();
-    }*/
 
     public static String getIndexerEsBaseUrl() {
         return indexerEsBaseUrl;

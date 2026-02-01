@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.indexer.es;
 
-import cz.nkp.urnnbn.apiClient.v5.CzidloApiConnector;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -27,7 +26,6 @@ public class EsIndexer implements AutoCloseable {
     private long initTime;
 
     //helpers
-    private CzidloApiConnector czidloApiConnector = null;
     private EsConnector esConnector = null;
     private String dbUrl = null;
     private String dbLogin = null;
@@ -49,11 +47,6 @@ public class EsIndexer implements AutoCloseable {
 
         logger.info("Initializing Elasticsearch client for URL: " + baseUrl);
         this.esConnector = new EsConnector(baseUrl, login, password, indexSearch, indexAssign, indexResolve);
-        this.czidloApiConnector = new CzidloApiConnector(
-                config.getCzidloApiBaseUrl(),
-                null,
-                config.getCzidloApiUseHttps(),
-                false);
         this.dbUrl = config.getDbUrl();
         this.dbLogin = config.getDbLogin();
         this.dbPassword = config.getDbPassword();
@@ -63,10 +56,6 @@ public class EsIndexer implements AutoCloseable {
     public void close() {
         if (reportLogger != null) {
             reportLogger.close();
-        }
-        if (czidloApiConnector != null) {
-            czidloApiConnector.close();
-            czidloApiConnector = null;
         }
         if (esConnector != null) {
             esConnector.close();
@@ -107,9 +96,6 @@ public class EsIndexer implements AutoCloseable {
             } catch (IOException e) {
                 counters.incrementErrors();
                 report(" I/O error", e);
-            } catch (SolrException e) {
-                counters.incrementErrors();
-                report(" Solr error", e);
             } catch (SQLException e) {
                 counters.incrementErrors();
                 report(" SQL error", e);
@@ -203,9 +189,6 @@ public class EsIndexer implements AutoCloseable {
         } catch (IOException e) {
             counters.incrementErrors();
             report(" I/O error", e);
-        } catch (SolrException e) {
-            counters.incrementErrors();
-            report(" Solr error", e);
         } catch (SQLException e) {
             counters.incrementErrors();
             report(" SQL error", e);
@@ -242,10 +225,5 @@ public class EsIndexer implements AutoCloseable {
 
     private void commit() {
         //nothing
-        /*try {
-            solrConnector.commit();
-        } catch (SolrServerException | IOException e) {
-            report(" Solr server error while commiting", e);
-        }*/
     }
 }

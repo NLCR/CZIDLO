@@ -400,13 +400,6 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
                         .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
-                        .usingJobData(IndexationJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getCzidloApiBaseUrl())//
-                        /*.usingJobData(IndexationJob.PARAM_SOLR_BASE_URL, Configuration.getSolrIndexerSolrBaseUrl())//
-                        .usingJobData(IndexationJob.PARAM_SOLR_COLLECTION, Configuration.getSolrIndexerSolrCollection())
-                        .usingJobData(IndexationJob.PARAM_SOLR_USE_HTTPS, Configuration.getSolrIndexerSolrUseHttps())
-                        .usingJobData(IndexationJob.PARAM_SOLR_LOGIN, Configuration.getSolrIndexerSolrLogin())
-                        .usingJobData(IndexationJob.PARAM_SOLR_PASSWORD, Configuration.getSolrIndexerSolrPassword())
-                        .usingJobData(IndexationJob.PARAM_XSL_FILE, Configuration.getSolrXsltFilename())*/
                         .usingJobData(IndexationJob.PARAM_ES_BASE_URL, Configuration.getIndexerEsBaseUrl())//
                         .usingJobData(IndexationJob.PARAM_ES_LOGIN, Configuration.getIndexerEsLogin())
                         .usingJobData(IndexationJob.PARAM_ES_PASSWORD, Configuration.getIndexerEsPassword())
@@ -629,7 +622,7 @@ public class ProcessManagerImpl implements ProcessManager {
         if (scheduler != null) {
             try {
                 if (!scheduler.isShutdown()) {
-                    // Volitelné: nejdřív zastavit nové spouštění triggerů
+                    // Volitelné: nejdřív zastavit nové spouštění trigger
                     scheduler.standby();
 
                     // Řízené ukončení – počká na doběh jobů

@@ -17,6 +17,8 @@
 package cz.nkp.urnnbn.processmanager.conf;
 
 /**
+ * Process manager specific property keys.
+ *
  * @author Martin Řehánek
  */
 public class PropertyKeys extends cz.nkp.urnnbn.config.PropertyKeys {
@@ -29,13 +31,7 @@ public class PropertyKeys extends cz.nkp.urnnbn.config.PropertyKeys {
     //OAI ADAPTER
     static final String OAI_ADAPTER_DD_REGISTRATION_XSD_URL = "process.oaiAdapter.digDocRegistrationXsdUrl";
     static final String OAI_ADAPTER_DI_IMPORT_XSD_URL = "process.oaiAdapter.digInstImportXsdUrl";
-    //SOLR INDEXER
-    /*static String SOLR_INDEXER_SOLR_BASE_URL = "process.solrIndexer.baseUrl";
-    static String SOLR_INDEXER_SOLR_COLLECTION = "process.solrIndexer.collection";
-    static String SOLR_INDEXER_SOLR_USE_HTTPS = "process.solrIndexer.useHttps";
-    static String SOLR_INDEXER_SOLR_LOGIN = "process.solrIndexer.login";
-    static String SOLR_INDEXER_SOLR_PASSWORD = "process.solrIndexer.password";*/
-    //INDEXER
+    //INDEXER (Elasticsearch)
     static String INDEXER_ES_BASE_URL = "process.indexer.es.baseUrl";
     static String INDEXER_ES_LOGIN = "process.indexer.es.login";
     static String INDEXER_ES_PASSWORD = "process.indexer.es.password";

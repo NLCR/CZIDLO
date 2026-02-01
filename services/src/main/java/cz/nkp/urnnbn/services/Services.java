@@ -12,7 +12,6 @@ import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.impl.*;
 import cz.nkp.urnnbn.indexer.DataProvider;
 import cz.nkp.urnnbn.indexer.IndexerConfig;
-import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
 import org.joda.time.DateTime;
 
 import java.util.List;
