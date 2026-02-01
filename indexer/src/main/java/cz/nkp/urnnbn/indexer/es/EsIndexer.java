@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class EsIndexer {
+public class EsIndexer implements AutoCloseable {
 
     private static final Logger logger = Logger.getLogger(EsIndexer.class.getName());
 
@@ -33,10 +33,22 @@ public class EsIndexer {
     private String dbLogin = null;
     private String dbPassword = null;
 
+    private final IndexerConfig config;
+
     public EsIndexer(IndexerConfig config, OutputStream reportLoggerStream, DataProvider dataProvider) {
+        boolean disabled = false;
+        if (disabled) {
+            logger.info("Initializing EsIndexer disabled!");
+            this.config = null;
+            this.dataProvider = null;
+            this.reportLogger = null;
+            return;
+        }
+
         long start = System.currentTimeMillis();
         this.reportLogger = new ReportLogger(reportLoggerStream);
         this.dataProvider = dataProvider;
+        this.config = config;
         String baseUrl = config.getEsApiBaseUrl();
         String login = config.getEsApiLogin();
         String password = config.getEsApiPassword();
@@ -61,6 +73,9 @@ public class EsIndexer {
         if (reportLogger != null) {
             reportLogger.close();
         }
+        if (czidloApiConnector != null) {
+            czidloApiConnector.close();
+        }
     }
 
     public void setProgressListener(ProgressListener progressListener) {
@@ -78,6 +93,9 @@ public class EsIndexer {
     }
 
     public void indexDigitalDocument(long ddInternalId) {
+        System.out.println("Indexing digital document with internal id " + ddInternalId);
+        System.out.println("indexer base url: " + config.getEsApiBaseUrl());
+        System.out.println("indexer search index:  " + config.getEsApiIndexSearchName());
         indexDigitalDocument(ddInternalId, new Counters(1), true);
     }
 

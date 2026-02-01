@@ -4,13 +4,18 @@
  */
 package cz.nkp.urnnbn.indexer;
 
+import cz.nkp.urnnbn.indexer.es.EsIndexer;
+
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.logging.Logger;
 
 /**
  * @author hanis
  */
 public class ReportLogger {
+
+    private static final Logger logger = Logger.getLogger(ReportLogger.class.getName());
 
     private PrintStream stream;
 
@@ -32,6 +37,7 @@ public class ReportLogger {
     }
 
     public void close() {
+        logger.info("Closing ReportLogger");
         if (stream != null) {
             stream.close();
         }

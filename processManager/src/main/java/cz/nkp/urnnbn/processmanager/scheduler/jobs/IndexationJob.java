@@ -90,7 +90,6 @@ public class IndexationJob extends AbstractJob {
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 
-    //private SolrIndexer solrIndexer;
     private EsIndexer esIndexer;
 
     @Override
@@ -239,9 +238,6 @@ public class IndexationJob extends AbstractJob {
 
     @Override
     void close() {
-        /*if (solrIndexer != null) {
-            solrIndexer.close();
-        }*/
         if (esIndexer != null) {
             esIndexer.close();
         }

@@ -14,7 +14,6 @@ import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.*;
-import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,12 +25,10 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 
     private static final Logger LOGGER = Logger.getLogger(DataImportServiceImpl.class.getName());
 
-    //private final SolrIndexer solrIndexer;
     private final EsIndexer esIndexer;
 
-    public DataImportServiceImpl(DatabaseConnector conn, SolrIndexer solrIndexer, EsIndexer esIndexer) {
+    public DataImportServiceImpl(DatabaseConnector conn, EsIndexer esIndexer) {
         super(conn);
-        //this.solrIndexer = solrIndexer;
         this.esIndexer = esIndexer;
     }
 
@@ -126,7 +123,6 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 
     private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
         try {
-            //solrIndexer.indexDocument(digDocId);
             esIndexer.indexDigitalDocument(digDocId);
             LOGGER.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {

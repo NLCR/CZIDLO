@@ -14,7 +14,6 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.DataRemoveService;
 import cz.nkp.urnnbn.services.exceptions.*;
-import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,10 +25,9 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
 
     private static final Logger LOGGER = Logger.getLogger(DataRemoveServiceImpl.class.getName());
 
-    //private final SolrIndexer solrIndexer;
     private final EsIndexer esIndexer;
 
-    public DataRemoveServiceImpl(DatabaseConnector conn, SolrIndexer solrIndexer, EsIndexer esIndexer) {
+    public DataRemoveServiceImpl(DatabaseConnector conn, EsIndexer esIndexer) {
         super(conn);
         this.esIndexer = esIndexer;
     }

@@ -375,4 +375,7 @@ public class CzidloApiConnector {
         }
     }
 
+    public void close() {
+        logger.info("Closing CzidloApiConnector");
+    }
 }

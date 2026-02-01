@@ -13,7 +13,6 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.exceptions.*;
-import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,10 +26,9 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     private static final Logger LOGGER = Logger.getLogger(DataUpdateServiceImpl.class.getName());
 
-    //private final SolrIndexer solrIndexer;
     private final EsIndexer esIndexer;
 
-    public DataUpdateServiceImpl(DatabaseConnector conn, SolrIndexer solrIndexer, EsIndexer esIndexer) {
+    public DataUpdateServiceImpl(DatabaseConnector conn, EsIndexer esIndexer) {
         super(conn);
         this.esIndexer = esIndexer;
     }
