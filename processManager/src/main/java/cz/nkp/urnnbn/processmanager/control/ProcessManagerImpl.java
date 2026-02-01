@@ -343,7 +343,8 @@ public class ProcessManagerImpl implements ProcessManager {
 
     private JobDetail buildJobDetail(Process process) {
         String id = process.getId().toString();
-        System.err.println(parematersToString(process.getParams()));
+        //System.out.println("Params:");
+        //System.out.println(parematersToString(process.getParams()));
         String[] params = process.getParams();
         int i = 0;
         switch (process.getType()) {
@@ -371,19 +372,23 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
                         .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
+
                         .usingJobData(OaiAdapterJob.PARAM_CZIDLO_REGISTRAR_CODE, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getCzidloApiBaseUrl())//
                         .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_LOGIN, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_PASSWORD, params[i++])//
+
                         .usingJobData(OaiAdapterJob.PARAM_OAI_BASE_URL, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_OAI_METADATA_PREFIX, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_OAI_SET, params[i++])//
+
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSL_ID, params[i++])//
-                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSL_FILE, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSL, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL_ID, params[i++])//
-                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL_FILE, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSD_URL, Configuration.getOaiAdapterDigDocRegistrationXsdUrl())//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSD_URL, Configuration.getOaiAdapterDigInstImportXsdUrl())//
+
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN, Boolean.valueOf(params[i++]))//
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN, Boolean.valueOf(params[i++]))//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_MERGE_DIS, Boolean.valueOf(params[i++]))//

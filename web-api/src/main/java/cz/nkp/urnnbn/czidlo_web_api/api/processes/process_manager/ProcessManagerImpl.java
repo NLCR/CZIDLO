@@ -9,6 +9,8 @@ import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
 import cz.nkp.urnnbn.processmanager.control.ProcessResultManager;
 import cz.nkp.urnnbn.processmanager.control.ProcessResultManagerImpl;
+import cz.nkp.urnnbn.processmanager.core.XmlTransformation;
+import cz.nkp.urnnbn.processmanager.persistence.XmlTransformationDAOImpl;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.DiUrlAvailabilityCheckJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.IndexationJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.OaiAdapterJob;
@@ -51,9 +53,11 @@ public class ProcessManagerImpl implements ProcessManager {
     @Override
     public Process scheduleNewProcess(String login, ProcessType type, Map<String, Object> processParams) {
         //print process params
-        for (String key : processParams.keySet()) {
-            System.out.println("Process param: key=\"" + key + "\", value=\"" + processParams.get(key) + "\"");
-        }
+        /*for (String key : processParams.keySet()) {
+            Object v = processParams.get(key);
+            System.out.println("Process param: key=\"" + key + "\", value=\"" + v + "\", class=" + (v == null ? "null" : v.getClass().getName()));
+            //System.out.println("Process param: key=\"" + key + "\", value=\"" + processParams.get(key) + "\"");
+        }*/
         cz.nkp.urnnbn.processmanager.core.Process process = rawProcessManager().scheduleNewProcess(login, toRawProcessType(type), toRawProcessParams(type, processParams));
         return rawProcessToProcess(process);
         //throw new RuntimeException("ProcessManagerImpl: Not implemented");
@@ -75,11 +79,30 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     private String[] toRawProcessParams(ProcessType type, Map<String, Object> paramMap) {
+        //see cz.nkp.urnnbn.server.services.ProcessServiceImpl
         //see cz.nkp.urnnbn.processmanager.control.ProcessManagerImpl.buildJobDetail()
+        //System.out.println("Building raw process params for process type: " + type);
+        //printParamMap(paramMap);
         List<String> paramList = new ArrayList<>();
         switch (type) {
             case OAI_ADAPTER:
-                // TODO: implement
+                paramList.add(getParam("registrarCode", paramMap));
+                paramList.add("czidlo_api_login");
+                paramList.add("czidlo_api_password");
+                paramList.add(getParam("oaiBaseUrl", paramMap));
+                paramList.add(getParam("oaiMetadataPrefix", paramMap));
+                paramList.add(getParam("oaiSet", paramMap));
+                XmlTransformation ddRegTrans = extractXmlTransformation(paramMap, "ddRegTransId");
+                paramList.add(ddRegTrans.getName());
+                paramList.add(ddRegTrans.getXslt());
+                XmlTransformation diImportTrans = extractXmlTransformation(paramMap, "diImportTransId");
+                paramList.add(diImportTrans.getName());
+                paramList.add(diImportTrans.getXslt());
+                paramList.add(getParam("registerDDsWithUrn", paramMap));
+                paramList.add(getParam("registerDDsWithoutUrn", paramMap));
+                paramList.add(getParam("diImportMergeDis", paramMap));
+                paramList.add(getParam("ignoreDifferenceInAccessibility", paramMap));
+                paramList.add(getParam("ignoreDifferenceInFormat", paramMap));
                 return paramList.toArray(new String[0]);
             case REGISTRARS_URN_NBN_CSV_EXPORT:
                 paramList.add(getParam("registrationDateFrom", paramMap));
@@ -113,6 +136,23 @@ public class ProcessManagerImpl implements ProcessManager {
                 return paramList.toArray(new String[0]);
             default:
                 throw new IllegalArgumentException("Unknown process type: " + type);
+        }
+    }
+
+    private XmlTransformation extractXmlTransformation(Map<String, Object> paramMap, String key) {
+        XmlTransformationDAOImpl xmlTransformationDAO = XmlTransformationDAOImpl.instanceOf();
+        String idStr = getParam(key, paramMap);
+        Long id = idStr != null ? Long.parseLong(idStr) : null;
+        try {
+            return xmlTransformationDAO.getTransformation(id);
+        } catch (cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void printParamMap(Map<String, Object> paramMap) {
+        for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
+            System.out.println("Param key=\"" + entry.getKey() + "\", value=\"" + entry.getValue() + "\"");
         }
     }
 

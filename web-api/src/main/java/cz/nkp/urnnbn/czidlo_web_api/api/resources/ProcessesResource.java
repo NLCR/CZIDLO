@@ -126,18 +126,27 @@ public class ProcessesResource extends AbstractResource {
         Map<String, Object> result = new HashMap<>();
         for (String key : params.keySet()) {
             JsonValue jsonValue = params.get(key);
+            //System.out.println(key + " raw json = " + jsonValue + " (" + jsonValue.getValueType() + ")");
             Object value = switch (jsonValue.getValueType()) {
                 case STRING -> params.getString(key);
                 case TRUE -> Boolean.TRUE;
                 case FALSE -> Boolean.FALSE;
                 case NUMBER -> {
                     JsonNumber num = params.getJsonNumber(key);
-                    yield num.isIntegral() ? num.intValue() : num.doubleValue();
+                    var bd = num.bigDecimalValue();
+                    // 1, 1.0, 45, 45.000, 45e0 -> pořád celé číslo
+                    var stripped = bd.stripTrailingZeros();
+                    if (stripped.scale() <= 0) {
+                        yield stripped.longValueExact();   // Long
+                    } else {
+                        yield bd.doubleValue();            // Double
+                    }
                 }
                 case NULL -> null;
                 default ->
                         throw new IllegalArgumentException("Unsupported parameter type ( " + jsonValue.getValueType() + ") for key: " + key);
             };
+            System.out.println("MAP PUT " + key + " => " + value + " / class=" + (value == null ? "null" : value.getClass().getName()));
             result.put(key, value);
         }
         return result;

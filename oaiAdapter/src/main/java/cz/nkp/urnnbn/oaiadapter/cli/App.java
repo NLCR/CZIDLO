@@ -70,7 +70,7 @@ public class App {
         return new OaiAdapter(registrarCode,
                 oaiBaseUrl, oaiMetadataPrefix, oaiSetSpec,
                 czidloApiBaseUrl, czidloApiLogin, czidloApiPassword, czidloApiIgnoreInvalidCertificate,
-                new XslTemplate(null, ddRegistrationXsl, ddRegistrationXslFile), new XslTemplate(null, diImportXsl, diImportXslFile),
+                new XslTemplate(null, ddRegistrationXsl), new XslTemplate(null, diImportXsl),
                 ddRegistrationDataXsdUrl, diImportDataXsdUrl,
                 registerDDsWithUrn, registerDDsWithoutUrn,
                 mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat,

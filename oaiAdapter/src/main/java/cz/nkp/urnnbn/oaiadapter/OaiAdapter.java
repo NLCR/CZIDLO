@@ -192,16 +192,10 @@ public class OaiAdapter {
         if (metadataToDdRegistrationXslt != null && metadataToDdRegistrationXslt.getId() != null) {
             report("  Metadata to DD-registration template: " + metadataToDdRegistrationXslt.getId());
         }
-        if (metadataToDdRegistrationXslt != null && metadataToDdRegistrationXslt.getFile() != null) {
-            report("  Metadata to DD-registration template file: " + metadataToDdRegistrationXslt.getFile().getAbsolutePath());
-        }
         report("  DD-registration schema location: " + ddRegistrationDataXsdUrl.toString());
 
         if (metadataToDiImportXslt != null && metadataToDiImportXslt.getId() != null) {
             report("  Metadata to DI-import template: " + metadataToDiImportXslt.getId());
-        }
-        if (metadataToDiImportXslt != null && metadataToDiImportXslt.getFile() != null) {
-            report("  Metadata to DI-import template file: " + metadataToDiImportXslt.getFile().getAbsolutePath());
         }
         report("  DI-import schema location: " + diImportDataXsdUrl.toString());
         report(" ");
@@ -363,16 +357,8 @@ public class OaiAdapter {
         return metadataToDdRegistrationXslt.getXml();
     }
 
-    public File getMetadataToDdRegistrationXsltFile() {
-        return metadataToDdRegistrationXslt.getFile();
-    }
-
     public String getMetadataToDiImportXslt() {
         return metadataToDiImportXslt.getXml();
-    }
-
-    public File getMetadataToDiImportXsltFile() {
-        return metadataToDiImportXslt.getFile();
     }
 
     public URL getDdRegistrationDataXsdUrl() {

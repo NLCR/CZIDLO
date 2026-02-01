@@ -8,13 +8,10 @@ import java.io.File;
 public class XslTemplate {
     private final String id;
     private final String xml;
-    private final File file;
 
-
-    public XslTemplate(String id, String xml, File file) {
+    public XslTemplate(String id, String xml) {
         this.id = id;
         this.xml = xml;
-        this.file = file;
     }
 
     public String getId() {
@@ -25,11 +22,8 @@ public class XslTemplate {
         return xml;
     }
 
-    public File getFile() {
-        return file;
+    public String getDescription() {
+        return id;
     }
 
-    public String getDescription() {
-        return id != null ? id : file != null ? file.getName() : "";
-    }
 }
