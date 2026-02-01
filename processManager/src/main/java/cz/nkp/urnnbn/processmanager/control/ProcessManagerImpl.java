@@ -577,12 +577,14 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     @Override
-    public void shutdown(boolean waitForJobsToFinish) {
+    public void shutdown(boolean waitForJobsToComplete) {
+        logger.info("ProcessManager shutdown called, scheduler=" + scheduler);
         try {
-            if (!waitForJobsToFinish) {
+            if (!waitForJobsToComplete) {
                 killAllRunningJobs();
             }
-            scheduler.shutdown(true);
+            scheduler.shutdown(waitForJobsToComplete);
+            logger.info("ProcessManager shutdown called, shutdown=" + scheduler.isShutdown());
         } catch (SchedulerException ex) {
             throw new RuntimeException(ex);
         }
