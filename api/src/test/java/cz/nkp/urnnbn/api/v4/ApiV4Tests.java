@@ -67,7 +67,7 @@ public abstract class ApiV4Tests {
     private final String IMPORT_DI_XSD = "http://localhost:8080/api/v4/digInstImport.xsd";
     private final String REGISTER_DI_XSD = "http://localhost:8080/api/v4/digDocRegistration.xsd";
 
-    static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
+    static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReservations.maxReservedToPrint)
 
     // examples of valid and invalid registrar codes according to regexp ^[a-zA-Z0-9]{2,6}$
     // all valid codes must not identify existing registrar in database
