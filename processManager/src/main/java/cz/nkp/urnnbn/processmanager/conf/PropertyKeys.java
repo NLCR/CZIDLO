@@ -26,9 +26,8 @@ public class PropertyKeys extends cz.nkp.urnnbn.config.PropertyKeys {
     static final String JOBS_DATA_DIR = "process.scheduler.jobsDataDir";
     static final String MAX_ADMIN_JOBS = "process.scheduler.maxRunning.admin";
     static final String MAX_USER_JOBS = "process.scheduler.maxRunning.user";
-    //COMMON
-    static final String CZIDLO_API_BASE_URL = "process.common.czidloApi.baseUrl";
     //OAI ADAPTER
+    static final String CZIDLO_API_BASE_URL = "process.oaiAdapter.czidloApi.baseUrl";
     static final String OAI_ADAPTER_DD_REGISTRATION_XSD_URL = "process.oaiAdapter.digDocRegistrationXsdUrl";
     static final String OAI_ADAPTER_DI_IMPORT_XSD_URL = "process.oaiAdapter.digInstImportXsdUrl";
     //INDEXER (Elasticsearch)

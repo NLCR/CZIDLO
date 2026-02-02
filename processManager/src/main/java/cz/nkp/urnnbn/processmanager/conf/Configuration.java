@@ -35,9 +35,8 @@ public class Configuration {
     private static File jobsDir;
     private static Integer maxRunningAdminProcesses;
     private static Integer maxRunningUserProcesses;
-    // configuration for processes
-    private static String czidloApiBaseUrl;
     //oai adapter
+    private static String oaiAdapterCzidloApiBaseUrl;
     private static String oaiAdapterDigDocRegistrationXsdUrl;
     private static String oaiAdapterDigInstImportXsdUrl;
     //indexer - Elasticsearch
@@ -65,9 +64,8 @@ public class Configuration {
         jobsDir = loader.loadDir(PropertyKeys.JOBS_DATA_DIR);
         maxRunningAdminProcesses = loader.loadInt(PropertyKeys.MAX_ADMIN_JOBS);
         maxRunningUserProcesses = loader.loadInt(PropertyKeys.MAX_USER_JOBS);
-        // processes - common
-        czidloApiBaseUrl = loader.loadString(PropertyKeys.CZIDLO_API_BASE_URL);
         // oai adapter
+        oaiAdapterCzidloApiBaseUrl = loader.loadString(PropertyKeys.CZIDLO_API_BASE_URL);
         oaiAdapterDigDocRegistrationXsdUrl = loader.loadString(PropertyKeys.OAI_ADAPTER_DD_REGISTRATION_XSD_URL);
         oaiAdapterDigInstImportXsdUrl = loader.loadString(PropertyKeys.OAI_ADAPTER_DI_IMPORT_XSD_URL);
         //indexer - Elasticsearch
@@ -105,8 +103,8 @@ public class Configuration {
         return oaiAdapterDigInstImportXsdUrl;
     }
 
-    public static String getCzidloApiBaseUrl() {
-        return czidloApiBaseUrl;
+    public static String getOaiAdapterCzidloApiBaseUrl() {
+        return oaiAdapterCzidloApiBaseUrl;
     }
 
     public static String getIndexerEsBaseUrl() {

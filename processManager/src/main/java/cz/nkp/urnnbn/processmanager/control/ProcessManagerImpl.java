@@ -374,7 +374,7 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
 
                         .usingJobData(OaiAdapterJob.PARAM_CZIDLO_REGISTRAR_CODE, params[i++])//
-                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getCzidloApiBaseUrl())//
+                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getOaiAdapterCzidloApiBaseUrl())//
                         .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_LOGIN, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_PASSWORD, params[i++])//
 
