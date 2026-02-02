@@ -16,14 +16,12 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler;
 
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
 import java.io.File;
+
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
 import org.quartz.InterruptableJob;
-import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

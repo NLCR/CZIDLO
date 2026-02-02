@@ -150,6 +150,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         if (csvWriter != null) {
             csvWriter.close();
         }
+        closeLogger();
     }
 
     private void runProcess(String countryCode, UrnNbnExportFilter filter, boolean exportNumOfDigInstances) {

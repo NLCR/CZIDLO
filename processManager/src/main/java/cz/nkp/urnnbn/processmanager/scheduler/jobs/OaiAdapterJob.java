@@ -167,5 +167,6 @@ public class OaiAdapterJob extends AbstractJob {
         if (reportLogger != null) {
             reportLogger.close();
         }
+        closeLogger();
     }
 }

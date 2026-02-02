@@ -282,6 +282,7 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
         if (csvWriter != null) {
             csvWriter.close();
         }
+        closeLogger();
     }
 
     class Filter {

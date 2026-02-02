@@ -199,6 +199,7 @@ public class IndexationJob extends AbstractJob {
         if (esIndexer != null) {
             esIndexer.close();
         }
+        closeLogger();
     }
 
 }

@@ -20,6 +20,7 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.Services;
+import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -61,6 +62,19 @@ public abstract class AbstractJob implements InterruptableJob {
 
     abstract void close();
 
+    protected void closeLogger() {
+        if (logger == null) return;
+        String appenderName = APPENDER_PREFIX + logger.getName();
+        Appender ap = logger.getAppender(appenderName);
+        if (ap != null) {
+            logger.removeAppender(ap);
+            try {
+                ap.close();
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
     protected void init(JobDataMap mergedJobDataMap, ProcessType processType) {
         this.processId = (Long) mergedJobDataMap.get(PARAM_PROCESS_ID_KEY);
         initLogger(processId, processType);
@@ -72,20 +86,62 @@ public abstract class AbstractJob implements InterruptableJob {
         logger = org.apache.log4j.Logger.getLogger(processType.toString() + ":" + processId);
     }
 
+    private static final String APPENDER_PREFIX = "ProcessFileAppender::";
+
     private void initLogAppender() {
+        File logFile = ProcessFileUtils.buildLogFile(processId);
+
+        // 1) základní sanity checks
+        try {
+            File dir = logFile.getParentFile();
+            if (dir != null) dir.mkdirs();
+            if (!logFile.exists()) logFile.createNewFile();
+            if (!logFile.canWrite()) {
+                System.err.println("Process log file is not writable: " + logFile.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to prepare process log file: " + logFile.getAbsolutePath() + " - " + e);
+        }
+
+        // 2) logger nezávislý na root konfiguraci
+        logger.setAdditivity(false);
+        logger.setLevel(org.apache.log4j.Level.INFO); // nebo DEBUG
+
+        // 3) unikátní appender per process (ať se to neplete)
+        String appenderName = APPENDER_PREFIX + logger.getName();
+
+        // 4) pokud už existuje, zavři/odpoj (např. opakované spuštění jobu se stejným loggerem)
+        org.apache.log4j.Appender old = logger.getAppender(appenderName);
+        if (old != null) {
+            logger.removeAppender(old);
+            try {
+                old.close();
+            } catch (Exception ignored) {
+            }
+        }
+
         FileAppender fa = new FileAppender();
-        fa.setName("ProcessFileAppender");
-        fa.setFile(ProcessFileUtils.buildLogFile(processId).getAbsolutePath());
+        fa.setName(appenderName);
+        fa.setFile(logFile.getAbsolutePath());
         fa.setLayout(new PatternLayout("%d %-5p [%c{1}] %m%n"));
-        fa.setThreshold(org.apache.log4j.Level.DEBUG);
-        // fa.setThreshold(org.apache.log4j.Level.INFO);
+        fa.setThreshold(org.apache.log4j.Level.INFO); // match logger level
         fa.setAppend(true);
-        fa.activateOptions();
-        // add appender to any Logger (here is root)
-        // org.apache.log4j.Logger.getRootLogger().addAppender(fa);
+
+        // Pokud by došlo k chybě při otevření file streamu, chceme to vidět
+        try {
+            fa.activateOptions();
+        } catch (Exception e) {
+            System.err.println("Failed to activate FileAppender for " + logFile.getAbsolutePath() + ": " + e);
+        }
+
         logger.addAppender(fa);
-        // logger.info("apender added");
+
+        // 5) jednorázová diagnostika (můžeš pak odstranit)
+        logger.info("Process logger initialized. file=" + logFile.getAbsolutePath()
+                + " effectiveLevel=" + logger.getEffectiveLevel()
+                + " infoEnabled=" + logger.isInfoEnabled());
     }
+
 
     protected File createWriteableProcessFile(String filename) throws IOException {
         return ProcessFileUtils.createWriteableProcessFile(processId, filename);
