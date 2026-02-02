@@ -37,11 +37,16 @@ public abstract class ApplicationConfiguration {
         languageCode = loader.loadString(PropertyKeys.LANGUAGE_CODE);
         adminName = loader.loadStringOrNull(PropertyKeys.ADMIN_NAME);
         adminEmail = loader.loadStringOrNull(PropertyKeys.ADMIN_EMAIL);
+        CountryCode.initialize(languageCode);
+        //admin log
         adminLogFile = new File(loader.loadString(PropertyKeys.ADMIN_LOG_FILE));
         appLogger.log(Level.INFO, "initializing admin logger to file {0}", adminLogFile);
-        AdminLogger.initializeLogger(webAppName, adminLogFile);
-        CountryCode.initialize(languageCode);
-
+        try {
+            AdminLogger.initializeLogger(webAppName, adminLogFile);
+        } catch (Exception e) {
+            appLogger.log(Level.SEVERE, "AdminLogger init failed", e);
+        }
+        //indexer
         boolean initIndexer = loader.loadBoolean("indexer.enabled", true);
         IndexerConfig indexerConfig = initIndexer ? new IndexerConfig() : null;
         if (!initIndexer) {

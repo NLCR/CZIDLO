@@ -27,6 +27,7 @@ public class SystemLogProviderImpl implements SystemLogProvider {
     @Override
     public String getLogs(Integer maxLines, LocalDate minDate, LocalDate dayAfterMaxDate) throws IOException {
         File adminLogFile = WebApiModuleConfiguration.instanceOf().getAdminLogFile();
+        //System.out.println("Reading admin log file: " + adminLogFile.getAbsolutePath());
         if (!adminLogFile.exists()) {
             return "Log file does not exist: " + adminLogFile.getAbsolutePath();
         }

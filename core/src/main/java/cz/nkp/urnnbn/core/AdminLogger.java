@@ -1,50 +1,89 @@
-/*
- * Copyright (C) 2013 Martin Řehánek
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package cz.nkp.urnnbn.core;
-
-import java.io.File;
-import java.io.IOException;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
-/**
- *
- * @author Martin Řehánek
- */
-public class AdminLogger {
+import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
 
+public class AdminLogger {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminLogger.class.getName());
+    private static final Object LOCK = new Object();
 
     private static Logger adminLogger;
     private static File adminLogFile;
+    private static Appender appender;
 
     public static void initializeLogger(String loggerName, File loggerFile) throws IOException {
-        logger.info("Initializing admin logger '" + loggerName + "' with log file: " + loggerFile.getAbsolutePath());
-        adminLogFile = loggerFile;
-        AdminLogger.adminLogger = Logger.getLogger(loggerName);
-        // Layout layout = new PatternLayout("%-5p [%d{dd. MM. yyyy HH:mm:ss}] %c: %m%n");
-        Layout layout = new PatternLayout("[%d{dd.MM.yyyy, HH:mm:ss}] %c: %m%n");
-        Appender appender = new FileAppender(layout, loggerFile.getAbsolutePath(), true);
-        adminLogger.removeAllAppenders();
-        adminLogger.addAppender(appender);
+        synchronized (LOCK) {
+            String canonicalPath = canonicalPath(loggerFile);
+            String appenderName = appenderName(loggerName, canonicalPath);
+
+            // získáme logger instance (log4j singleton dle jména v rámci log4j contextu)
+            Logger l = Logger.getLogger(loggerName);
+
+            // pokud je už náš appender přítomen, máme hotovo (idempotentní init)
+            Appender existing = l.getAppender(appenderName);
+            if (existing != null) {
+                adminLogger = l;
+                adminLogFile = loggerFile;
+                appender = existing;
+                // pojistky, kdyby se konfigurace změnila
+                adminLogger.setAdditivity(false);
+                adminLogger.setLevel(Level.INFO);
+                return;
+            }
+
+            logger.info("Initializing admin logger '" + loggerName + "' with log file: " + canonicalPath);
+            logger.info("AdminLogger loaded from " + AdminLogger.class.getProtectionDomain().getCodeSource().getLocation());
+
+            // zavři jen "naše" staré appendery (pokud existují), nešahej na cizí
+            closeOurAppenders(l);
+
+            // nastav logger tak, aby nebyl závislý na root loggeru
+            l.setAdditivity(false);
+            l.setLevel(Level.INFO);
+
+            Layout layout = new PatternLayout("[%d{dd.MM.yyyy, HH:mm:ss}] %c: %m%n");
+            FileAppender fa = new FileAppender(layout, canonicalPath, true);
+            fa.setName(appenderName);
+            fa.setThreshold(Level.INFO);
+
+            l.addAppender(fa);
+
+            adminLogger = l;
+            adminLogFile = loggerFile;
+            appender = fa;
+        }
+    }
+
+    public static void shutdown() {
+        synchronized (LOCK) {
+            try {
+                logger.info(() -> "Shutting down AdminLogger, logger=" + adminLogger + ", file=" + (adminLogFile == null ? "null" : adminLogFile.getAbsolutePath()));
+                if (adminLogger != null) {
+                    // zavři jen to, co AdminLogger vytvořil
+                    if (appender != null) {
+                        adminLogger.removeAppender(appender);
+                        safeClose(appender);
+                    } else {
+                        // fallback: zavři všechny "naše" appendery podle prefixu jména
+                        closeOurAppenders(adminLogger);
+                    }
+                }
+            } catch (Exception ex) {
+                logger.warning("Failed to shutdown AdminLogger: " + ex.getMessage());
+            } finally {
+                adminLogger = null;
+                adminLogFile = null;
+                appender = null;
+            }
+        }
     }
 
     public static Logger getLogger() {
@@ -53,5 +92,38 @@ public class AdminLogger {
 
     public static File getLogFile() {
         return adminLogFile;
+    }
+
+    private static void closeOurAppenders(Logger l) {
+        Enumeration<?> e = l.getAllAppenders();
+        while (e != null && e.hasMoreElements()) {
+            Object x = e.nextElement();
+            if (x instanceof Appender ap) {
+                String n = ap.getName();
+                if (n != null && n.startsWith("ADMIN::")) {
+                    l.removeAppender(ap);
+                    safeClose(ap);
+                }
+            }
+        }
+    }
+
+    private static void safeClose(Appender ap) {
+        try {
+            ap.close();
+        } catch (Exception ignored) {
+        }
+    }
+
+    private static String canonicalPath(File f) throws IOException {
+        // canonical je lepší pro detekci "stejného souboru" přes symlinky/relativní cesty
+        return f.getCanonicalPath();
+    }
+
+    private static String appenderName(String loggerName, String canonicalPath) {
+        // jméno appenderu musí být stabilní a unikátní pro (loggerName + soubor)
+        // a zároveň nepoužívat OS-problémové znaky
+        String safePath = canonicalPath.replace('\\', '/').replace(':', '_');
+        return "ADMIN::" + loggerName + "::" + safePath;
     }
 }

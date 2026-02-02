@@ -78,9 +78,9 @@ public class EsIndexer implements AutoCloseable {
     }
 
     public void indexDigitalDocument(long ddInternalId) {
-        System.out.println("Indexing digital document with internal id " + ddInternalId);
-        System.out.println("indexer base url: " + config.getEsApiBaseUrl());
-        System.out.println("indexer search index:  " + config.getEsApiIndexSearchName());
+        //System.out.println("Indexing digital document with internal id " + ddInternalId);
+        //System.out.println("indexer base url: " + config.getEsApiBaseUrl());
+        //System.out.println("indexer search index:  " + config.getEsApiIndexSearchName());
         indexDigitalDocument(ddInternalId, new Counters(1), true);
     }
 

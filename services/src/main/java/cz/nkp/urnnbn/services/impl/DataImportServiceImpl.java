@@ -38,6 +38,14 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             RegistrationModeNotAllowedException, IncorrectPredecessorStatus {
         authorization.checkRegistrarRights(importData.getRegistrarCode(), login);
         UrnNbn urnNbn = new DigitalDocumentRegistrar(factory, importData, esIndexer).run();
+        /*System.out.println("DataImportServiceImpl.registerDigitalDocument: registered " + urnNbn);
+        System.out.println(AdminLogger.getLogger());
+        var l = AdminLogger.getLogger();
+        System.out.println("AdminLogger: " + l);
+        System.out.println("AdminLogger effectiveLevel: " + l.getEffectiveLevel());
+        System.out.println("AdminLogger infoEnabled: " + l.isInfoEnabled());
+        System.out.println("AdminLogger allAppenders: " + l.getAllAppenders().hasMoreElements());
+        */
         AdminLogger.getLogger().info(String.format("User %s registered digital-document to %s.", login, urnNbn));
         return urnNbn;
     }

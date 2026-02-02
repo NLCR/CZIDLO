@@ -23,7 +23,7 @@ import cz.nkp.urnnbn.xml.config.XmlModuleConfiguration;
 public class ContextListener implements ServletContextListener {
 
     private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
-    private static final String WEB_APP_NAME = "oaiPmhProvider";
+    private static final String WEB_APP_NAME = "OAI-PMH-PROVIDER";
     private static final String PROPERTIES_FILE = "oaiPmhProvider.properties";
     private static final String CZIDLO_TO_OAIDC_XSLT = "czidloToOaiDc.xsl";
 
