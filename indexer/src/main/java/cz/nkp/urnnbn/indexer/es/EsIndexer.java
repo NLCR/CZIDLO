@@ -4,7 +4,6 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.indexer.*;
-import org.apache.solr.common.SolrException;
 import org.joda.time.DateTime;
 
 import java.io.IOException;

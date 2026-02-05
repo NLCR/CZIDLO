@@ -164,7 +164,7 @@ It is NOT sufficient only to run this script to update database. Complete databa
    <Context antiJARLocking="true" path="/api">
     <Resource auth="Container"
      driverClassName="org.postgresql.Driver"
-     maxActive="100" maxIdle="30" maxWait="200"
+     maxTotal="100" maxIdle="30" maxWaitMillis="200"
      name="jdbc/postgres"
      username="testuser"
      password="testpass"
