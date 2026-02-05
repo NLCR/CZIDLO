@@ -2,7 +2,7 @@
 <Context antiJARLocking="true" path="/api">
     <Resource auth="Container" 
               driverClassName="org.postgresql.Driver" 
-              maxActive="100" maxIdle="30" maxWait="200" 
+              maxTotal="100" maxIdle="30" maxWaitMillis="200"
               type="javax.sql.DataSource" 
               name="jdbc/postgres"
               url="jdbc:postgresql://localhost:5432/czidlo_core" 
