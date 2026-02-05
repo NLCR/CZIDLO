@@ -16,6 +16,7 @@ import org.elasticsearch.client.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,6 +24,7 @@ import java.sql.SQLException;
 public class EsConnector implements AutoCloseable {
 
     private static final Logger log = LoggerFactory.getLogger(EsConnector.class);
+    private final DataSource dataSource; //database
     private final RestClient restClient;
     private final ElasticsearchTransport transport;
     private final ElasticsearchClient esClient;
@@ -30,7 +32,8 @@ public class EsConnector implements AutoCloseable {
     private final String indexAssign;
     private final String indexResolve;
 
-    public EsConnector(String baseurl, String login, String password, String indexSearch, String indexAssign, String indexResolve) {
+    public EsConnector(String baseurl, String login, String password, String indexSearch, String indexAssign, String indexResolve, DataSource dataSource) {
+        this.dataSource = dataSource;
         BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         if (login != null && !login.isEmpty()) {
             credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(login, password));
@@ -51,11 +54,6 @@ public class EsConnector implements AutoCloseable {
         this.indexSearch = indexSearch;
         this.indexAssign = indexAssign;
         this.indexResolve = indexResolve;
-        /*try {
-            esClient.ping();
-        } catch (IOException e) {
-            throw new RuntimeException("Could not reach elastic", e);
-        }*/
     }
 
     private ElasticsearchClient initEsClient(String baseUrl, String login, String password) {
@@ -81,8 +79,8 @@ public class EsConnector implements AutoCloseable {
         return new ElasticsearchClient(transport);
     }
 
-    public void indexDigitalDocument(long ddInternalId, String dbUrl, String dbLogin, String dbPassword, ReportLogger reportLogger) throws IOException, SQLException {
-        try (Connection conn = Utils.createConnection(dbUrl, dbLogin, dbPassword)) {
+    public void indexDigitalDocument(long ddInternalId, ReportLogger reportLogger) throws IOException, SQLException {
+        try (Connection conn = dataSource.getConnection()) {
             ObjectMapper mapper = Config.getObjectMapper();
             EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
             //reportLogger.report("Indexing digital document with internal id: " + ddInternalId);
@@ -91,37 +89,29 @@ public class EsConnector implements AutoCloseable {
 
             //index Search
             if (conversionResult.getSearch() != null) {
-                esClient.index(idx -> idx
-                        .index(indexSearch)
+                esClient.index(idx -> idx.index(indexSearch)
                         .id(conversionResult.getSearch().getId())
-                        .document(conversionResult.getSearch())
-                );
+                        .document(conversionResult.getSearch()));
             }
-
             //index Assigning
             if (conversionResult.getAssignment() != null) {
-                esClient.index(idx -> idx
-                        .index(indexAssign)
+                esClient.index(idx -> idx.index(indexAssign)
                         .id(conversionResult.getAssignment().getId())
-                        .document(conversionResult.getAssignment())
-                );
+                        .document(conversionResult.getAssignment()));
             }
         }
     }
 
-    public void indexResolvation(long resolvingId, String dbUrl, String dbLogin, String dbPassword, ReportLogger reportLogger) throws IOException, SQLException {
-        try (Connection conn = Utils.createConnection(dbUrl, dbLogin, dbPassword)) {
+    public void indexResolvation(long resolvingId, ReportLogger reportLogger) throws IOException, SQLException {
+        try (Connection conn = dataSource.getConnection()) {
             ObjectMapper mapper = Config.getObjectMapper();
             EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
             DdEsConversionResult conversionResult = dataProvider.convertResolvingJson(resolvingId);
 
-            //index Resolving
             if (conversionResult.getResolve() != null) {
-                esClient.index(idx -> idx
-                        .index(indexResolve)
+                esClient.index(idx -> idx.index(indexResolve)
                         .id(conversionResult.getResolve().getId())
-                        .document(conversionResult.getResolve())
-                );
+                        .document(conversionResult.getResolve()));
             }
         }
     }
@@ -139,6 +129,8 @@ public class EsConnector implements AutoCloseable {
             log.warn("Failed to close Elasticsearch RestClient", e);
         }
     }
+
+    // DB pool zavírá EsIndexer
 }
 
 

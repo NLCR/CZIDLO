@@ -59,7 +59,7 @@ public class App {
 
         long start = System.currentTimeMillis();
         int counter = 0;
-        int limit = 5;
+        int limit = 50;
         CountryCode.initialize("cz");
 
         while (counter++ < limit) {

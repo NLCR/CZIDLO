@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.indexer.es;
 
+import com.zaxxer.hikari.HikariDataSource;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -26,9 +27,7 @@ public class EsIndexer implements AutoCloseable {
 
     //helpers
     private EsConnector esConnector = null;
-    private String dbUrl = null;
-    private String dbLogin = null;
-    private String dbPassword = null;
+    private HikariDataSource dataSource;
 
     private final IndexerConfig config;
 
@@ -45,10 +44,15 @@ public class EsIndexer implements AutoCloseable {
         String indexResolve = config.getEsApiIndexResolveName();
 
         logger.info("Initializing Elasticsearch client for URL: " + baseUrl);
-        this.esConnector = new EsConnector(baseUrl, login, password, indexSearch, indexAssign, indexResolve);
-        this.dbUrl = config.getDbUrl();
-        this.dbLogin = config.getDbLogin();
-        this.dbPassword = config.getDbPassword();
+        this.dataSource = Utils.createPooledDataSource(
+                config.getDbUrl(),
+                config.getDbLogin(),
+                config.getDbPassword()
+        );
+        this.esConnector = new EsConnector(baseUrl, login, password,
+                indexSearch, indexAssign, indexResolve,
+                this.dataSource
+        );
         this.initTime = System.currentTimeMillis() - start;
     }
 
@@ -60,6 +64,10 @@ public class EsIndexer implements AutoCloseable {
             esConnector.close();
             esConnector = null;
         }
+        if (dataSource != null) {
+            dataSource.close();
+            dataSource = null;
+        }
     }
 
     public void setProgressListener(ProgressListener progressListener) {
@@ -68,7 +76,7 @@ public class EsIndexer implements AutoCloseable {
 
     public void indexResolvation(ResolvationLog resolvationLog) {
         try {
-            esConnector.indexResolvation(resolvationLog.getId(), dbUrl, dbLogin, dbPassword, reportLogger);
+            esConnector.indexResolvation(resolvationLog.getId(), reportLogger);
         } catch (SQLException e) {
             report(" SQL error", e);
         } catch (IOException e) {
@@ -90,7 +98,7 @@ public class EsIndexer implements AutoCloseable {
         } else {
             //report(" processing " + urnNbn);
             try {
-                esConnector.indexDigitalDocument(ddInternalId, dbUrl, dbLogin, dbPassword, reportLogger);
+                esConnector.indexDigitalDocument(ddInternalId, reportLogger);
                 counters.incrementIndexed();
             } catch (IOException e) {
                 counters.incrementErrors();
@@ -183,7 +191,7 @@ public class EsIndexer implements AutoCloseable {
     private void indexResolvationLog(ResolvationLog resolvationLog, Counters counters, boolean explicitCommit) {
         //report(" processing " + resolvationLog);
         try {
-            esConnector.indexResolvation(resolvationLog.getId(), dbUrl, dbLogin, dbPassword, reportLogger);
+            esConnector.indexResolvation(resolvationLog.getId(), reportLogger);
             counters.incrementIndexed();
         } catch (IOException e) {
             counters.incrementErrors();
