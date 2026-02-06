@@ -255,12 +255,16 @@ public class EsIndexerBatching extends EsIndexerAbstract implements EsIndexer, A
             if (THROTTLING_ENABLED) {
                 long sleepMs = throttle.computeSleepMs(r);
                 if (sleepMs > 0) {
-                    report("Throttling: sleeping " + sleepMs + " ms; " + throttle.stateString());
+                    if (REPORT_MEASUREMENTS) {
+                        report("Throttling: sleeping " + sleepMs + " ms; " + throttle.stateString());
+                    }
                     try {
                         Thread.sleep(sleepMs);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
-                        report("Throttling sleep interrupted");
+                        if (REPORT_MEASUREMENTS) {
+                            report("Throttling sleep interrupted");
+                        }
                     }
                 }
             }
@@ -301,12 +305,16 @@ public class EsIndexerBatching extends EsIndexerAbstract implements EsIndexer, A
             if (THROTTLING_ENABLED) {
                 long sleepMs = throttle.computeSleepMs(r);
                 if (sleepMs > 0) {
-                    report("Throttling: sleeping " + sleepMs + " ms; " + throttle.stateString());
+                    if (REPORT_MEASUREMENTS) {
+                        report("Throttling: sleeping " + sleepMs + " ms; " + throttle.stateString());
+                    }
                     try {
                         Thread.sleep(sleepMs);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
-                        report("Throttling sleep interrupted");
+                        if (REPORT_MEASUREMENTS) {
+                            report("Throttling sleep interrupted");
+                        }
                     }
                 }
             }
