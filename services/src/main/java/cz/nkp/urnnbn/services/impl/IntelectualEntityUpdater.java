@@ -23,7 +23,6 @@ public class IntelectualEntityUpdater {
 
     private static final Logger logger = Logger.getLogger(IntelectualEntityUpdater.class.getName());
     private final DAOFactory daoFactory;
-    //private final SolrIndexer solrIndexer;
     private final EsIndexer esIndexer;
 
     public IntelectualEntityUpdater(DAOFactory daoFactory, EsIndexer esIndexer) {

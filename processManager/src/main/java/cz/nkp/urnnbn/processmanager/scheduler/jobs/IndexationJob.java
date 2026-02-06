@@ -20,6 +20,7 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.indexer.es.EsIndexer;
+import cz.nkp.urnnbn.indexer.es.EsIndexerBatching;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.Services;
@@ -130,7 +131,7 @@ public class IndexationJob extends AbstractJob {
             DateTime registrationAfterEnd = registrationEnd == null ? null : registrationEnd.plusMillis(1);
             //System.out.println("until: " + registrationEnd + ", after until: " + registrationAfterEnd);
 
-            esIndexer = new EsIndexer(config, buildReportLoggerOutputStream(),
+            esIndexer = new EsIndexerBatching(config, buildReportLoggerOutputStream(),
                     new DataProvider() {
                         @Override
                         public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {

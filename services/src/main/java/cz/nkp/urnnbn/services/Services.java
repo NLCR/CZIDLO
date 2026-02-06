@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.indexer.es.EsIndexer;
+import cz.nkp.urnnbn.indexer.es.EsIndexerBatching;
 import cz.nkp.urnnbn.services.impl.*;
 import cz.nkp.urnnbn.indexer.DataProvider;
 import cz.nkp.urnnbn.indexer.IndexerConfig;
@@ -54,7 +55,7 @@ public class Services implements AutoCloseable {
             logger.warning("Indexer config is null, ignoring ES indexer initialization");
         } else {
             logger.info("initializing ES indexer");
-            esIndexer = new EsIndexer(indexerConfig, null,
+            esIndexer = new EsIndexerBatching(indexerConfig, null,
                     new DataProvider() {
                         @Override
                         public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {

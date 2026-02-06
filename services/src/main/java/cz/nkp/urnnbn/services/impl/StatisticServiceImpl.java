@@ -24,7 +24,7 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
         try {
             ResolvationLog resolvationLog = factory.urnNbnResolvationLogsDao().insertResolvationAccessLog(registrarCode, documentCode);
             try {
-                this.esIndexer.indexResolvation(resolvationLog);
+                this.esIndexer.indexResolvationLog(resolvationLog);
             } catch (Throwable e) { //don't break main flow
                 LOGGER.warning("Failed to index resolvation log into Elasticsearch: " + e.getMessage());
             }

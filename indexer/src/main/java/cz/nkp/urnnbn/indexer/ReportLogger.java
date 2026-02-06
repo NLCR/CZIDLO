@@ -4,8 +4,6 @@
  */
 package cz.nkp.urnnbn.indexer;
 
-import cz.nkp.urnnbn.indexer.es.EsIndexer;
-
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.logging.Logger;

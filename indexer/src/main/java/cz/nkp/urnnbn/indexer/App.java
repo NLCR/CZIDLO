@@ -5,6 +5,7 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.indexer.es.EsIndexer;
+import cz.nkp.urnnbn.indexer.es.EsIndexerBatching;
 import cz.nkp.urnnbn.indexer.es.domain.assigning.AssigningQueryBuilder;
 import cz.nkp.urnnbn.indexer.es.domain.resolving.ResolvingQueryBuilder;
 import cz.nkp.urnnbn.indexer.es.domain.searching.SearchQueryBuilder;
@@ -73,7 +74,7 @@ public class App {
     }
 
     private static void indexDocumentInLoop(IndexerConfig config, int ddId, String urnNbn) {
-        EsIndexer indexer = new EsIndexer(config, null, new DataProvider() {
+        EsIndexer indexer = new EsIndexerBatching(config, null, new DataProvider() {
             @Override
             public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {
                 return null;
@@ -106,7 +107,7 @@ public class App {
     }
 
     private static void indexSingleDocument(IndexerConfig config, int ddId, String urnNbn) {
-        EsIndexer indexer = new EsIndexer(config, null, new DataProvider() {
+        EsIndexer indexer = new EsIndexerBatching(config, null, new DataProvider() {
             @Override
             public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {
                 return null;

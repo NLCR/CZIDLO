@@ -8,6 +8,7 @@ import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
 import cz.nkp.urnnbn.indexer.DataProvider;
 import cz.nkp.urnnbn.indexer.IndexerConfig;
 import cz.nkp.urnnbn.indexer.es.EsIndexer;
+import cz.nkp.urnnbn.indexer.es.EsIndexerBatching;
 import cz.nkp.urnnbn.services.Services;
 import org.joda.time.DateTime;
 
@@ -46,7 +47,7 @@ public class IndexerJobTest {
     }
 
     private static void indexDocumentsInDateRange(IndexerConfig config, DateTime fromInclusive, DateTime untilExclusive) {
-        EsIndexer indexer = new EsIndexer(config, System.out,
+        EsIndexer indexer = new EsIndexerBatching(config, System.out,
                 new DataProvider() {
                     @Override
                     public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {

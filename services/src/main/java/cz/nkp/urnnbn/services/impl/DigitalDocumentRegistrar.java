@@ -34,13 +34,11 @@ public class DigitalDocumentRegistrar {
     private final DigDocRegistrationData data;
     private final IntelectualEntityMerger merger;
     private final UrnNbnFinder finder;
-    //private final SolrIndexer solrIndexer;
     private final EsIndexer esIndexer;
 
     DigitalDocumentRegistrar(DAOFactory factory, DigDocRegistrationData data, EsIndexer esIndexer) throws UnknownRegistrarException {
         this.factory = factory;
         this.data = data;
-        //this.solrIndexer = solrIndexer;
         this.esIndexer = esIndexer;
         this.merger = new IntelectualEntityMerger(factory);
         this.finder = initFinder(factory, data);

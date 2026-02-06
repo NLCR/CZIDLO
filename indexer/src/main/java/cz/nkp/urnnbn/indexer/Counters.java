@@ -7,6 +7,7 @@ public class Counters {
     private final int found;
     private int indexed = 0;
     private int errors = 0;
+    private int processed = 0;
 
     public Counters(int found) {
         this.found = found;
@@ -14,10 +15,12 @@ public class Counters {
 
     public void incrementIndexed() {
         indexed += 1;
+        processed += 1;
     }
 
     public void incrementErrors() {
         errors += 1;
+        processed += 1;
     }
 
     public int getFound() {
@@ -33,6 +36,18 @@ public class Counters {
     }
 
     public int getProcessed() {
-        return indexed + errors;
+        return processed;
+    }
+
+    public void addProcessed(int i) {
+        this.processed += i;
+    }
+
+    public void addIndexed(int i) {
+        this.indexed += i;
+    }
+
+    public void addErrors(int i) {
+        this.errors += i;
     }
 }
