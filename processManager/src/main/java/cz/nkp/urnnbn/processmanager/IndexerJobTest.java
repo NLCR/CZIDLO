@@ -39,7 +39,7 @@ public class IndexerJobTest {
         config.setDbPassword(props.getProperty("db.password"));
 
         Services.init(initDatabaseConnector(config), null);
-        indexDocumentsInDateRange(config, DateTime.parse("2026-01-01"), DateTime.parse("2026-02-06"));
+        indexDocumentsInDateRange(config, DateTime.parse("2025-01-01"), DateTime.parse("2025-01-08"));
     }
 
     private static DatabaseConnector initDatabaseConnector(IndexerConfig config) {

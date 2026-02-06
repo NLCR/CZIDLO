@@ -15,9 +15,27 @@ import java.util.ArrayList;
 
 public class EsIndexerBatching extends EsIndexerAbstract implements EsIndexer, AutoCloseable {
 
-    private static final Logger logger = Logger.getLogger(EsIndexerBatching.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(EsIndexerBatching.class.getName());
+
     private static final boolean REPORT_MEASUREMENTS = true;
-    private static final int INDEXING_BATCH_SIZE = 50; // start: 200–1000 typicky OK
+    private static final int INDEXING_BATCH_SIZE = 100;
+
+    private static final boolean THROTTLING_ENABLED = true;
+
+    private static final long THROTTLE_TARGET_BULK_MS = 500;
+    private static final double THROTTLE_TARGET_MS_PER_OP = 5.0;
+
+    private static final long THROTTLE_MIN_SLEEP_MS = 100;
+    private static final long THROTTLE_MAX_SLEEP_MS = 5_000;
+    private static final double THROTTLE_EMA_ALPHA = 0.2;
+
+    private final ThrottleController throttle = new ThrottleController(
+            THROTTLE_TARGET_BULK_MS,
+            THROTTLE_TARGET_MS_PER_OP,
+            THROTTLE_EMA_ALPHA,
+            THROTTLE_MIN_SLEEP_MS,
+            THROTTLE_MAX_SLEEP_MS
+    );
 
     public EsIndexerBatching(IndexerConfig config, OutputStream reportLoggerStream, DataProvider dataProvider) {
         super(config, reportLoggerStream, dataProvider);
@@ -214,6 +232,19 @@ public class EsIndexerBatching extends EsIndexerAbstract implements EsIndexer, A
                         r.requestedDocs(), r.convertedDocs(), r.operations(),
                         r.bulkMs(), r.convertMs(), r.totalMs(), r.bulkErrors()
                 ));
+            }
+
+            if (THROTTLING_ENABLED) {
+                long sleepMs = throttle.computeSleepMs(r);
+                if (sleepMs > 0) {
+                    report("Throttling: sleeping " + sleepMs + " ms; " + throttle.stateString());
+                    try {
+                        Thread.sleep(sleepMs);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        report("Throttling sleep interrupted");
+                    }
+                }
             }
 
             return r;
