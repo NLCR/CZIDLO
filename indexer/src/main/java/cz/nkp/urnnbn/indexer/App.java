@@ -5,6 +5,9 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.indexer.es.EsIndexer;
+import cz.nkp.urnnbn.indexer.es.domain.assigning.AssigningQueryBuilder;
+import cz.nkp.urnnbn.indexer.es.domain.resolving.ResolvingQueryBuilder;
+import cz.nkp.urnnbn.indexer.es.domain.searching.SearchQueryBuilder;
 import org.joda.time.DateTime;
 
 import java.io.FileInputStream;
@@ -17,6 +20,8 @@ import java.util.Properties;
  */
 public class App {
     public static void main(String[] args) throws IOException {
+
+        printDbQueriesForExplain();
 
         IndexerConfig config = new IndexerConfig();
         Properties props = new Properties();
@@ -39,6 +44,34 @@ public class App {
         indexDocumentInLoop(config, 1823067, "urn:nbn:cz:pna001-001k7x");
     }
 
+    private static void printDbQueriesForExplain() {
+        String prefix = "EXPLAIN (ANALYZE, BUFFERS) ";
+
+        if (false) {
+            System.out.println(prefix +
+                    new AssigningQueryBuilder()
+                            .withAlias("resulting_json")
+                            .where("dd.id = 1823067")
+                            .build());
+        }
+
+        if (false) {
+            System.out.println(prefix +
+                    new SearchQueryBuilder()
+                            .withAlias("resulting_json")
+                            .where("dd.id = 1823067")
+                            .build());
+        }
+
+        if (true) {
+            System.out.println(prefix +
+                    new ResolvingQueryBuilder()
+                            .withAlias("resulting_json")
+                            .where("u.id = 1129975")
+                            .build());
+        }
+    }
+
     private static void indexDocumentInLoop(IndexerConfig config, int ddId, String urnNbn) {
         EsIndexer indexer = new EsIndexer(config, null, new DataProvider() {
             @Override
@@ -59,7 +92,7 @@ public class App {
 
         long start = System.currentTimeMillis();
         int counter = 0;
-        int limit = 50;
+        int limit = 15;
         CountryCode.initialize("cz");
 
         while (counter++ < limit) {

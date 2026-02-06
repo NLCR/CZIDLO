@@ -102,6 +102,44 @@ public class EsConnector implements AutoCloseable {
         }
     }
 
+    public void indexDigitalDocumentWithTiming(long ddInternalId, ReportLogger reportLogger) throws IOException, SQLException {
+        long t0 = System.nanoTime();
+
+        try (Connection conn = dataSource.getConnection()) {
+            long tConn = System.nanoTime();
+
+            ObjectMapper mapper = Config.getObjectMapper();
+            EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
+
+            DdEsConversionResult conversionResult = dataProvider.convertDigitalDocumentJson(ddInternalId);
+            long tConv = System.nanoTime();
+
+            if (conversionResult.getSearch() != null) {
+                esClient.index(idx -> idx.index(indexSearch)
+                        .id(conversionResult.getSearch().getId())
+                        .document(conversionResult.getSearch()));
+            }
+            long tIdx1 = System.nanoTime();
+
+            if (conversionResult.getAssignment() != null) {
+                esClient.index(idx -> idx.index(indexAssign)
+                        .id(conversionResult.getAssignment().getId())
+                        .document(conversionResult.getAssignment()));
+            }
+            long tIdx2 = System.nanoTime();
+
+            System.out.printf(
+                    "dd=%d conn=%dms convert=%dms esSearch=%dms esAssign=%dms total=%dms%n",
+                    ddInternalId,
+                    (tConn - t0) / 1_000_000,
+                    (tConv - tConn) / 1_000_000,
+                    (tIdx1 - tConv) / 1_000_000,
+                    (tIdx2 - tIdx1) / 1_000_000,
+                    (tIdx2 - t0) / 1_000_000
+            );
+        }
+    }
+
     public void indexResolvation(long resolvingId, ReportLogger reportLogger) throws IOException, SQLException {
         try (Connection conn = dataSource.getConnection()) {
             ObjectMapper mapper = Config.getObjectMapper();

@@ -44,6 +44,7 @@ public class Utils {
         cfg.setJdbcUrl(jdbcUrl);
         cfg.setUsername(user);
         cfg.setPassword(pass);
+        cfg.setDriverClassName("org.postgresql.Driver");
 
         // rozumné defaulty pro job
         cfg.setMaximumPoolSize(8);          // podle paralelismu jobu
