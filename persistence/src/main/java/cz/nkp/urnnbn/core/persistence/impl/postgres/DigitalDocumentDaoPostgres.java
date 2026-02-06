@@ -133,7 +133,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
             RecordNotFoundException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
         try {
-            StatementWrapper st = new SelectAllAttrsbyTimestampsLong(TABLE_NAME, ATTR_UPDATED, from, until, ATTR_REGISTRAR_ID, registrarId);
+            StatementWrapper st = new SelectAllAttrsByTimestampsLong(TABLE_NAME, ATTR_UPDATED, from, until, ATTR_REGISTRAR_ID, registrarId);
             DaoOperation operation = new MultipleResultsOperation(st, new DigitalDocumentRT());
             return (List<DigitalDocument>) runInTransaction(operation);
         } catch (PersistenceException ex) {

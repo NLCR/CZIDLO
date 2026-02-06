@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertContent;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectContentByLangAndName;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLangAndName;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateContent;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ContentRT;
 
@@ -64,7 +64,7 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
 
     @Override
     public Content getContentByNameAndLanguage(String name, String lang) throws DatabaseException, RecordNotFoundException {
-        StatementWrapper wrapper = new SelectContentByLangAndName(lang, name);
+        StatementWrapper wrapper = new SelectAllAttrsByLangAndName(lang, name);
         DaoOperation operation = new SingleResultOperation(wrapper, new ContentRT());
         try {
             return (Content) runInTransaction(operation);

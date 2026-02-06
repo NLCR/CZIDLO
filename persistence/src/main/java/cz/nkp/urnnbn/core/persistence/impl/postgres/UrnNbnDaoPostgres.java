@@ -182,7 +182,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     @Override
     public List<UrnNbn> getUrnNbnsByRegistrarCodeAndTimestamps(RegistrarCode registrarCode, DateTime from, DateTime until) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectAllAttrsbyTimestampsString(TABLE_NAME, ATTR_DEACTIVATED, from, until, ATTR_REGISTRAR_CODE,
+            StatementWrapper st = new SelectAllAttrsByTimestampsString(TABLE_NAME, ATTR_DEACTIVATED, from, until, ATTR_REGISTRAR_CODE,
                     registrarCode.toString());
             DaoOperation operation = new MultipleResultsOperation(st, new UrnNbnRT());
             return (List<UrnNbn>) runInTransaction(operation);

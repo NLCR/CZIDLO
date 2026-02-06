@@ -18,37 +18,37 @@ import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
  *
  * @author Martin Řehánek
  */
-public class SelectAllAttrsbyTimestampsLong implements StatementWrapper {
+public class SelectAllAttrsByTimestampsString implements StatementWrapper {
 
     private final String tableName;
     private final String timstampAttrName;
     private final DateTime from;
     private final DateTime until;
-    private final String longAttrName;
-    private final Long longAttrValue;
+    private final String stringAttrName;
+    private final String stringAttrValue;
 
-    public SelectAllAttrsbyTimestampsLong(String tableName, String timstampAttrName, DateTime from, DateTime until, String longAttrName,
-            Long longAttrValue) {
+    public SelectAllAttrsByTimestampsString(String tableName, String timstampAttrName, DateTime from, DateTime until, String stringAttrName,
+                                            String stringAttrValue) {
         this.tableName = tableName;
         this.timstampAttrName = timstampAttrName;
         this.from = from;
         this.until = until;
-        this.longAttrName = longAttrName;
-        this.longAttrValue = longAttrValue;
+        this.stringAttrName = stringAttrName;
+        this.stringAttrValue = stringAttrValue;
     }
 
     @Override
     public String preparedStatement() {
         if (from != null && until != null) {
-            return "SELECT * from " + tableName + " WHERE " + longAttrName + "=?" + " AND " + "(date_trunc('second'," + timstampAttrName
+            return "SELECT * from " + tableName + " WHERE " + stringAttrName + "=?" + " AND " + "(date_trunc('second'," + timstampAttrName
                     + ")=date_trunc('second',?::timestamp)" + " OR " + "date_trunc('second'," + timstampAttrName
                     + ")=date_trunc('second',?::timestamp)" + " OR " + "(extract(seconds from AGE(" + timstampAttrName + ",?)) >1" + " AND "
                     + "extract (seconds from AGE(?," + timstampAttrName + ")) >1" + "))";
         } else if (from != null) { // until == null
-            return "SELECT * from " + tableName + " WHERE " + longAttrName + "=?" + " AND " + "(date_trunc('second'," + timstampAttrName
+            return "SELECT * from " + tableName + " WHERE " + stringAttrName + "=?" + " AND " + "(date_trunc('second'," + timstampAttrName
                     + ")=date_trunc('second',?::timestamp)" + " OR " + "AGE(" + timstampAttrName + ",?) >interval '1 seconds'" + ")";
         } else if (until != null) {// from == null
-            return "SELECT * from " + tableName + " WHERE " + longAttrName + "=?" + " AND " + "(date_trunc('second'," + timstampAttrName
+            return "SELECT * from " + tableName + " WHERE " + stringAttrName + "=?" + " AND " + "(date_trunc('second'," + timstampAttrName
                     + ")=date_trunc('second',?::timestamp)" + " OR " + "AGE(?," + timstampAttrName + ") >interval '1 seconds'" + ")";
         } else { // both null - select all records
             return "SELECT * from " + tableName;
@@ -59,7 +59,7 @@ public class SelectAllAttrsbyTimestampsLong implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             if (from != null && until != null) {
-                st.setLong(1, longAttrValue);
+                st.setString(1, stringAttrValue);
                 Timestamp fromTs = DateTimeUtils.datetimeToTimestamp(from);
                 Timestamp untilTs = DateTimeUtils.datetimeToTimestamp(until);
                 st.setTimestamp(2, fromTs);
@@ -67,12 +67,12 @@ public class SelectAllAttrsbyTimestampsLong implements StatementWrapper {
                 st.setTimestamp(4, fromTs);
                 st.setTimestamp(5, untilTs);
             } else if (from != null) { // until == null
-                st.setLong(1, longAttrValue);
+                st.setString(1, stringAttrValue);
                 Timestamp fromTs = DateTimeUtils.datetimeToTimestamp(from);
                 st.setTimestamp(2, fromTs);
                 st.setTimestamp(3, fromTs);
             } else if (until != null) { // from == null
-                st.setLong(1, longAttrValue);
+                st.setString(1, stringAttrValue);
                 Timestamp untilTs = DateTimeUtils.datetimeToTimestamp(until);
                 st.setTimestamp(2, untilTs);
                 st.setTimestamp(3, untilTs);

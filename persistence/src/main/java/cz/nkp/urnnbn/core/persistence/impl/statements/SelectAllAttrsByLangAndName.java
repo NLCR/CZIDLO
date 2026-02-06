@@ -15,13 +15,13 @@ import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
  *
  * @author xrosecky
  */
-public class SelectContentByLangAndName implements StatementWrapper {
+public class SelectAllAttrsByLangAndName implements StatementWrapper {
 
     private String language;
 
     private String name;
 
-    public SelectContentByLangAndName(String language, String name) {
+    public SelectAllAttrsByLangAndName(String language, String name) {
         this.language = language;
         this.name = name;
     }
