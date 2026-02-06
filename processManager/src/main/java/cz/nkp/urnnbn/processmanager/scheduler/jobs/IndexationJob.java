@@ -110,9 +110,21 @@ public class IndexationJob extends AbstractJob {
             //logger.info("Database login: " + config.getDbLogin() + ", password:" +  config.getDbPassword());
 
             //registration date range
-            DateTime registrationStart = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_FROM, context, dateFormat);
+            DateTime registrationStartRaw = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_FROM, context, dateFormat);
+            DateTime registrationEndRaw = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_TO, context, dateFormat);
+
+            DateTime registrationStart = registrationStartRaw == null
+                    ? null
+                    : registrationStartRaw.toLocalDate()
+                    .toDateTimeAtStartOfDay(registrationStartRaw.getZone());
+            DateTime registrationEnd = registrationEndRaw == null
+                    ? null
+                    : registrationEndRaw.toLocalDate()
+                    .plusDays(1)
+                    .toDateTimeAtStartOfDay(registrationEndRaw.getZone())
+                    .minusMillis(1);
+
             logger.info("Registration from: " + (registrationStart == null ? null : registrationStart.toString(dateTimeFormatter)));
-            DateTime registrationEnd = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_TO, context, dateFormat);
             logger.info("Registration until: " + (registrationEnd == null ? null : registrationEnd.toString(dateTimeFormatter)));
 
             esIndexer = new EsIndexer(config, buildReportLoggerOutputStream(),
