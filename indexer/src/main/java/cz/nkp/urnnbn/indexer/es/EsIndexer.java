@@ -118,13 +118,20 @@ public class EsIndexer implements AutoCloseable {
 
     public void indexDigitalDocuments(DateTime from, DateTime to) {
         long start = System.currentTimeMillis();
-        report("Indexing documents from " + from.toString() + " to " + to.toString());
+        report("Indexing digital documents");
+        report("==============================");
+
+        //range: dd.mm.yyyy - dd.mm.yyyy
+        String fromStr = from == null ? null : from.toString("dd.MM.yyyy");
+        String toStr = to == null ? null : to.toString("dd.MM.yyyy");
+        report(String.format("Range: %s - %s", fromStr, toStr));
         List<DigitalDocument> digitalDocuments = dataProvider.digDocsByModificationDate(from, to);
+        report("Matching records: " + digitalDocuments.size());
+
         Counters counters = new Counters(digitalDocuments.size());
-        report("Processing " + counters.getFound() + " digital documents");
         Integer limit = null; // for testing, set to null for production
         int iterationCount = 0;
-        report("==============================");
+
         for (DigitalDocument doc : digitalDocuments) {
             if (stopped) {
                 report(" stopped ");
@@ -137,16 +144,21 @@ public class EsIndexer implements AutoCloseable {
             indexDigitalDocument(doc.getId(), counters, false);
         }
         commit(); //one explicit commit at the very end
-        report(" ");
 
-        report("Summary");
-        report("=====================================================");
+        long now = System.currentTimeMillis();
+        long totalDuration = now - start;
+        float durationPerRecord = counters.getProcessed() == 0 ? 0 : (float) totalDuration / counters.getProcessed();
+
+        report("Results");
+        report("------------------------------");
         report(" records found    : " + counters.getFound());
         report(" records processed: " + counters.getProcessed());
         report(" records indexed  : " + counters.getIndexed());
         report(" records erroneous: " + counters.getErrors());
-        report(" initialization duration: " + formatTime(initTime));
-        report(" records processing duration: " + formatTime(System.currentTimeMillis() - start));
+        report(" initialization time: " + formatTime(initTime));
+        report(" records processing time: " + formatTime(totalDuration));
+        report(" avg. record processing time: " + String.format("%.2f ms", durationPerRecord));
+        report("");
         if (progressListener != null) {
             progressListener.onFinished(counters.getProcessed(), counters.getFound());
         }
@@ -154,13 +166,19 @@ public class EsIndexer implements AutoCloseable {
 
     public void indexResolvationLogs(DateTime from, DateTime to) {
         long start = System.currentTimeMillis();
-        report("Indexing documents from " + from.toString() + " to " + to.toString());
+        report("Indexing resolvation logs");
+        report("==============================");
+
+        //range: dd.mm.yyyy - dd.mm.yyyy
+        String fromStr = from == null ? null : from.toString("dd.MM.yyyy");
+        String toStr = to == null ? null : to.toString("dd.MM.yyyy");
+        report(String.format("Range: %s - %s", fromStr, toStr));
         List<ResolvationLog> resolvationLogs = dataProvider.resolvationLogsByDate(from, to);
+        report("Matching records: " + resolvationLogs.size());
+
         Counters counters = new Counters(resolvationLogs.size());
-        report("Processing " + counters.getFound() + " resolvation logs");
         Integer limit = null; // for testing, set to null for production
         int iterationCount = 0;
-        report("==============================");
         for (ResolvationLog log : resolvationLogs) {
             if (stopped) {
                 report(" stopped ");
@@ -173,19 +191,24 @@ public class EsIndexer implements AutoCloseable {
             indexResolvationLog(log, counters, false);
         }
         commit(); //one explicit commit at the very end
-        report(" ");
 
-        report("Summary");
-        report("=====================================================");
+        long now = System.currentTimeMillis();
+        long totalDuration = now - start;
+        float durationPerRecord = counters.getProcessed() == 0 ? 0 : (float) totalDuration / counters.getProcessed();
+
+        report("Results");
+        report("------------------------------");
         report(" records found    : " + counters.getFound());
         report(" records processed: " + counters.getProcessed());
         report(" records indexed  : " + counters.getIndexed());
         report(" records erroneous: " + counters.getErrors());
-        report(" initialization duration: " + formatTime(initTime));
-        report(" records processing duration: " + formatTime(System.currentTimeMillis() - start));
+        report(" initialization time: " + formatTime(initTime));
+        report(" records processing time: " + formatTime(totalDuration));
+        report(" avg. record processing time: " + String.format("%.2f ms", durationPerRecord));
         if (progressListener != null) {
             progressListener.onFinished(counters.getProcessed(), counters.getFound());
         }
+        report("");
     }
 
     private void indexResolvationLog(ResolvationLog resolvationLog, Counters counters, boolean explicitCommit) {
