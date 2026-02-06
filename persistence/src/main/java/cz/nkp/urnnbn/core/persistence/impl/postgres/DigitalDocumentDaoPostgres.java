@@ -147,9 +147,9 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DigitalDocument> getDigDocsByTimestamps(DateTime from, DateTime until) throws DatabaseException {
+    public List<DigitalDocument> getDigDocsByTimestamps(DateTime fromInclusive, DateTime untilExclusive) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until);
+            StatementWrapper st = new SelectAllAttrsByTimestampsEndExclusive(TABLE_NAME, ATTR_UPDATED, fromInclusive, untilExclusive);
             DaoOperation operation = new MultipleResultsOperation(st, new DigitalDocumentRT());
             return (List<DigitalDocument>) runInTransaction(operation);
         } catch (PersistenceException ex) {
@@ -163,9 +163,9 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Long> getDigDocDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException {
+    public List<Long> getDigDocDbIdListByTimestamps(DateTime fromInclusive, DateTime untilExclusive) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectSingleAttrByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until, ATTR_ID);
+            StatementWrapper st = new SelectSingleAttrByTimestampsEndExclusive(TABLE_NAME, ATTR_UPDATED, fromInclusive, untilExclusive, ATTR_ID);
             DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {

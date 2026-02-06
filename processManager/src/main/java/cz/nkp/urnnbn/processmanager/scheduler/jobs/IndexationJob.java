@@ -127,16 +127,19 @@ public class IndexationJob extends AbstractJob {
             logger.info("Registration from: " + (registrationStart == null ? null : registrationStart.toString(dateTimeFormatter)));
             logger.info("Registration until: " + (registrationEnd == null ? null : registrationEnd.toString(dateTimeFormatter)));
 
+            DateTime registrationAfterEnd = registrationEnd == null ? null : registrationEnd.plusMillis(1);
+            //System.out.println("until: " + registrationEnd + ", after until: " + registrationAfterEnd);
+
             esIndexer = new EsIndexer(config, buildReportLoggerOutputStream(),
                     new DataProvider() {
                         @Override
-                        public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
-                            return Services.instanceOf().dataAccessService().digDocsByModificationDate(from, until);
+                        public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {
+                            return Services.instanceOf().dataAccessService().digDocsByModificationDate(fromInclusive, untilExclusive);
                         }
 
                         @Override
-                        public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until) {
-                            return Services.instanceOf().dataAccessService().resolvationLogsByDate(from, until);
+                        public List<ResolvationLog> resolvationLogsByDate(DateTime fromInclusive, DateTime untilExclusive) {
+                            return Services.instanceOf().dataAccessService().resolvationLogsByDate(fromInclusive, untilExclusive);
                         }
 
                         @Override
@@ -179,7 +182,7 @@ public class IndexationJob extends AbstractJob {
                 }
             });
             if (!interrupted) {
-                esIndexer.indexResolvationLogs(registrationStart, registrationEnd);
+                esIndexer.indexResolvationLogs(registrationStart, registrationAfterEnd);
             }
 
             if (interrupted) {

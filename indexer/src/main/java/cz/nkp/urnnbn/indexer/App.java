@@ -75,12 +75,12 @@ public class App {
     private static void indexDocumentInLoop(IndexerConfig config, int ddId, String urnNbn) {
         EsIndexer indexer = new EsIndexer(config, null, new DataProvider() {
             @Override
-            public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
+            public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {
                 return null;
             }
 
             @Override
-            public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until) {
+            public List<ResolvationLog> resolvationLogsByDate(DateTime fromInclusive, DateTime untilExclusive) {
                 return null;
             }
 
@@ -108,12 +108,12 @@ public class App {
     private static void indexSingleDocument(IndexerConfig config, int ddId, String urnNbn) {
         EsIndexer indexer = new EsIndexer(config, null, new DataProvider() {
             @Override
-            public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
+            public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {
                 return null;
             }
 
             @Override
-            public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until) {
+            public List<ResolvationLog> resolvationLogsByDate(DateTime fromInclusive, DateTime untilExclusive) {
                 return null;
             }
 

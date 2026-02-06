@@ -16,5 +16,5 @@ public interface UrnNbnResolvationLogsDAO {
 
     public ResolvationLog insertResolvationAccessLog(String registrarCode, String documentCode) throws DatabaseException;
 
-    public List<ResolvationLog> getResolvationLogsByTimestamps(DateTime from, DateTime until) throws DatabaseException;
+    public List<ResolvationLog> getResolvationLogsByTimestamps(DateTime fromInclusive, DateTime untilExclusive) throws DatabaseException;
 }

@@ -173,7 +173,6 @@ public class EsConnector implements AutoCloseable {
         }
     }
 
-    // DB pool zavírá EsIndexer
 }
 
 

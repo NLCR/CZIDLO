@@ -353,18 +353,18 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
+    public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {
         try {
-            return factory.documentDao().getDigDocsByTimestamps(from, until);
+            return factory.documentDao().getDigDocsByTimestamps(fromInclusive, untilExclusive);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until) {
+    public List<ResolvationLog> resolvationLogsByDate(DateTime fromInclusive, DateTime untilExclusive) {
         try {
-            return factory.urnNbnResolvationLogsDao().getResolvationLogsByTimestamps(from, until);
+            return factory.urnNbnResolvationLogsDao().getResolvationLogsByTimestamps(fromInclusive, untilExclusive);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }

@@ -12,7 +12,7 @@ import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestampsEndExclusive;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ResolvationLogRT;
 import org.joda.time.DateTime;
 
@@ -46,9 +46,9 @@ public class UrnNbnResolvationLogsDaoPostgres extends AbstractDAO implements Urn
     }
 
     @Override
-    public List<ResolvationLog> getResolvationLogsByTimestamps(DateTime from, DateTime until) throws DatabaseException {
+    public List<ResolvationLog> getResolvationLogsByTimestamps(DateTime fromInclusive, DateTime untilExclusive) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_RESOLVED, from, until);
+            StatementWrapper st = new SelectAllAttrsByTimestampsEndExclusive(TABLE_NAME, ATTR_RESOLVED, fromInclusive, untilExclusive);
             DaoOperation operation = new MultipleResultsOperation(st, new ResolvationLogRT());
             return (List<ResolvationLog>) runInTransaction(operation);
         } catch (PersistenceException ex) {

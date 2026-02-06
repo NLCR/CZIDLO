@@ -57,13 +57,13 @@ public class Services implements AutoCloseable {
             esIndexer = new EsIndexer(indexerConfig, null,
                     new DataProvider() {
                         @Override
-                        public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
-                            return dataAccessService().digDocsByModificationDate(from, until);
+                        public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {
+                            return dataAccessService().digDocsByModificationDate(fromInclusive, untilExclusive);
                         }
 
                         @Override
-                        public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until) {
-                            return dataAccessService().resolvationLogsByDate(from, until);
+                        public List<ResolvationLog> resolvationLogsByDate(DateTime fromInclusive, DateTime untilExclusive) {
+                            return dataAccessService().resolvationLogsByDate(fromInclusive, untilExclusive);
                         }
 
                         @Override

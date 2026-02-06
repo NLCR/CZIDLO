@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface DataProvider {
 
-    public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until);
+    public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive);
 
-    public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until);
+    public List<ResolvationLog> resolvationLogsByDate(DateTime fromInclusive, DateTime untilExclusive);
 
     public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors);
 

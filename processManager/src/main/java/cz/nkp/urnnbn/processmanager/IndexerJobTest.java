@@ -45,17 +45,17 @@ public class IndexerJobTest {
         return new PostgresPooledConnector(config.getDbUrl(), config.getDbLogin(), config.getDbPassword());
     }
 
-    private static void indexDocumentsInDateRange(IndexerConfig config, DateTime start, DateTime end) {
+    private static void indexDocumentsInDateRange(IndexerConfig config, DateTime fromInclusive, DateTime untilExclusive) {
         EsIndexer indexer = new EsIndexer(config, System.out,
                 new DataProvider() {
                     @Override
-                    public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
-                        return Services.instanceOf().dataAccessService().digDocsByModificationDate(from, until);
+                    public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {
+                        return Services.instanceOf().dataAccessService().digDocsByModificationDate(fromInclusive, untilExclusive);
                     }
 
                     @Override
-                    public List<ResolvationLog> resolvationLogsByDate(DateTime from, DateTime until) {
-                        return Services.instanceOf().dataAccessService().resolvationLogsByDate(from, until);
+                    public List<ResolvationLog> resolvationLogsByDate(DateTime fromInclusive, DateTime untilExclusive) {
+                        return Services.instanceOf().dataAccessService().resolvationLogsByDate(fromInclusive, untilExclusive);
                     }
 
                     @Override
@@ -63,7 +63,7 @@ public class IndexerJobTest {
                         return Services.instanceOf().dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
                     }
                 });
-        indexer.indexDigitalDocuments(start, end);
+        indexer.indexDigitalDocuments(fromInclusive, untilExclusive);
         indexer.close();
     }
 }

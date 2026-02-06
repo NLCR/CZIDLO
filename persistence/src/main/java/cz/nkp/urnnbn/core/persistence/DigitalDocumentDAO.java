@@ -86,9 +86,9 @@ public interface DigitalDocumentDAO {
     public List<DigitalDocument> getDigDocsByRegistrarIdAndTimestamps(long registrarId, DateTime from, DateTime until) throws DatabaseException,
             RecordNotFoundException;
 
-    public List<DigitalDocument> getDigDocsByTimestamps(DateTime from, DateTime until) throws DatabaseException;
+    public List<DigitalDocument> getDigDocsByTimestamps(DateTime fromInclusive, DateTime untilExclusive) throws DatabaseException;
 
-    public List<Long> getDigDocDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException;
+    public List<Long> getDigDocDbIdListByTimestamps(DateTime fromInclusive, DateTime untilExclusive) throws DatabaseException;
 
     /**
      *
