@@ -48,5 +48,18 @@
             <artifactId>joda-time</artifactId>
             <version>2.14.0</version>
         </dependency>
+
+        <!--db connection pool (only for PostgresPooledConnector for testing)-->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

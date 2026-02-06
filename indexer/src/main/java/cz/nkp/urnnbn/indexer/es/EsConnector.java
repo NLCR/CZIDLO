@@ -80,6 +80,11 @@ public class EsConnector implements AutoCloseable {
     }
 
     public void indexDigitalDocument(long ddInternalId, ReportLogger reportLogger) throws IOException, SQLException {
+        indexDigitalDocumentBasic(ddInternalId, reportLogger);
+        //indexDigitalDocumentWithTiming(ddInternalId, reportLogger);
+    }
+
+    private void indexDigitalDocumentBasic(long ddInternalId, ReportLogger reportLogger) throws IOException, SQLException {
         try (Connection conn = dataSource.getConnection()) {
             ObjectMapper mapper = Config.getObjectMapper();
             EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
