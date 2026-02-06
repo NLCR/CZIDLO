@@ -289,6 +289,105 @@ public class EsConnector implements AutoCloseable {
         }
     }
 
+    public BulkIndexResult bulkIndexResolvations(List<Long> urIds, ReportLogger reportLogger) throws IOException, SQLException {
+        long t0 = System.nanoTime();
+
+        int requestedDocs = (urIds == null) ? 0 : urIds.size();
+        if (requestedDocs == 0) {
+            return new BulkIndexResult(0, 0, 0, 0, 0, 0, 0, 0, 0);
+        }
+
+        long tConn0 = System.nanoTime();
+        try (Connection conn = dataSource.getConnection()) {
+            long tConn1 = System.nanoTime();
+
+            ObjectMapper mapper = Config.getObjectMapper();
+            EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
+
+            // resolve = max 1 op per urId
+            List<BulkOperation> ops = new ArrayList<>(requestedDocs);
+            int convertedDocs = 0;
+
+            long tConv0 = System.nanoTime();
+            for (Long urId : urIds) {
+                if (urId == null) continue;
+
+                try {
+                    DdEsConversionResult conversionResult = dataProvider.convertResolvingJson(urId);
+
+                    if (conversionResult.getResolve() != null) {
+                        ops.add(BulkOperation.of(op -> op.index(idx -> idx
+                                .index(indexResolve)
+                                .id(conversionResult.getResolve().getId())
+                                .document(conversionResult.getResolve())
+                        )));
+                        convertedDocs++;
+                    }
+
+                } catch (RuntimeException e) {
+                    // konverze/validace/query fail pro 1 ur -> log a pokračuj
+                    if (reportLogger != null) {
+                        reportLogger.report("Conversion failed for urId=" + urId, e);
+                    }
+                }
+            }
+            long tConv1 = System.nanoTime();
+
+            if (ops.isEmpty()) {
+                long t1 = System.nanoTime();
+                return new BulkIndexResult(
+                        requestedDocs,
+                        convertedDocs,
+                        0,
+                        0,
+                        0,
+                        (tConn1 - tConn0) / 1_000_000,
+                        (tConv1 - tConv0) / 1_000_000,
+                        0,
+                        (t1 - t0) / 1_000_000
+                );
+            }
+
+            long tBulk0 = System.nanoTime();
+            BulkResponse resp = esClient.bulk(BulkRequest.of(b -> b.operations(ops)));
+            long tBulk1 = System.nanoTime();
+
+            int bulkErrors = 0;
+            int bulkItems = (resp.items() == null) ? 0 : resp.items().size();
+
+            if (Boolean.TRUE.equals(resp.errors()) && resp.items() != null) {
+                for (int i = 0; i < resp.items().size(); i++) {
+                    BulkResponseItem item = resp.items().get(i);
+                    if (item.error() != null) {
+                        bulkErrors++;
+                        if (reportLogger != null) {
+                            reportLogger.report(
+                                    "Bulk item error: op=" + item.operationType() +
+                                            " index=" + item.index() +
+                                            " id=" + item.id() +
+                                            " reason=" + item.error().reason()
+                            );
+                        }
+                    }
+                }
+            }
+
+            long t1 = System.nanoTime();
+            return new BulkIndexResult(
+                    requestedDocs,
+                    convertedDocs,
+                    ops.size(),
+                    bulkItems,
+                    bulkErrors,
+                    (tConn1 - tConn0) / 1_000_000,
+                    (tConv1 - tConv0) / 1_000_000,
+                    (tBulk1 - tBulk0) / 1_000_000,
+                    (t1 - t0) / 1_000_000
+            );
+        }
+
+
+    }
 }
 
 

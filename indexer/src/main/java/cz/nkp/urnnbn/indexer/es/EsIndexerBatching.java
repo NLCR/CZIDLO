@@ -17,7 +17,7 @@ public class EsIndexerBatching extends EsIndexerAbstract implements EsIndexer, A
 
     private static final Logger LOGGER = Logger.getLogger(EsIndexerBatching.class.getName());
 
-    private static final boolean REPORT_MEASUREMENTS = true;
+    private static final boolean REPORT_MEASUREMENTS = false;
     private static final int INDEXING_BATCH_SIZE = 100;
 
     private static final boolean THROTTLING_ENABLED = true;
@@ -88,30 +88,44 @@ public class EsIndexerBatching extends EsIndexerAbstract implements EsIndexer, A
         report("Indexing resolvation logs");
         report("==============================");
 
-        //range: dd.mm.yyyy - dd.mm.yyyy
         String fromStr = from == null ? null : from.toString("dd.MM.yyyy");
         String toStr = to == null ? null : to.toString("dd.MM.yyyy");
         report(String.format("Range: %s - %s", fromStr, toStr));
-        List<ResolvationLog> resolvationLogs = dataProvider.resolvationLogsByDate(from, to);
-        report("Matching records: " + resolvationLogs.size());
 
-        Counters counters = new Counters(resolvationLogs.size());
-        Integer limit = null; // for testing, set to null for production
-        int iterationCount = 0;
-        for (ResolvationLog log : resolvationLogs) {
+        List<ResolvationLog> logs = dataProvider.resolvationLogsByDate(from, to);
+        report("Matching records: " + logs.size());
+
+        Counters counters = new Counters(logs.size());
+
+        final int batchSize = INDEXING_BATCH_SIZE; // nebo vlastní RESOLVE_BATCH_SIZE
+        List<Long> batch = new ArrayList<>(batchSize);
+
+        long bulkTotalMs = 0;
+        long convertTotalMs = 0;
+
+        for (ResolvationLog log : logs) {
             if (stopped) {
                 report(" stopped ");
                 break;
             }
-            if (limit != null && iterationCount++ >= limit) {
-                report(" limit of " + limit + " reached, stopping (for testing purposes) ");
-                break;
+            batch.add(log.getId());
+
+            if (batch.size() >= batchSize) {
+                BulkIndexResult r = flushResolveBulk(batch, counters);
+                bulkTotalMs += r.bulkMs();
+                convertTotalMs += r.convertMs();
+                batch.clear();
             }
-            indexResolvationLog(log, counters, false);
         }
 
-        long now = System.currentTimeMillis();
-        long totalDuration = now - start;
+        if (!stopped && !batch.isEmpty()) {
+            BulkIndexResult r = flushResolveBulk(batch, counters);
+            bulkTotalMs += r.bulkMs();
+            convertTotalMs += r.convertMs();
+            batch.clear();
+        }
+
+        long totalDuration = System.currentTimeMillis() - start;
         float durationPerRecord = counters.getProcessed() == 0 ? 0 : (float) totalDuration / counters.getProcessed();
 
         report("Results");
@@ -123,11 +137,15 @@ public class EsIndexerBatching extends EsIndexerAbstract implements EsIndexer, A
         report(" initialization time: " + formatTime(initTime));
         report(" records processing time: " + formatTime(totalDuration));
         report(" avg. record processing time: " + String.format("%.2f ms", durationPerRecord));
+        report(" bulk total time: " + bulkTotalMs + " ms");
+        report(" convert total time: " + convertTotalMs + " ms");
+        report("");
+
         if (progressListener != null) {
             progressListener.onFinished(counters.getProcessed(), counters.getFound());
         }
-        report("");
     }
+
 
     private void indexResolvationLog(ResolvationLog resolvationLog, Counters counters, boolean explicitCommit) {
         //report(" processing " + resolvationLog);
@@ -256,6 +274,51 @@ public class EsIndexerBatching extends EsIndexerAbstract implements EsIndexer, A
 
             long dt = System.currentTimeMillis() - t0;
             return new BulkIndexResult(ddIds.size(), 0, 0, 0, ddIds.size(), 0, 0, dt, dt);
+        }
+    }
+
+    private BulkIndexResult flushResolveBulk(List<Long> urIds, Counters counters) {
+        long t0 = System.currentTimeMillis();
+        try {
+            BulkIndexResult r = esConnector.bulkIndexResolvations(urIds, reportLogger);
+
+            counters.addProcessed(r.requestedDocs());
+            counters.addIndexed(r.convertedDocs());
+            counters.addErrors(r.bulkErrors());
+
+            if (progressListener != null) {
+                progressListener.onProgress(counters.getProcessed(), counters.getFound());
+            }
+
+            if (REPORT_MEASUREMENTS) {
+                report(String.format(
+                        "bulk resolve docs=%d converted=%d ops=%d bulkMs=%d convertMs=%d totalMs=%d errors=%d",
+                        r.requestedDocs(), r.convertedDocs(), r.operations(),
+                        r.bulkMs(), r.convertMs(), r.totalMs(), r.bulkErrors()
+                ));
+            }
+
+            if (THROTTLING_ENABLED) {
+                long sleepMs = throttle.computeSleepMs(r);
+                if (sleepMs > 0) {
+                    report("Throttling: sleeping " + sleepMs + " ms; " + throttle.stateString());
+                    try {
+                        Thread.sleep(sleepMs);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        report("Throttling sleep interrupted");
+                    }
+                }
+            }
+
+            return r;
+        } catch (Exception e) {
+            counters.addProcessed(urIds.size());
+            counters.addErrors(urIds.size());
+            report(" Bulk resolve indexing failed for batch size=" + urIds.size(), e);
+
+            long dt = System.currentTimeMillis() - t0;
+            return new BulkIndexResult(urIds.size(), 0, 0, 0, urIds.size(), 0, 0, dt, dt);
         }
     }
 }

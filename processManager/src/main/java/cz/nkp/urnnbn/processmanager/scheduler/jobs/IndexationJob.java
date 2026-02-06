@@ -50,6 +50,9 @@ public class IndexationJob extends AbstractJob {
     //report file
     public static final String PARAM_REPORT_FILE = "report.txt";
 
+    //logging
+    private static final int LOG_COUNTERS_EVERY = 1000;
+
     //elasticsearch
     public static final String PARAM_ES_BASE_URL = "esBaseUrl";
     public static final String PARAM_ES_LOGIN = "esLogin";
@@ -70,6 +73,7 @@ public class IndexationJob extends AbstractJob {
 
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+
 
     private EsIndexer esIndexer;
 
@@ -154,7 +158,7 @@ public class IndexationJob extends AbstractJob {
             esIndexer.setProgressListener(new ProgressListener() {
                 @Override
                 public void onProgress(int processed, int total) {
-                    if (processed % 100 == 0) {
+                    if (processed % LOG_COUNTERS_EVERY == 0) {
                         logger.info(String.format("Processed %d/%d", processed, total));
                     }
                 }
@@ -172,7 +176,7 @@ public class IndexationJob extends AbstractJob {
             esIndexer.setProgressListener(new ProgressListener() {
                 @Override
                 public void onProgress(int processed, int total) {
-                    if (processed % 100 == 0) {
+                    if (processed % LOG_COUNTERS_EVERY == 0) {
                         logger.info(String.format("Processed %d/%d", processed, total));
                     }
                 }

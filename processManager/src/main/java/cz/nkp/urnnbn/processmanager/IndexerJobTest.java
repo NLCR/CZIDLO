@@ -40,6 +40,13 @@ public class IndexerJobTest {
 
         Services.init(initDatabaseConnector(config), null);
         indexDocumentsInDateRange(config, DateTime.parse("2025-01-01"), DateTime.parse("2025-01-08"));
+        indexResolvationLogsInDateRange(config, DateTime.parse("2021-03-01"), DateTime.parse("2021-03-02"));
+    }
+
+    private static void indexResolvationLogsInDateRange(IndexerConfig config, DateTime fromInclusive, DateTime untilExclusive) {
+        EsIndexer indexer = new EsIndexerBatching(config, System.out, initDataProvider());
+        indexer.indexResolvationLogs(fromInclusive, untilExclusive);
+        indexer.close();
     }
 
     private static DatabaseConnector initDatabaseConnector(IndexerConfig config) {
@@ -47,24 +54,27 @@ public class IndexerJobTest {
     }
 
     private static void indexDocumentsInDateRange(IndexerConfig config, DateTime fromInclusive, DateTime untilExclusive) {
-        EsIndexer indexer = new EsIndexerBatching(config, System.out,
-                new DataProvider() {
-                    @Override
-                    public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {
-                        return Services.instanceOf().dataAccessService().digDocsByModificationDate(fromInclusive, untilExclusive);
-                    }
-
-                    @Override
-                    public List<ResolvationLog> resolvationLogsByDate(DateTime fromInclusive, DateTime untilExclusive) {
-                        return Services.instanceOf().dataAccessService().resolvationLogsByDate(fromInclusive, untilExclusive);
-                    }
-
-                    @Override
-                    public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
-                        return Services.instanceOf().dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
-                    }
-                });
+        EsIndexer indexer = new EsIndexerBatching(config, System.out, initDataProvider());
         indexer.indexDigitalDocuments(fromInclusive, untilExclusive);
         indexer.close();
+    }
+
+    private static DataProvider initDataProvider() {
+        return new DataProvider() {
+            @Override
+            public List<DigitalDocument> digDocsByModificationDate(DateTime fromInclusive, DateTime untilExclusive) {
+                return Services.instanceOf().dataAccessService().digDocsByModificationDate(fromInclusive, untilExclusive);
+            }
+
+            @Override
+            public List<ResolvationLog> resolvationLogsByDate(DateTime fromInclusive, DateTime untilExclusive) {
+                return Services.instanceOf().dataAccessService().resolvationLogsByDate(fromInclusive, untilExclusive);
+            }
+
+            @Override
+            public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
+                return Services.instanceOf().dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
+            }
+        };
     }
 }
