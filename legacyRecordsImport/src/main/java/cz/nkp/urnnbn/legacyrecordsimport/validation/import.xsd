@@ -465,7 +465,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         </xs:complexType>
     </xs:element>
     
-    <!-- compression and compression ration -->
+    <!-- compression and compression ratio -->
     <xs:element name="compression">
         <xs:complexType>
             <xs:simpleContent>

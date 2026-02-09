@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </xs:sequence>
     </xs:complexType>
     
-    <!-- compression and compression ration -->
+    <!-- compression and compression ratio -->
     <xs:complexType name="compression">
         <xs:simpleContent>
             <xs:extension base="xs:string">
