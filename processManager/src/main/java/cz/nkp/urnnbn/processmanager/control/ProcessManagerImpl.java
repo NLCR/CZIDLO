@@ -360,6 +360,8 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(UrnNbnCsvExportJob.PARAM_WITH_MISSING_CCNB_ONLY, params[i++])//
                         .usingJobData(UrnNbnCsvExportJob.PARAM_WITH_MISSING_ISSN_ONLY, params[i++])//
                         .usingJobData(UrnNbnCsvExportJob.PARAM_WITH_MISSING_ISBN_ONLY, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_INCLUDE_BORN_DIGITAL, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_INCLUDE_BORN_ANALOG, params[i++])//
                         .usingJobData(UrnNbnCsvExportJob.PARAM_RETURN_ACTIVE, params[i++])//
                         .usingJobData(UrnNbnCsvExportJob.PARAM_RETURN_DEACTIVED, params[i++])//
                         .usingJobData(UrnNbnCsvExportJob.PARAM_DEACTIVATION_START, params[i++])//

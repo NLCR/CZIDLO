@@ -26,7 +26,7 @@ public class SelectUrnNbnExport implements StatementWrapper {
         String parameters = buildParameters();
         String result = "SELECT * FROM " + "(SELECT 'urn:nbn:" + languageCode + ":'|| urn.registrarcode || '-' || urn.documentcode AS urn_nbn"
                 + ",urn.registrarcode AS registrar" + ",urn.reserved AS reserved" + ",urn.registered AS registered"
-                + ",urn.deactivated AS deactivated" + ",urn.active AS active" + ",ie.entitytype AS entity_type"
+                + ",urn.deactivated AS deactivated" + ",urn.active AS active" + ",ie.entitytype AS entity_type" + ", ie.digitalborn AS born_digital"
                 + ",EXISTS(SELECT 1 FROM ieidentifier AS ied WHERE ied.intelectualentityid = ie.id AND ied.type='CCNB') AS cnb"
                 + ",EXISTS(SELECT 1 FROM ieidentifier AS ied WHERE ied.intelectualentityid = ie.id AND ied.type='ISSN') AS issn"
                 + ",EXISTS(SELECT 1 FROM ieidentifier AS ied WHERE ied.intelectualentityid = ie.id AND ied.type='ISBN') AS isbn"
@@ -82,9 +82,19 @@ public class SelectUrnNbnExport implements StatementWrapper {
         if (filter.getWithMissingIssnOnly()) {
             parameters.append("row.issn = false AND ");
         }
-        if (filter.getWithMMissingIsbnOnly()) {
+        if (filter.getWithMissingIsbnOnly()) {
             parameters.append("row.isbn = false AND ");
         }
+        //born digital/analog
+        if (!filter.isIncludeBornDigital() || !filter.isIncludeBornAnalog()) {
+            if (filter.isIncludeBornDigital()) {
+                parameters.append("row.born_digital = true AND ");
+            }
+            if (filter.isIncludeBornAnalog()) {
+                parameters.append("row.born_digital = false AND ");
+            }
+        }
+
         //state
         if (!filter.getReturnActive() || !filter.getReturnDeactivated()) {
             if (filter.getReturnActive()) {

@@ -112,6 +112,8 @@ public class ProcessManagerImpl implements ProcessManager {
                 paramList.add(getParam("withMissingCnbOnly", paramMap));
                 paramList.add(getParam("withMissingIssnOnly", paramMap));
                 paramList.add(getParam("withMissingIsbnOnly", paramMap));
+                paramList.add(getParam("bornDigital", paramMap));
+                paramList.add(getParam("bornAnalog", paramMap));
                 paramList.add(getParam("returnActive", paramMap));
                 paramList.add(getParam("returnDeactivated", paramMap));
                 paramList.add(getParam("deactivationDateFrom", paramMap));

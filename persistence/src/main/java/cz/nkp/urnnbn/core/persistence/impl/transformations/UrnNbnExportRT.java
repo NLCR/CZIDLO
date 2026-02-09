@@ -36,6 +36,7 @@ public class UrnNbnExportRT implements ResultsetTransformer {
         result.setSubtitle(rs.getString("id_sub_title"));
         result.setVolumeTitle(rs.getString("id_volume_title"));
         result.setIssueTitle(rs.getString("id_issue_title"));
+        result.setBornDigital(rs.getBoolean("born_digital"));
         return result;
     }
 

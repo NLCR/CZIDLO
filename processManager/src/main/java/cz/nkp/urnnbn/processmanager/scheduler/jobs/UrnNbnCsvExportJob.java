@@ -49,6 +49,8 @@ public class UrnNbnCsvExportJob extends AbstractJob {
     public static final String PARAM_WITH_MISSING_CCNB_ONLY = "withMissingCnbOnly";
     public static final String PARAM_WITH_MISSING_ISSN_ONLY = "withMissingIssnOnly";
     public static final String PARAM_WITH_MISSING_ISBN_ONLY = "withMissingIsbnOnly";
+    public static final String PARAM_INCLUDE_BORN_DIGITAL = "bornDigital";
+    public static final String PARAM_INCLUDE_BORN_ANALOG = "bornAnalog";
     public static final String PARAM_RETURN_ACTIVE = "returnActive";
     public static final String PARAM_RETURN_DEACTIVED = "returnDeactivated";
     public static final String PARAM_DEACTIVATION_START = "deactivationStart";
@@ -65,6 +67,8 @@ public class UrnNbnCsvExportJob extends AbstractJob {
     private static final String HEADER_HAS_CNB = "Má ČNB";
     private static final String HEADER_HAS_ISSN = "Má ISSN";
     private static final String HEADER_HAS_ISBN = "Má ISBN";
+    private static final String HEADER_BORN_DIGITAL = "Born digital";
+
     private static final String HEADER_UNR_ACTIVE = "Aktivní";
     private static final String HEADER_NUM_OF_DIG_INSTANCES = "Počet instancí";
 
@@ -131,7 +135,12 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         logger.info("Limit to records missing ISSN: " + result.getWithMissingIssnOnly());
         // limit to only those with missing isbn
         result.setWithMissingIsbnOnly(context.getMergedJobDataMap().getBoolean(PARAM_WITH_MISSING_ISBN_ONLY));
-        logger.info("Limit to records missing ISBN: " + result.getWithMMissingIsbnOnly());
+        logger.info("Limit to records missing ISBN: " + result.getWithMissingIsbnOnly());
+        // born digital/analog
+        result.setIncludeBornDigital(context.getMergedJobDataMap().getBoolean(PARAM_INCLUDE_BORN_DIGITAL));
+        logger.info("Include born digital: " + result.isIncludeBornDigital());
+        result.setIncludeBornAnalog(context.getMergedJobDataMap().getBoolean(PARAM_INCLUDE_BORN_ANALOG));
+        logger.info("Include born analog: " + result.isIncludeBornAnalog());
         // urn:nbn states
         result.setReturnActive(context.getMergedJobDataMap().getBoolean(PARAM_RETURN_ACTIVE));
         logger.info("Return active records: " + result.getReturnActive());
@@ -188,7 +197,9 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         result.append('\"').append(HEADER_DEACTIVATED).append('\"').append(',');
         result.append('\"').append(HEADER_HAS_CNB).append('\"').append(',');
         result.append('\"').append(HEADER_HAS_ISSN).append('\"').append(',');
-        result.append('\"').append(HEADER_HAS_ISBN).append('\"');
+        result.append('\"').append(HEADER_HAS_ISBN).append('\"').append(',');
+        result.append('\"').append(HEADER_BORN_DIGITAL).append('\"');
+
         return result.toString();
     }
 
@@ -207,7 +218,8 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         result.append('\"').append(item.getDeactivated() == null ? "" : item.getDeactivated()).append('\"').append(',');
         result.append('\"').append(item.isCnbAssigned()).append('\"').append(',');
         result.append('\"').append(item.isIssnAssigned()).append('\"').append(',');
-        result.append('\"').append(item.isIsbnAssigned()).append('\"');
+        result.append('\"').append(item.isIsbnAssigned()).append('\"').append(',');
+        result.append('\"').append(item.isBornDigital()).append('\"');
         return result.toString();
     }
 

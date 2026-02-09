@@ -12,7 +12,9 @@ public class UrnNbnExportFilter {
     private List<String> entityTypes;
     private boolean withMissingCcnbOnly;
     private boolean withMissingIssnOnly;
-    private boolean withMMissingIsbnOnly;
+    private boolean withMissingIsbnOnly;
+    private boolean includeBornDigital;
+    private boolean includeBornAnalog;
     private boolean returnActive;
     private boolean returnDeactivated;
     private DateTime deactivationStart;
@@ -22,14 +24,19 @@ public class UrnNbnExportFilter {
     }
 
     public UrnNbnExportFilter(DateTime registrationStart, DateTime registrationEnd, List<String> registrars, List<String> entityTypes, boolean withMissingCcnbOnly,
-                              boolean withMissingIssnOnly, boolean withMMissingIsbnOnly, boolean returnActive, boolean returnDeactivated, DateTime deactivationStart, DateTime deactivationEnd) {
+                              boolean withMissingIssnOnly, boolean withMissingIsbnOnly,
+                              boolean includeBornDigital, boolean includeBornAnalog,
+                              boolean returnActive, boolean returnDeactivated,
+                              DateTime deactivationStart, DateTime deactivationEnd) {
         this.registrationStart = registrationStart;
         this.registrationEnd = registrationEnd;
         this.registrars = registrars;
         this.entityTypes = entityTypes;
         this.withMissingCcnbOnly = withMissingCcnbOnly;
         this.withMissingIssnOnly = withMissingIssnOnly;
-        this.withMMissingIsbnOnly = withMMissingIsbnOnly;
+        this.withMissingIsbnOnly = withMissingIsbnOnly;
+        this.includeBornDigital = includeBornDigital;
+        this.includeBornAnalog = includeBornAnalog;
         this.returnActive = returnActive;
         this.returnDeactivated = returnDeactivated;
         this.deactivationStart = deactivationStart;
@@ -37,8 +44,16 @@ public class UrnNbnExportFilter {
     }
 
     public UrnNbnExportFilter(DateTime registrationStart, DateTime registrationEnd, List<String> registrars, List<String> entityTypes, boolean withMissingCcnbOnly,
-                              boolean withMissingIssnOnly, boolean withMMissingIsbnOnly, boolean returnActive, boolean returnDeactivated) {
-        this(registrationStart, registrationEnd, registrars, entityTypes, withMissingCcnbOnly, withMissingIssnOnly, withMissingIssnOnly, returnActive, returnDeactivated, null, null);
+                              boolean withMissingIssnOnly, boolean withMissingIsbnOnly,
+                              boolean includeBornDigital, boolean includeBornAnalog,
+                              boolean returnActive, boolean returnDeactivated) {
+        this(registrationStart, registrationEnd, registrars, entityTypes, withMissingCcnbOnly, withMissingIssnOnly, withMissingIsbnOnly, includeBornDigital, includeBornAnalog, returnActive, returnDeactivated, null, null);
+    }
+
+    public UrnNbnExportFilter(DateTime registrationStart, DateTime registrationEnd, List<String> registrars, List<String> entityTypes, boolean withMissingCcnbOnly,
+                              boolean withMissingIssnOnly, boolean withMissingIsbnOnly,
+                              boolean returnActive, boolean returnDeactivated) {
+        this(registrationStart, registrationEnd, registrars, entityTypes, withMissingCcnbOnly, withMissingIssnOnly, withMissingIsbnOnly, true, true, returnActive, returnDeactivated, null, null);
     }
 
     public DateTime getRegistrationStart() {
@@ -65,8 +80,16 @@ public class UrnNbnExportFilter {
         return withMissingIssnOnly;
     }
 
-    public boolean getWithMMissingIsbnOnly() {
-        return withMMissingIsbnOnly;
+    public boolean getWithMissingIsbnOnly() {
+        return withMissingIsbnOnly;
+    }
+
+    public boolean isIncludeBornDigital() {
+        return includeBornDigital;
+    }
+
+    public boolean isIncludeBornAnalog() {
+        return includeBornAnalog;
     }
 
     public boolean getReturnActive() {
@@ -110,7 +133,15 @@ public class UrnNbnExportFilter {
     }
 
     public void setWithMissingIsbnOnly(boolean withMMissingIsbnOnly) {
-        this.withMMissingIsbnOnly = withMMissingIsbnOnly;
+        this.withMissingIsbnOnly = withMMissingIsbnOnly;
+    }
+
+    public void setIncludeBornDigital(boolean includeBornDigital) {
+        this.includeBornDigital = includeBornDigital;
+    }
+
+    public void setIncludeBornAnalog(boolean includeBornAnalog) {
+        this.includeBornAnalog = includeBornAnalog;
     }
 
     public void setReturnActive(boolean returnActive) {

@@ -21,6 +21,8 @@ public class UrnNbnExport {
 
     private boolean isbnAssigned;
 
+    private boolean bornDigital;
+
     private String title;
 
     private String subtitle;
@@ -143,4 +145,11 @@ public class UrnNbnExport {
         this.issueTitle = issueTitle;
     }
 
+    public boolean isBornDigital() {
+        return bornDigital;
+    }
+
+    public void setBornDigital(boolean bornDigital) {
+        this.bornDigital = bornDigital;
+    }
 }
