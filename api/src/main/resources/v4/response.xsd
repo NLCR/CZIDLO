@@ -567,9 +567,9 @@
     <xs:complexType name="resolution">
         <xs:sequence>
             <xs:element name="horizontal" type="xs:integer"
-                minOccurs="1" maxOccurs="1" />
+                minOccurs="0" maxOccurs="1" />
             <xs:element name="vertical" type="xs:integer"
-                minOccurs="1" maxOccurs="1" />
+                minOccurs="0" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
 

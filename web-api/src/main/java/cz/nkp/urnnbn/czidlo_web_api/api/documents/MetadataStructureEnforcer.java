@@ -70,12 +70,6 @@ public class MetadataStructureEnforcer {
         if (digDoc.getFormat() == null || digDoc.getFormat().isEmpty()) {
             throw new MetadataStructureException("Digital document format is required.");
         }
-        if (digDoc.getResolutionHorizontal() == null) {
-            throw new MetadataStructureException("Digital document horizontal resolution is required.");
-        }
-        if (digDoc.getResolutionVertical() == null) {
-            throw new MetadataStructureException("Digital document vertical resolution is required.");
-        }
         if (digDoc.getCompression() == null || digDoc.getCompression().isEmpty()) {
             throw new MetadataStructureException("Digital document compression is required.");
         }
