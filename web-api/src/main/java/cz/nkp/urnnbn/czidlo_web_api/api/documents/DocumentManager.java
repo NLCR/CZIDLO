@@ -4,6 +4,7 @@ import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.RecordToBeCreatedOrUpdated;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.ConflictException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.services.exceptions.*;
@@ -70,4 +71,30 @@ public interface DocumentManager {
      */
     public void updateRecord(RecordToBeCreatedOrUpdated record, String login) throws BadArgumentException,
             UnknownUserException, InsufficientRightsException, UnknownRecordException;
+
+
+    /**
+     * Adds predecessor -> successor relation. Also deactivates the predecessor record if it is active.
+     *
+     * @param predecessor
+     * @param successor
+     * @param note
+     * @param login
+     * @throws UnknownRecordException
+     * @throws InsufficientRightsException
+     * @throws IncorrectPredecessorStatus
+     * @throws ConflictException           Adding predecessor-successor relation would create a cycle in predecessor-successor graph
+     */
+    public void addPredecessorSuccessorRelation(UrnNbn predecessor, UrnNbn successor, String note, String login) throws UnknownRecordException, InsufficientRightsException, IncorrectPredecessorStatus, ConflictException;
+
+    /**
+     * Removes predecessor -> successor relation.
+     *
+     * @param predecessor
+     * @param successor
+     * @param login
+     * @throws UnknownRecordException
+     * @throws InsufficientRightsException
+     */
+    public void removePredecessorSuccessorRelation(UrnNbn predecessor, UrnNbn successor, String login) throws UnknownRecordException, InsufficientRightsException;
 }

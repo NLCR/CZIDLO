@@ -339,6 +339,25 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     }
 
     @Override
+    public void deletePredecessorSuccessorRelation(UrnNbn predecessor, UrnNbn successor) throws DatabaseException {
+        try {
+            final StatementWrapper st = new DeleteByStringStringStringString(SUCCESSOR_TABLE_NAME,
+                    ATTR_PRECESSOR_REGISTRAR_CODE, predecessor.getRegistrarCode().toString(),
+                    ATTR_PRECESSOR_DOCUMENT_CODE, predecessor.getDocumentCode(),
+                    ATTR_SUCCESSOR_REGISTRAR_CODE, successor.getRegistrarCode().toString(),
+                    ATTR_SUCCESSOR_DOCUMENT_CODE, successor.getDocumentCode());
+            DaoOperation operation = new NoResultOperation(st);
+            runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            // cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Cannot delete predecessor - successor relation {0} - {1}", new Object[]{predecessor, successor});
+            throw new DatabaseException(ex);
+        }
+    }
+
+    @Override
     public void deleteSuccessors(UrnNbn urn) throws DatabaseException {
         try {
             final StatementWrapper st = new DeleteByStringString(SUCCESSOR_TABLE_NAME, ATTR_PRECESSOR_REGISTRAR_CODE, urn.getRegistrarCode()

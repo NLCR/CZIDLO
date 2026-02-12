@@ -90,6 +90,8 @@ public interface UrnNbnDAO {
     // only for tests, rollbacks
     public void deletePredecessors(UrnNbn urn) throws DatabaseException;
 
+    public void deletePredecessorSuccessorRelation(UrnNbn predecessor, UrnNbn successor) throws DatabaseException;
+
     // only for tests
     public void deleteSuccessors(UrnNbn urn) throws DatabaseException;
 

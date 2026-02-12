@@ -86,4 +86,28 @@ public interface DataUpdateService extends BusinessService {
      */
     public void reactivateUrnNbn(UrnNbn urn, String login) throws UnknownUserException, AccessException, UnknownDigDocException;
 
+    /**
+     * Adds relation predecessor-successor between two URN:NBNs.
+     *
+     * @param predecessor
+     * @param successor
+     * @param note
+     * @param login
+     * @throws UnknownUserException
+     * @throws NotAdminException
+     * @throws IncorrectPredecessorStatus
+     */
+    public void addRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String note, String login) throws UnknownUserException, NotAdminException, IncorrectPredecessorStatus;
+
+    /**
+     * Removes relation predecessor-successor between two URN:NBNs.
+     *
+     * @param predecessor
+     * @param successor
+     * @param login
+     * @throws UnknownUserException
+     * @throws NotAdminException
+     */
+    public void removeRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String login) throws UnknownUserException, NotAdminException;
+
 }

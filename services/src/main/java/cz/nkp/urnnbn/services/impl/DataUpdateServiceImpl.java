@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.AdminLogger;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
@@ -375,6 +376,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
                 AdminLogger.getLogger().info(String.format("User %s deactivated %s.", login, urn));
             }
         } catch (DatabaseException ex) {
+            ex.printStackTrace();
             throw new RuntimeException(ex);
         }
     }
@@ -388,6 +390,59 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             AdminLogger.getLogger().info(String.format("User %s reactivated %s.", login, urn));
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void addRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String note, String login) throws UnknownUserException, NotAdminException, IncorrectPredecessorStatus {
+        try {
+            authorization.checkAdmin(login);
+            checkPredecessorNotFreeOrReserved(predecessor);
+            factory.urnDao().insertUrnNbnPredecessor(predecessor, successor, note);
+        } catch (IncorrectPredecessorStatus e) {
+            LOGGER.log(Level.INFO, "predecessor {0} of {1} has incorrect status ({2}", new Object[]{predecessor, successor,
+                    e.getPredecessor().getStatus()});
+            throw e;
+        } catch (RecordNotFoundException e) {
+            LOGGER.log(Level.WARNING, "{0} or {1} doesn't exist", new Object[]{predecessor.toString(), successor.toString()});
+        } catch (AlreadyPresentException e) {
+            LOGGER.log(Level.WARNING, "Predecessor - successor relation {0} - {1} already present, ignoring", new Object[]{
+                    predecessor.toString(), successor.toString()});
+        } catch (DatabaseException e) {
+            LOGGER.log(Level.WARNING, "database  error while adding predecessor successor {0} - {1}: {2}", new Object[]{predecessor.toString(), successor.toString(), e.getMessage()});
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void checkPredecessorNotFreeOrReserved(UrnNbn urn) throws IncorrectPredecessorStatus, DatabaseException {
+        UrnNbn reserved = urnNbnReserved(urn);
+        if (reserved != null) {// URN:NBN is reserved
+            throw new IncorrectPredecessorStatus(new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.RESERVED, null));
+        }
+        try {
+            factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode());
+        } catch (RecordNotFoundException ex) {// URN:NBN is free
+            throw new IncorrectPredecessorStatus(new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.FREE, null));
+        }
+    }
+
+    private UrnNbn urnNbnReserved(UrnNbn urn) throws DatabaseException {
+        try {
+            return factory.urnReservedDao().getUrn(urn.getRegistrarCode(), urn.getDocumentCode());
+            // when RecordNotFound is not thrown the urn:nbn is reserved
+        } catch (RecordNotFoundException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public void removeRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String login) throws UnknownUserException, NotAdminException {
+        try {
+            authorization.checkAdmin(login);
+            factory.urnDao().deletePredecessorSuccessorRelation(predecessor, successor);
+        } catch (DatabaseException e) {
+            LOGGER.log(Level.WARNING, "database  error while adding predecessor successor {0} - {1}: {2}", new Object[]{predecessor.toString(), successor.toString(), e.getMessage()});
+            throw new RuntimeException(e);
         }
     }
 

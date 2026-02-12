@@ -302,6 +302,136 @@ public class DocumentsResource extends AbstractResource {
     }
 
     @Operation(
+            summary = "Add predecessor for this document thus deactivating the predecessor",
+            tags = "Documents",
+            description = "Adds predecessor for document with given URN:NBN and deactivates the predecessor if not already deactivated.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Predecessor -> successor relation created"),
+                    @ApiResponse(responseCode = "400", description = "Invalid URN:NBN format or predecessor not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Not an admin",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "One of the digital documents not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "409", description = "Adding this relation would cause cycle in predecessor-successor relations",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @PUT
+    @Path("{urn}/predecessors")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response setPredecessor(
+            @Parameter(description = "URN:NBN identifier of the digital document", required = true)
+            @PathParam("urn") String urn, @RequestBody(
+                    content = @Content(schema = @Schema(implementation = PredecessorCreate.class)),
+                    description = "JSON object containing predecessor URN:NBN and note describing reason for setting predecessor",
+                    required = true
+            ) String body) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, BadArgumentException, ConflictException {
+        //authorization: must be admin
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin can setup predecessor - successor relation");
+        }
+
+        //parse successor from path
+        UrnNbn urnNbnSuccessor;
+        try {
+            urnNbnSuccessor = UrnNbn.valueOf(urn);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid URN:NBN format for " + urn + ": " + e.getMessage());
+        }
+        //parse mandatory body to json
+        if (body == null || body.isEmpty()) {
+            return mandatoryBodyMissingResponse();
+        }
+        JsonObject root;
+        try (JsonReader r = Json.createReader(new StringReader(body))) {
+            root = r.readObject();
+        }
+        //extract and validate parameters
+        if (!root.containsKey("predecessorUrnNbn")) {
+            throw new BadArgumentException("Missing mandatory parameter: predecessorUrnNbn");
+        }
+        String predecessorUrnNbnStr = readParam("predecessorUrnNbn", root::getString);
+        UrnNbn predecessor;
+        try {
+            predecessor = UrnNbn.valueOf(predecessorUrnNbnStr);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid URN:NBN format for " + predecessorUrnNbnStr + ": " + e.getMessage());
+        }
+        String note = null;
+        if (root.containsKey("note")) {
+            note = readParam("note", root::getString);
+        }
+        //check if not same URN:NBN
+        if (urnNbnSuccessor.equals(predecessor)) {
+            throw new BadArgumentException("Predecessor URN:NBN must be different from successor URN:NBN");
+        }
+
+        try {
+            documentManager.addPredecessorSuccessorRelation(predecessor, urnNbnSuccessor, note, user.getLogin());
+        } catch (IncorrectPredecessorStatus e) {
+            throw new BadRequestException("Incorrect predecessor status: " + e.getMessage());
+        }
+        return Response.ok().build();
+    }
+
+    @Operation(
+            summary = "Remove predecessor for this document",
+            tags = "Documents",
+            description = "Removes predecessor for document with given URN:NBN",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Predecessor -> successor relation removed"),
+                    @ApiResponse(responseCode = "400", description = "Invalid URN:NBN format",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Not an admin",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Digital document not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @DELETE
+    @Path("{urn}/predecessors/{predUrnNbn}")
+    public Response reactivateUrnNbn(
+            @Parameter(description = "URN:NBN of the successor", required = true)
+            @PathParam("urn") String successorUrnNbnStr,
+            @Parameter(description = "URN:NBN of the predecessor", required = true)
+            @PathParam("predUrnNbn") String predecessorUrnNbnStr
+    ) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin can perform this operation");
+        }
+
+        UrnNbn successorUrnNbn;
+        try {
+            successorUrnNbn = UrnNbn.valueOf(successorUrnNbnStr);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid URN:NBN format for " + successorUrnNbnStr + ": " + e.getMessage());
+        }
+
+        UrnNbn predecessorUrnNbn;
+        try {
+            predecessorUrnNbn = UrnNbn.valueOf(predecessorUrnNbnStr);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid URN:NBN format for " + predecessorUrnNbnStr + ": " + e.getMessage());
+        }
+        documentManager.removePredecessorSuccessorRelation(predecessorUrnNbn, successorUrnNbn, user.getLogin());
+        return Response.ok().build();
+    }
+
+    @Operation(
             summary = "Create digital instance",
             tags = "Documents",
             description = "Creates new digital instance linked to document identified by the given URN:NBN.",
@@ -405,6 +535,9 @@ public class DocumentsResource extends AbstractResource {
 
     record InstanceCreate(@NotNull String url, @NotNull Long libraryId, String format, String accessibility,
                           String accessRestriction) {
+    }
+
+    record PredecessorCreate(@NotNull String predecessorUrnNbn, String note) {
     }
 
 }

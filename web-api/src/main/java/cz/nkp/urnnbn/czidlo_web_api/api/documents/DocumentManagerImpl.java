@@ -7,6 +7,7 @@ import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.Archiver;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.ConflictException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
@@ -17,6 +18,7 @@ import jakarta.ws.rs.BadRequestException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class DocumentManagerImpl implements DocumentManager {
 
@@ -175,6 +177,83 @@ public class DocumentManagerImpl implements DocumentManager {
             throw new UnknownRecordException("Unknown intellectual entity: " + e.getMessage());
         } catch (UnknownDigDocException e) {
             throw new UnknownRecordException("Unknown digital document: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void addPredecessorSuccessorRelation(UrnNbn predecessorIn, UrnNbn successorIn, String note, String login) throws UnknownRecordException, InsufficientRightsException, IncorrectPredecessorStatus, ConflictException {
+        UrnNbnWithStatus predecessorWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(predecessorIn.getRegistrarCode(), predecessorIn.getDocumentCode(), true);
+        UrnNbnWithStatus successorWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(successorIn.getRegistrarCode(), successorIn.getDocumentCode(), true);
+        UrnNbn predecessor = predecessorWithStatus.getUrn();
+        UrnNbn successor = successorWithStatus.getUrn();
+        detectCycle(predecessorWithStatus, successorWithStatus);
+        switch (predecessorWithStatus.getStatus()) {
+            case FREE:
+            case RESERVED:
+                throw new UnknownRecordException("document " + predecessor + " not found");
+        }
+        switch (successorWithStatus.getStatus()) {
+            case FREE:
+            case RESERVED:
+                throw new UnknownRecordException("document " + successor + " not found");
+        }
+        try {
+            dataUpdateService().addRelationPredecessorSuccessor(predecessor, successor, note, login);
+            dataUpdateService().deactivateUrnNbn(predecessor, login, null);
+        } catch (UnknownUserException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (NotAdminException e) {
+            throw new InsufficientRightsException("Insufficient rights: " + e.getMessage());
+        } catch (AccessException e) {
+            throw new InsufficientRightsException("Insufficient rights: " + e.getMessage());
+        } catch (UnknownDigDocException e) {
+            throw new UnknownRecordException("Unknown digital document: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Checks that adding new predecessor -> successor relation doesn't create a cycle in predecessor -> successor relations graph.
+     * Example: U -> u1 -> u2 -> ... -> un -> P. Now adding P -> U would create a cycle.
+     *
+     * @param newPredecessor the predecessor that would be added to urnNbn
+     * @param urnNbn         the successor to which newPredecessor would be added as predecessor
+     * @throws BadArgumentException if there would be a cycle
+     */
+    private void detectCycle(UrnNbnWithStatus newPredecessor, UrnNbnWithStatus urnNbn) throws ConflictException {
+        System.out.println("Searching for " + urnNbn.getUrn() + " -> ... -> " + newPredecessor.getUrn());
+        List<UrnNbnWithStatus> toBeChecked = new ArrayList<>();
+        toBeChecked.add(newPredecessor);
+        while (!toBeChecked.isEmpty()) {
+            UrnNbnWithStatus next = toBeChecked.removeFirst();
+            if (next != null) {
+                //System.out.println("checking: " + next.getUrn());
+                //make sure that predecessors are always loaded
+                next = dataAccessService().urnByRegistrarCodeAndDocumentCode(next.getUrn().getRegistrarCode(), next.getUrn().getDocumentCode(), true);
+                List<UrnNbnWithStatus> predecessors = next.getUrn().getPredecessors();
+                //System.out.println(next.getUrn() + " predecessors: " + predecessors);
+                if (predecessors != null) {
+                    toBeChecked.addAll(predecessors);
+                }
+                if (next.getUrn().equals(urnNbn.getUrn())) {
+                    System.out.println("CYCLE DETECTED: " + urnNbn.getUrn() + " is already a predecessor of " + newPredecessor.getUrn());
+                    //cycle detected
+                    throw new ConflictException("Adding predeccessor->successor relation " + newPredecessor.getUrn() + " -> " + urnNbn.getUrn() + " would create a cycle in predecessor-successor relation graph");
+                }
+            } else {
+                //System.out.println("next is null");
+            }
+        }
+    }
+
+    @Override
+    public void removePredecessorSuccessorRelation(UrnNbn predecessor, UrnNbn successor, String login) throws UnknownRecordException, InsufficientRightsException {
+        try {
+            dataUpdateService().removeRelationPredecessorSuccessor(predecessor, successor, login);
+        } catch (UnknownUserException e) {
+            throw new UnknownRecordException("Unknown digital document: " + e.getMessage());
+        } catch (NotAdminException e) {
+            throw new InsufficientRightsException("Insufficient rights: " + e.getMessage());
         }
     }
 
