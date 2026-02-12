@@ -67,11 +67,11 @@ public class MetadataStructureEnforcer {
 
     private void checkDigitalDocument() throws MetadataStructureException {
         DigitalDocument digDoc = data.getDigitalDocument();
-        //TODO: format and version should be mandatory?
+        //eventually nothing from technical metadata is mandator
         //https://github.com/NLCR/czidlo-frontend/issues/18#issuecomment-3854064777
-        if (digDoc.getFormat() == null || digDoc.getFormat().isEmpty()) {
+        /*if (digDoc.getFormat() == null || digDoc.getFormat().isEmpty()) {
             throw new MetadataStructureException("Digital document format is required.");
-        }
+        }*/
     }
 
     private void checkSourceDocumentForAnalytical() throws MetadataStructureException {
