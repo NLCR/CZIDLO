@@ -80,33 +80,33 @@ public abstract class AbstractDigitalDocumentResource extends ApiResource {
             }
         }
         switch (action) {
-        case DECIDE:
-            // pokud se najde vhodna digitalni instance, je presmerovano
-            // preferuje se dig. inst. z nektere dig. knihovny registratora, kteremu patri katalog, jehoz prefix se shoduje s refererem
-            // jinak se pouzije jakakoliv jina (aktivni) digitalni instance
-            // pokud neni digitalni instance nalezena, zobrazi se zaznam DD
-            URI digitalInstance = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
-            if (digitalInstance != null) {
-                return redirectResponse(digitalInstance);
-            } else {
-                return showRecordResponse(format, request, withDigitalInstances);
-            }
-        case REDIRECT:
-            URI uriByReferer = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
-            if (uriByReferer != null) {
-                return redirectResponse(uriByReferer);
-            } else {
-                URI anyInstanceUri = getAnyActiveDigInstanceUri();
-                if (anyInstanceUri != null) {
-                    return redirectResponse(anyInstanceUri);
-                } else {// no digital instance found
-                    throw new UnknownDigitalInstanceException();
+            case DECIDE:
+                // pokud se najde vhodna digitalni instance, je presmerovano
+                // preferuje se dig. inst. z nektere dig. knihovny registratora, kteremu patri katalog, jehoz prefix se shoduje s refererem
+                // jinak se pouzije nejstarsi digitalni instance
+                // pokud neni digitalni instance nalezena, zobrazi se zaznam DD
+                URI digitalInstance = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
+                if (digitalInstance != null) {
+                    return redirectResponse(digitalInstance);
+                } else {
+                    return showRecordResponse(format, request, withDigitalInstances);
                 }
-            }
-        case SHOW:
-            return showRecordResponse(format, request, withDigitalInstances);
-        default:
-            return recordXmlResponse(withDigitalInstances);
+            case REDIRECT:
+                URI uriByReferer = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
+                if (uriByReferer != null) {
+                    return redirectResponse(uriByReferer);
+                } else {
+                    URI anyInstanceUri = getAnyActiveDigInstanceUri();
+                    if (anyInstanceUri != null) {
+                        return redirectResponse(anyInstanceUri);
+                    } else {// no digital instance found
+                        throw new UnknownDigitalInstanceException();
+                    }
+                }
+            case SHOW:
+                return showRecordResponse(format, request, withDigitalInstances);
+            default:
+                return recordXmlResponse(withDigitalInstances);
         }
     }
 
@@ -122,15 +122,27 @@ public abstract class AbstractDigitalDocumentResource extends ApiResource {
 
     private URI getDigInstUriOrNull(String refererUrl) {
         try {
-            List<DigitalInstance> allDigitalInstanceds = dataAccessService().digInstancesByDigDocId(doc.getId());
-            DigitalInstance instanceByReferer = digInstanceByReferer(allDigitalInstanceds, refererUrl);
-            if (instanceByReferer != null) { // prefered uri found
+            List<DigitalInstance> allDigitalInstances = dataAccessService().digInstancesByDigDocId(doc.getId());
+            DigitalInstance instanceByReferer = digInstanceByReferer(allDigitalInstances, refererUrl);
+            if (instanceByReferer != null) { // preferred uri found
                 return toUri(instanceByReferer.getUrl());
-            } else { // return any uri
-                for (DigitalInstance instance : allDigitalInstanceds) {
+            } else { // return oldest active digital instance
+                DigitalInstance oldestActive = null;
+                for (DigitalInstance instance : allDigitalInstances) {
                     if (instance.isActive()) {
-                        return toUri(instance.getUrl());
+                        if (oldestActive == null) {
+                            //System.out.println("First active instance found: " + instance.getUrl() + " created: " + instance.getCreated());
+                            oldestActive = instance;
+                        } else if (instance.getCreated().isBefore(oldestActive.getCreated())) {
+                            oldestActive = instance;
+                        } else {
+                            //System.out.println("Active instance found: " + instance.getUrl() + " but IGNORED, " +
+                            //       "because created: " + instance.getCreated() + ", which is not older than: " + oldestActive.getUrl() + " created: " + oldestActive.getCreated());
+                        }
                     }
+                }
+                if (oldestActive != null) {
+                    return toUri(oldestActive.getUrl());
                 }
             }
             return null;
@@ -191,12 +203,12 @@ public abstract class AbstractDigitalDocumentResource extends ApiResource {
 
     private Response showRecordResponse(ResponseFormat format, HttpServletRequest request, boolean withDigitalInstances) {
         switch (format) {
-        case HTML:
-            return redirectResponse(webModuleUri(request));
-        case XML:
-            return recordXmlResponse(withDigitalInstances);
-        default:
-            throw new InvalidQueryParamValueException(PARAM_FORMAT, format.toString(), "");
+            case HTML:
+                return redirectResponse(webModuleUri(request));
+            case XML:
+                return recordXmlResponse(withDigitalInstances);
+            default:
+                throw new InvalidQueryParamValueException(PARAM_FORMAT, format.toString(), "");
         }
     }
 
