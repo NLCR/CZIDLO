@@ -29,6 +29,7 @@ public abstract class ApplicationConfiguration {
     private String adminName;
     private String adminEmail;
     private File adminLogFile;
+    private IndexerConfig indexerConfig;
 
     public void initialize(String webAppName, PropertyLoader loader) throws IOException {
         appLogger.fine("Loading configuration");
@@ -48,7 +49,7 @@ public abstract class ApplicationConfiguration {
         }
         //indexer
         boolean initIndexer = loader.loadBoolean("indexer.enabled", true);
-        IndexerConfig indexerConfig = initIndexer ? new IndexerConfig() : null;
+        this.indexerConfig = initIndexer ? new IndexerConfig() : null;
         if (!initIndexer) {
             appLogger.log(Level.WARNING, "Indexer will not be initialized");
         } else {
@@ -95,5 +96,9 @@ public abstract class ApplicationConfiguration {
 
     public File getAdminLogFile() {
         return adminLogFile;
+    }
+
+    public IndexerConfig getIndexerConfig() {
+        return indexerConfig;
     }
 }
