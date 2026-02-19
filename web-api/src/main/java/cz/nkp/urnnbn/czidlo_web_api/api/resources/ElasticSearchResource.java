@@ -41,7 +41,7 @@ public class ElasticSearchResource extends AbstractResource {
             tags = "Elastic",
             description = "Searches in ElasticSearch, index SEARCH. The request body must contain valid ElasticSearch query in JSON format. The response contains search results in the same format as returned by ElasticSearch.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Search results",
+                    @ApiResponse(responseCode = "200", description = "Search results for index SEARCH",
                             content = @Content()),
                     @ApiResponse(responseCode = "400", description = "Invalid input data in request body",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
@@ -55,14 +55,13 @@ public class ElasticSearchResource extends AbstractResource {
     @Path("/index_search/_search")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response search(
+    public Response searchIndexSearch(
             @RequestBody(
                     content = @Content(),
                     description = "Query data",
                     required = true
             ) String body) throws UnauthorizedException, BadArgumentException {
-        //authorization: even unauthenticated user can search
-        //requireUserPrincipal(securityContext);
+        //authorization: none - even unauthenticated user can search
 
         //check mandatory body and that it is valid JSON
         if (body == null || body.isEmpty()) {
@@ -72,6 +71,82 @@ public class ElasticSearchResource extends AbstractResource {
 
         //System.out.println("Received ElasticSearch query: " + root);
         String index = indexerConfig().getEsApiIndexSearchName();
+        return makeEsPostRequest(index, body);
+    }
+
+    @Operation(
+            summary = "Query RESOLVE index",
+            tags = "Elastic",
+            description = "Searches in ElasticSearch, index RESOLVE. The request body must contain valid ElasticSearch query in JSON format. The response contains search results in the same format as returned by ElasticSearch.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Search results for index RESOLVE",
+                            content = @Content()),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data in request body",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @POST
+    @Path("/index_resolve/_search")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchIndexResolve(
+            @RequestBody(
+                    content = @Content(),
+                    description = "Query data",
+                    required = true
+            ) String body) throws UnauthorizedException, BadArgumentException {
+        //authorization: none - even unauthenticated user can search
+
+        //check mandatory body and that it is valid JSON
+        if (body == null || body.isEmpty()) {
+            return mandatoryBodyMissingResponse();
+        }
+        checkBodyIsJson(body);
+
+        //System.out.println("Received ElasticSearch query: " + root);
+        String index = indexerConfig().getEsApiIndexResolveName();
+        return makeEsPostRequest(index, body);
+    }
+
+    @Operation(
+            summary = "Query ASSIGN index",
+            tags = "Elastic",
+            description = "Searches in ElasticSearch, index ASSIGN. The request body must contain valid ElasticSearch query in JSON format. The response contains search results in the same format as returned by ElasticSearch.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Search results for index ASSIGN",
+                            content = @Content()),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data in request body",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @POST
+    @Path("/index_assign/_search")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchIndexAssign(
+            @RequestBody(
+                    content = @Content(),
+                    description = "Query data",
+                    required = true
+            ) String body) throws UnauthorizedException, BadArgumentException {
+        //authorization: none - even unauthenticated user can search
+
+        //check mandatory body and that it is valid JSON
+        if (body == null || body.isEmpty()) {
+            return mandatoryBodyMissingResponse();
+        }
+        checkBodyIsJson(body);
+
+        //System.out.println("Received ElasticSearch query: " + root);
+        String index = indexerConfig().getEsApiIndexAssignName();
         return makeEsPostRequest(index, body);
     }
 
