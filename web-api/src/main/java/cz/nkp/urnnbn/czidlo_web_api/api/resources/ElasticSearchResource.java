@@ -37,6 +37,44 @@ public class ElasticSearchResource extends AbstractResource {
     private SecurityContext securityContext;
 
     @Operation(
+            summary = "Query SEARCH index and return only count of matching documents",
+            tags = "Elastic",
+            description = "Searches in ElasticSearch, index SEARCH. The request body must contain valid ElasticSearch query in JSON format. The response contains only the count of matching documents, in the same format as returned by ElasticSearch _count API.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Number of search results for index SEARCH",
+                            content = @Content()),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data in request body",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @POST
+    @Path("/index_search/_count")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response indexSearchCount(
+            @RequestBody(
+                    content = @Content(),
+                    description = "Query data",
+                    required = false
+            ) String body) throws UnauthorizedException, BadArgumentException {
+        //authorization: none - even unauthenticated user can search
+
+        //if body is empty, it means "match all documents", which is valid for ElasticSearch _count API, so we allow empty body. But if body is present, it must be valid JSON.
+        if (body != null && !body.isBlank()) {
+            checkBodyIsJson(body);
+        }
+
+        //System.out.println("Received ElasticSearch query: " + body);
+        String index = indexerConfig().getEsApiIndexSearchName();
+        return makeEsPostCountRequest(index, body);
+    }
+
+
+    @Operation(
             summary = "Query SEARCH index",
             tags = "Elastic",
             description = "Searches in ElasticSearch, index SEARCH. The request body must contain valid ElasticSearch query in JSON format. The response contains search results in the same format as returned by ElasticSearch.",
@@ -55,7 +93,7 @@ public class ElasticSearchResource extends AbstractResource {
     @Path("/index_search/_search")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchIndexSearch(
+    public Response indexSearchSearch(
             @RequestBody(
                     content = @Content(),
                     description = "Query data",
@@ -69,9 +107,8 @@ public class ElasticSearchResource extends AbstractResource {
         }
         checkBodyIsJson(body);
 
-        //System.out.println("Received ElasticSearch query: " + root);
         String index = indexerConfig().getEsApiIndexSearchName();
-        return makeEsPostRequest(index, body);
+        return makeEsPostSearchRequest(index, body);
     }
 
     @Operation(
@@ -93,7 +130,7 @@ public class ElasticSearchResource extends AbstractResource {
     @Path("/index_resolve/_search")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchIndexResolve(
+    public Response indexResolveSearch(
             @RequestBody(
                     content = @Content(),
                     description = "Query data",
@@ -107,9 +144,8 @@ public class ElasticSearchResource extends AbstractResource {
         }
         checkBodyIsJson(body);
 
-        //System.out.println("Received ElasticSearch query: " + root);
         String index = indexerConfig().getEsApiIndexResolveName();
-        return makeEsPostRequest(index, body);
+        return makeEsPostSearchRequest(index, body);
     }
 
     @Operation(
@@ -131,7 +167,7 @@ public class ElasticSearchResource extends AbstractResource {
     @Path("/index_assign/_search")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchIndexAssign(
+    public Response indexAssignSearch(
             @RequestBody(
                     content = @Content(),
                     description = "Query data",
@@ -145,16 +181,15 @@ public class ElasticSearchResource extends AbstractResource {
         }
         checkBodyIsJson(body);
 
-        //System.out.println("Received ElasticSearch query: " + root);
         String index = indexerConfig().getEsApiIndexAssignName();
-        return makeEsPostRequest(index, body);
+        return makeEsPostSearchRequest(index, body);
     }
 
     private IndexerConfig indexerConfig() {
         return WebApiModuleConfiguration.instanceOf().getIndexerConfig();
     }
 
-    private Response makeEsPostRequest(String esIndex, String body) {
+    private Response makeEsPostSearchRequest(String esIndex, String body) {
         String esBaseUrl = indexerConfig().getEsApiBaseUrl();
         if (esBaseUrl == null || esBaseUrl.isBlank()) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -179,6 +214,65 @@ public class ElasticSearchResource extends AbstractResource {
                 .header("Authorization", basicAuthHeader())
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
+
+        HttpResponse<String> esResp;
+        try {
+            esResp = client.send(req, HttpResponse.BodyHandlers.ofString());
+        } catch (java.net.http.HttpTimeoutException e) {
+            return Response.status(Response.Status.BAD_GATEWAY)
+                    .entity("{\"message\":\"Elasticsearch timeout\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_GATEWAY)
+                    .entity("{\"message\":\"Elasticsearch request failed\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+
+        int status = esResp.statusCode();
+        String respBody = esResp.body() == null ? "" : esResp.body();
+
+        return Response.status(status)
+                .entity(respBody)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+
+    private Response makeEsPostCountRequest(String esIndex, String body) {
+        String esBaseUrl = indexerConfig().getEsApiBaseUrl();
+        if (esBaseUrl == null || esBaseUrl.isBlank()) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"message\":\"ES_BASE_URL is not configured\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+        if (esIndex == null || esIndex.isBlank()) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"message\":\"ES_INDEX is not configured\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+        URI target = URI.create(esBaseUrl + "/" + esIndex + "/_count");
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(3))
+                .build();
+
+        HttpRequest.Builder reqBuilder = HttpRequest.newBuilder(target)
+                .timeout(Duration.ofSeconds(15))
+                .header("Authorization", basicAuthHeader());
+
+        if (body != null && !body.isBlank()) {
+            //ElasticSearch _count API allows empty body, which means "match all documents". In that case we can send an empty body instead of "{}"
+            reqBuilder = reqBuilder
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.noBody());
+        } else {
+            reqBuilder = reqBuilder.GET();
+        }
+
+        HttpRequest req = reqBuilder.build();
 
         HttpResponse<String> esResp;
         try {
