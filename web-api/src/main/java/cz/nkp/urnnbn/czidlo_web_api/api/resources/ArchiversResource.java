@@ -77,9 +77,11 @@ public class ArchiversResource extends AbstractResource {
         }
 
         String name = readParam("name", root::getString);
+        checkArchiverName(name);
         String desc = null;
         if (root.containsKey("description")) {
             desc = readParam("description", root::getString);
+            checkArchiverDescription(desc);
         }
 
         Archiver a = archiverManager.createArchiver(user.getLogin(), name, desc);
@@ -138,7 +140,7 @@ public class ArchiversResource extends AbstractResource {
                     @ApiResponse(
                             responseCode = "200", description = "Success",
                             content = @Content(schema = @Schema(implementation = Archiver.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied or invalid archiver params",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
@@ -177,9 +179,11 @@ public class ArchiversResource extends AbstractResource {
         }
 
         String name = readParam("name", root::getString);
+        checkArchiverName(name);
         String desc = null;
         if (root.containsKey("description")) {
             desc = readParam("description", root::getString);
+            checkArchiverDescription(desc);
         }
         boolean hidden = readParam("hidden", root::getBoolean);
 
@@ -225,6 +229,24 @@ public class ArchiversResource extends AbstractResource {
     }
 
     record ArchiverUpdate(@NotNull String name, String description, @NotNull boolean hidden) {
+    }
+
+    private void checkArchiverName(String name) throws BadArgumentException {
+        //must not be null or empty
+        if (name == null || name.isEmpty()) {
+            throw new BadArgumentException("Invalid name: " + name + ". Must not be null or empty");
+        }
+        //max length = 100
+        if (name.length() > 100) {
+            throw new BadArgumentException("Invalid name: " + name + ". Max length is 50 characters");
+        }
+    }
+
+    private void checkArchiverDescription(String desc) throws BadArgumentException {
+        //max length = 200
+        if (desc != null && desc.length() > 200) {
+            throw new BadArgumentException("Invalid description: " + desc + ". Max length is 200 characters");
+        }
     }
 
 }

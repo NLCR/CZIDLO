@@ -90,8 +90,8 @@ public class RegistrarsResource extends AbstractResource {
         String desc = null;
         if (root.containsKey("description")) {
             desc = readParam("description", root::getString);
+            checkRegistrarDescription(desc);
         }
-        checkRegistrarDescription(desc);
         Boolean allowedRegistrationModeByResolver = readParam("allowedRegistrationModeByResolver", root::getBoolean);
         Boolean allowedRegistrationModeByReservation = readParam("allowedRegistrationModeByReservation", root::getBoolean);
         Boolean allowedRegistrationModeByRegistrar = readParam("allowedRegistrationModeByRegistrar", root::getBoolean);
@@ -196,8 +196,8 @@ public class RegistrarsResource extends AbstractResource {
         String desc = null;
         if (root.containsKey("description")) {
             desc = readParam("description", root::getString);
+            checkRegistrarDescription(desc);
         }
-        checkRegistrarDescription(desc);
         Boolean allowedRegistrationModeByResolver = readParam("allowedRegistrationModeByResolver", root::getBoolean);
         Boolean allowedRegistrationModeByReservation = readParam("allowedRegistrationModeByReservation", root::getBoolean);
         Boolean allowedRegistrationModeByRegistrar = readParam("allowedRegistrationModeByRegistrar", root::getBoolean);
@@ -601,8 +601,8 @@ public class RegistrarsResource extends AbstractResource {
         if (name == null || name.isEmpty()) {
             throw new BadArgumentException("Invalid name: " + name + ". Must not be null or empty");
         }
-        //max length = 50
-        if (name.length() > 50) {
+        //max length = 100
+        if (name.length() > 100) {
             throw new BadArgumentException("Invalid name: " + name + ". Max length is 50 characters");
         }
     }
