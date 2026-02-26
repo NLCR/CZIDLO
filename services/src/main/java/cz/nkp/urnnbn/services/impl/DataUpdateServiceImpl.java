@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import cz.nkp.urnnbn.core.AdminLogger;
+import cz.nkp.urnnbn.core.AdminLoggerSimple;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -84,7 +84,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         builder.append(String.format(", %s", urn));
         builder.append(String.format(", created: %s", formatDateTime(id.getCreated())));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -93,7 +93,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             authorization.checkRegistrarRightsOrAdmin(doc.getRegistrarId(), login);
             factory.documentDao().updateDocument(doc);
             UrnNbn urn = factory.urnDao().getUrnNbnByDigDocId(doc.getId());
-            AdminLogger.getLogger().info(String.format("User %s updated digital-document of %s.", login, urn));
+            AdminLoggerSimple.info(String.format("User %s updated digital-document of %s.", login, urn));
             reindexDigitalDocument(doc.getId(), urn);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -135,7 +135,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         builder.append(String.format(", registration modes: %s", registrar.modesToHumanReadableString()));
         builder.append(String.format(", created: %s", formatDateTime(registrar.getCreated())));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -167,7 +167,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         }
         builder.append(String.format(", created: %s", formatDateTime(archiver.getCreated())));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -206,7 +206,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         }
         builder.append(String.format(", created: %s", formatDateTime(library.getCreated())));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -242,7 +242,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         builder.append(String.format(", url prefix: %s", catalog.getUrlPrefix()));
         builder.append(String.format(", created: %s", formatDateTime(catalog.getCreated())));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -274,7 +274,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             throw new RuntimeException(e);
         }
         new IntelectualEntityUpdater(factory, esIndexer).run(entity, originator, publication, srcDoc, identifiers, urn, digDocId);
-        AdminLogger.getLogger().info(String.format("User %s updated intelectual-entity of %s.", login, urn));
+        AdminLoggerSimple.info(String.format("User %s updated intelectual-entity of %s.", login, urn));
     }
 
     @Override
@@ -328,7 +328,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         builder.append(String.format(", created: %s", formatDateTime(user.getCreated())));
         builder.append(String.format(", modified: %s", formatDateTime(user.getModified())));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -371,9 +371,9 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             }
             factory.urnDao().deactivateUrnNbn(urn.getRegistrarCode(), urn.getDocumentCode(), note);
             if (note != null) {
-                AdminLogger.getLogger().info(String.format("User %s deactivated %s with note: %s.", login, urn, note));
+                AdminLoggerSimple.info(String.format("User %s deactivated %s with note: %s.", login, urn, note));
             } else {
-                AdminLogger.getLogger().info(String.format("User %s deactivated %s.", login, urn));
+                AdminLoggerSimple.info(String.format("User %s deactivated %s.", login, urn));
             }
         } catch (DatabaseException ex) {
             ex.printStackTrace();
@@ -387,7 +387,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             long registrarId = registrarOfDigDoc(urn.getDigDocId());
             authorization.checkRegistrarRights(registrarId, login);
             factory.urnDao().reactivateUrnNbn(urn.getRegistrarCode(), urn.getDocumentCode());
-            AdminLogger.getLogger().info(String.format("User %s reactivated %s.", login, urn));
+            AdminLoggerSimple.info(String.format("User %s reactivated %s.", login, urn));
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -487,6 +487,6 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         builder.append(String.format(", library: %s", lib.getName()));
         builder.append(String.format(", created: %s", formatDateTime(instance.getCreated())));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 }

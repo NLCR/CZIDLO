@@ -16,7 +16,7 @@
  */
 package cz.nkp.urnnbn.processmanager.control;
 
-import cz.nkp.urnnbn.core.AdminLogger;
+import cz.nkp.urnnbn.core.AdminLoggerSimple;
 import cz.nkp.urnnbn.processmanager.conf.Configuration;
 import cz.nkp.urnnbn.processmanager.core.Process;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
@@ -143,7 +143,7 @@ public class ProcessManagerImpl implements ProcessManager {
                 process.getId()));
         builder.append(String.format(", parameters: %s", paramsToString(process.getType(), process.getParams())));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     private String paramsToString(ProcessType processType, String[] params) {
@@ -555,7 +555,7 @@ public class ProcessManagerImpl implements ProcessManager {
         builder.append(String.format("Canceled process %s of user %s with id: %d", process.getType().toString(), process.getOwnerLogin(),
                 process.getId()));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     private boolean removeFromQueueSynchronized(Queue<Process> queue, Process processToBeRemoved, String queueName) {
@@ -613,7 +613,7 @@ public class ProcessManagerImpl implements ProcessManager {
 
     private void logProcessDeleted(Process process, Long processId) {
         String log = String.format("Deleted process %s of user %s with id: %d.", process.getType(), process.getOwnerLogin(), processId);
-        AdminLogger.getLogger().info(log);
+        AdminLoggerSimple.info(log);
     }
 
     public void shutdown() {

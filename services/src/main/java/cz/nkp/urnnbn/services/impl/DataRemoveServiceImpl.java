@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import cz.nkp.urnnbn.core.AdminLogger;
+import cz.nkp.urnnbn.core.AdminLoggerSimple;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -62,7 +62,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     }
 
     private void logRegistrarScopeIdsDeleted(String login, UrnNbn urn) {
-        AdminLogger.getLogger().info(String.format("User %s deleted all registrar-scope-ids of %s.", login, urn));
+        AdminLoggerSimple.info(String.format("User %s deleted all registrar-scope-ids of %s.", login, urn));
     }
 
     @Override
@@ -131,7 +131,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             builder.append(String.format(", modified: %s", formatDateTime(id.getModified())));
         }
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -163,7 +163,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             builder.append(String.format(", modified: %s", formatDateTime(archiver.getCreated())));
         }
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -200,7 +200,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             builder.append(String.format(", modified: %s", formatDateTime(registrar.getModified())));
         }
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -244,7 +244,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             builder.append(String.format(", modified: %s", formatDateTime(library.getModified())));
         }
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -281,7 +281,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             builder.append(String.format(", modified: %s", formatDateTime(catalog.getModified())));
         }
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -308,7 +308,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             builder.append(String.format(", modified: %s", formatDateTime(user.getModified())));
         }
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -343,6 +343,6 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     private void logRegistrarRightRemoved(String login, User user, Registrar registrar) {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("User %s removed access-right for registrar %s from user %s.", login, registrar.getCode(), user.getLogin()));
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 }

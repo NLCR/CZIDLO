@@ -5,7 +5,7 @@
 package cz.nkp.urnnbn.webcommon.config;
 
 import cz.nkp.urnnbn.config.PropertyKeys;
-import cz.nkp.urnnbn.core.AdminLogger;
+import cz.nkp.urnnbn.core.AdminLoggerSimple;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import cz.nkp.urnnbn.services.Services;
@@ -43,7 +43,7 @@ public abstract class ApplicationConfiguration {
         adminLogFile = new File(loader.loadString(PropertyKeys.ADMIN_LOG_FILE));
         appLogger.log(Level.INFO, "initializing admin logger to file {0}", adminLogFile);
         try {
-            AdminLogger.initializeLogger(webAppName, adminLogFile);
+            AdminLoggerSimple.initializeLogger(webAppName, adminLogFile);
         } catch (Exception e) {
             appLogger.log(Level.SEVERE, "AdminLogger init failed", e);
         }

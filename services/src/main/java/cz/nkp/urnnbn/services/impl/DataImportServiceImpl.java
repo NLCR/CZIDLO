@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import cz.nkp.urnnbn.core.AdminLogger;
+import cz.nkp.urnnbn.core.AdminLoggerSimple;
 import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
@@ -46,7 +46,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         System.out.println("AdminLogger infoEnabled: " + l.isInfoEnabled());
         System.out.println("AdminLogger allAppenders: " + l.getAllAppenders().hasMoreElements());
         */
-        AdminLogger.getLogger().info(String.format("User %s registered digital-document to %s.", login, urnNbn));
+        AdminLoggerSimple.info(String.format("User %s registered digital-document to %s.", login, urnNbn));
         return urnNbn;
     }
 
@@ -70,8 +70,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
                 throw new UnknownDigLibException(instance.getLibraryId());
             }
             // admin log
-            AdminLogger.getLogger().info(
-                    String.format("User %s imported digital-instance with id: %d, %s, library: %s.", login, instance.getId(), urn, lib.getName()));
+            AdminLoggerSimple.info(String.format("User %s imported digital-instance with id: %d, %s, library: %s.", login, instance.getId(), urn, lib.getName()));
             return instance;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -145,7 +144,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         builder.append(String.format(", value: %s", id.getValue()));
         builder.append(String.format(", %s", urn));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -173,7 +172,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             builder.append(String.format(", description: %s", archiver.getDescription()));
         }
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -205,7 +204,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         }
         builder.append(String.format(", registration modes: %s", registrar.modesToHumanReadableString()));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -243,7 +242,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             builder.append(String.format(", url: %s", library.getUrl()));
         }
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -278,7 +277,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         }
         builder.append(String.format(", url prefix: %s", catalog.getUrlPrefix()));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -304,7 +303,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         builder.append(String.format(", email: %s", user.getEmail()));
         builder.append(String.format(", admin: %s", user.isAdmin()));
         builder.append(".");
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 
     @Override
@@ -340,6 +339,6 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     private void logRegistrarRightAssigned(String login, User user, Registrar registrar) {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("User %s assigned access-right for registrar %s to user %s.", login, registrar.getCode(), user.getLogin()));
-        AdminLogger.getLogger().info(builder);
+        AdminLoggerSimple.info(builder.toString());
     }
 }

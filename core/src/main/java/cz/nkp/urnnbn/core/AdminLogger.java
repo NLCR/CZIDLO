@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 
+/**
+ * @deprecated use cz.nkp.urnnbn.core.AdminLoggerSimple instead, which
+ */
 public class AdminLogger {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminLogger.class.getName());
     private static final Object LOCK = new Object();
@@ -20,6 +23,11 @@ public class AdminLogger {
     private static Appender appender;
 
     public static void initializeLogger(String loggerName, File loggerFile) throws IOException {
+        logger.info("AdminLogger CL=" + AdminLogger.class.getClassLoader());
+        logger.info("log4j Logger CL=" + org.apache.log4j.Logger.class.getClassLoader());
+        logger.info("AdminLogger code=" + AdminLogger.class.getProtectionDomain().getCodeSource().getLocation());
+        logger.info("log4j code=" + org.apache.log4j.Logger.class.getProtectionDomain().getCodeSource().getLocation());
+
         synchronized (LOCK) {
             String canonicalPath = canonicalPath(loggerFile);
             String appenderName = appenderName(loggerName, canonicalPath);
@@ -62,13 +70,15 @@ public class AdminLogger {
         }
     }
 
-    public static void shutdown() {
+    public static void _shutdown() {
+        logger.info("Shutting down admin logger");
         synchronized (LOCK) {
             try {
                 logger.info(() -> "Shutting down AdminLogger, logger=" + adminLogger + ", file=" + (adminLogFile == null ? "null" : adminLogFile.getAbsolutePath()));
                 if (adminLogger != null) {
                     // zavři jen to, co AdminLogger vytvořil
                     if (appender != null) {
+                        logger.info("Removing appender '" + appender.getName() + "' from logger '" + adminLogger.getName() + "' and closing it.");
                         adminLogger.removeAppender(appender);
                         safeClose(appender);
                     } else {
@@ -86,8 +96,50 @@ public class AdminLogger {
         }
     }
 
-    public static Logger getLogger() {
+    /*public static Logger getLogger() {
+        logger.info("AdminLogger CL=" + AdminLogger.class.getClassLoader());
+        logger.info("log4j Logger CL=" + org.apache.log4j.Logger.class.getClassLoader());
+        logger.info("AdminLogger code=" + AdminLogger.class.getProtectionDomain().getCodeSource().getLocation());
+        logger.info("log4j code=" + org.apache.log4j.Logger.class.getProtectionDomain().getCodeSource().getLocation());
+
+        logger.info(() -> "Fetching AdminLogger, logger=" + adminLogger.getName() + ", appender=" + (appender == null ? "null" : appender.getName()));
+        if (appender == null) {
+            logger.warning("No appender found for logger '" + adminLogger.getName() + "'");
+        }
         return adminLogger;
+    }*/
+
+    public static Logger _getLogger() {
+        logger.info("AdminLogger CL=" + AdminLogger.class.getClassLoader());
+        logger.info("log4j Logger CL=" + org.apache.log4j.Logger.class.getClassLoader());
+        logger.info("AdminLogger code=" + AdminLogger.class.getProtectionDomain().getCodeSource().getLocation());
+        logger.info("log4j code=" + org.apache.log4j.Logger.class.getProtectionDomain().getCodeSource().getLocation());
+
+        synchronized (LOCK) {
+            if (adminLogger == null) {
+                logger.warning("AdminLogger not initialized");
+                return Logger.getLogger("ADMIN-FALLBACK");
+            }
+
+            String expectedName = (appender != null ? appender.getName() : null);
+
+            Appender real = expectedName == null ? null : adminLogger.getAppender(expectedName);
+
+            if (real == null) {
+                logger.warning("AdminLogger appender is missing from logger at runtime; re-attaching");
+                // re-attach (nejjednodušší: znovu initializeLogger stejnými parametry)
+                try {
+                    initializeLogger(adminLogger.getName(), adminLogFile);
+                } catch (Exception e) {
+                    logger.warning("Failed to re-initialize AdminLogger: " + e.getMessage());
+                }
+            } else {
+                // refresh reference (kdyby log4j vrátil jiný wrapper)
+                appender = real;
+            }
+
+            return adminLogger;
+        }
     }
 
     public static File getLogFile() {
@@ -95,6 +147,7 @@ public class AdminLogger {
     }
 
     private static void closeOurAppenders(Logger l) {
+        logger.info("Closing existing AdminLogger appenders for logger '" + l.getName() + "' if any.");
         Enumeration<?> e = l.getAllAppenders();
         while (e != null && e.hasMoreElements()) {
             Object x = e.nextElement();
@@ -109,6 +162,7 @@ public class AdminLogger {
     }
 
     private static void safeClose(Appender ap) {
+        logger.info("Closing AdminLogger, logger=" + ap.getName() + ", appender=" + ap);
         try {
             ap.close();
         } catch (Exception ignored) {

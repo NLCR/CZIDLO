@@ -16,7 +16,7 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler;
 
-import cz.nkp.urnnbn.core.AdminLogger;
+import cz.nkp.urnnbn.core.AdminLoggerSimple;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.AbstractJob;
@@ -44,8 +44,7 @@ public class JobListenerImpl implements JobListener {
     private void logProcessStarted(JobDataMap processData, Long jobId) {
         ProcessType type = getProcessType(processData);
         String processOwner = getProcessOwner(processData);
-        String log = String.format("Started process %s of user %s with id: %d.", type.toString(), processOwner, jobId);
-        AdminLogger.getLogger().info(log);
+        AdminLoggerSimple.info(String.format("Started process %s of user %s with id: %d.", type.toString(), processOwner, jobId));
     }
 
     @Override
@@ -66,8 +65,7 @@ public class JobListenerImpl implements JobListener {
     private void logProcessFinished(JobDataMap processData, ProcessState finalState, Long jobId) {
         ProcessType type = getProcessType(processData);
         String processOwner = getProcessOwner(processData);
-        String log = String.format("Ended process %s of user %s with id: %d, state: %s.", type.toString(), processOwner, jobId, finalState);
-        AdminLogger.getLogger().info(log);
+        AdminLoggerSimple.info(String.format("Ended process %s of user %s with id: %d, state: %s.", type.toString(), processOwner, jobId, finalState));
     }
 
     private Long getJobId(JobExecutionContext context) {
