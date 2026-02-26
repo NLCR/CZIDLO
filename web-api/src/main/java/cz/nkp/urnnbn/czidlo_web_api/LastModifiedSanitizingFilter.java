@@ -76,7 +76,7 @@ public class LastModifiedSanitizingFilter implements ContainerResponseFilter {
         // 4) nastavíme novou hodnotu – RFC 1123, GMT, čisté ASCII
         ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
         String fixed = DateTimeFormatter.RFC_1123_DATE_TIME.format(now);
-        LOG.info("Last-Modified header value '" + originalValue + "' is not RFC 1123 compliant, replaced with '" + fixed + "'");
+        LOG.fine("Last-Modified header value '" + originalValue + "' is not RFC 1123 compliant, replaced with '" + fixed + "'");
         responseContext.getHeaders().add("Last-Modified", fixed);
     }
 }

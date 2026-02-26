@@ -2,9 +2,11 @@ package cz.nkp.urnnbn.czidlo_web_api.api.logs;
 
 import cz.nkp.urnnbn.czidlo_web_api.WebApiModuleConfiguration;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -60,7 +62,7 @@ public class SystemLogProviderImpl implements SystemLogProvider {
                 return "";
             }
 
-            StringBuilder lineBuilderReversed = new StringBuilder();
+            ByteArrayOutputStream lineBytesReversed = new ByteArrayOutputStream(256);
             long pos = fileLength - 1;
             boolean stopReading = false;
 
@@ -71,34 +73,40 @@ public class SystemLogProviderImpl implements SystemLogProvider {
 
                 if (b == '\n' || b == '\r') {
                     // máme jeden řádek (aktuálně poskládaný pozpátku)
-                    if (lineBuilderReversed.length() > 0) {
-                        String line = lineBuilderReversed.reverse().toString();
-                        lineBuilderReversed.setLength(0); // clear
-
-                        stopReading = processLine(line, linesFilteredAndReversed,
-                                maxLines, minDate, dayAfterMaxDate);
+                    if (lineBytesReversed.size() > 0) {
+                        String line = decodeReversedUtf8Line(lineBytesReversed);
+                        stopReading = processLine(line, linesFilteredAndReversed, maxLines, minDate, dayAfterMaxDate);
+                        lineBytesReversed.reset();
                     }
-                    // pokud je tam \r\n, další kolo cyklu se postará o druhý znak
+                    // \r\n vyřeší další iterace
                 } else {
-                    // přidáme znak do "reversed" řádku
-                    lineBuilderReversed.append((char) b);
+                    lineBytesReversed.write(b);
                 }
             }
 
             // poslední řádek (začátek souboru), pokud není ukončen newline
-            if (!stopReading && lineBuilderReversed.length() > 0) {
-                String line = lineBuilderReversed.reverse().toString();
-                processLine(line, linesFilteredAndReversed,
-                        maxLines, minDate, dayAfterMaxDate);
+            if (!stopReading && lineBytesReversed.size() > 0) {
+                String line = decodeReversedUtf8Line(lineBytesReversed);
+                processLine(line, linesFilteredAndReversed, maxLines, minDate, dayAfterMaxDate);
             }
         }
 
-        // převrátíme list, aby výsledek šel od nejstaršího k nejnovějšímu
         StringBuilder result = new StringBuilder();
         for (int i = linesFilteredAndReversed.size() - 1; i >= 0; i--) {
             result.append(linesFilteredAndReversed.get(i));
         }
         return result.toString();
+    }
+
+    private static String decodeReversedUtf8Line(ByteArrayOutputStream reversed) {
+        byte[] rev = reversed.toByteArray();
+        // otočit bajty do správného pořadí
+        for (int i = 0, j = rev.length - 1; i < j; i++, j--) {
+            byte tmp = rev[i];
+            rev[i] = rev[j];
+            rev[j] = tmp;
+        }
+        return new String(rev, StandardCharsets.UTF_8);
     }
 
     /**
