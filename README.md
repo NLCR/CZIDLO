@@ -1,11 +1,11 @@
-README file for CZIDLO v5.0
+README file for CZIDLO v6.0
 
 Copyright (C) 2013-2018 Martin Řehánek
 
 
 #####################################
 #####################################
-#         CZIDLO version 5.0        #
+#         CZIDLO version 6.0        #
 #####################################
 #####################################
 
@@ -101,6 +101,13 @@ Version 4.6.1
 Version 5.0
 - see https://github.com/NLCR/CZIDLO/wiki/P%C5%99ehled-zm%C4%9Bn#50
 
+Version 6.0
+- new component web-api for new frontend application
+- statistics data are now stored in Elasticsearch instead of database
+- processes updated
+- oai-pmh provider updated to handle some limited harvesting
+- update of multiple dependencies
+- some bug fixes and minor improvements
 
 ##################
 ## Installation ##
@@ -118,7 +125,7 @@ This archive should contain following files:
 - `api.war` - API module
 - `oaiPmhProvider.war` - OAI-PMH provider module
 - `processDataServer.war` - application to access logs and outputs of processes
-- `initDatabase_5.0.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
+- `initDatabase_6.0.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
 - `updateDatabase-2.0-2.2_to_2.3-3.0.sql` - sql script for upgrading core database (from CZIDLO versions 2.0, 2.1 or 2.2 to versions 2.3, 2.4 or 3.0)
 - `updateDatabase-2.3-3.0_to_4.1.sql` - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to version 4.1)
 - `updateDatabase_4.1_to_4.2.2.sql` - sql script for updating core database (from version 4.1 to version 4.2.2).
@@ -127,6 +134,7 @@ This archive should contain following files:
 - `updateDatabase_4.3_to_4.4-4.6.sql` - sql script for updating core database (from version 4.3 to versions 4.4, 4.4.1, 4.5 and 4.6).
 - `updateDatabase_4.4-4.6_to_4.6.1.sql` - sql script for updating core database (from versions versions 4.4, 4.4.1, 4.5 and 4.6 to version 4.6.1).
 - `updateDatabase_4.6.1_to_5.0.sql` - sql script for updating core database (from version 4.6.1 to version 5.0).
+- `updateDatabase_5.0_to_6.0.sql` - sql script for updating core database (from version 5.0 to version 6.0).
 - `solr-7.2.1-czidlo.zip` - zip archive containing solr server with CZIDLO configuration
 - `cliUtils.jar` - command line application with some utilities
 
