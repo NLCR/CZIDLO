@@ -1,0 +1,37 @@
+networks:
+  default:
+    name: czidlo_net
+
+services:
+
+  elasticsearch:
+    image: elasticsearch:8.8.0
+    ports:
+      - 9200:9200
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+    #command: ["bash", "-lc", "bin/elasticsearch -Epath.repo=/snapshots"]
+    volumes:
+      #- esdata:/usr/share/elasticsearch/data
+      #- ./es_snapshots:/snapshots
+      - ./esdata:/usr/share/elasticsearch/data
+
+
+  #kibana:
+  #  image: kibana:8.8.0
+  #  environment:
+  #    - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #    - xpack.security.enabled=false
+  #    - SERVER_NAME=kibana
+  #  ports:
+  #    - 5601:5601
+  #  depends_on:
+  #    - elasticsearch
+
+  #TODO: backend (api, web-api, oaiPmhProvider)
+  #TODO: frontend
+
+#volumes:
+#  esdata:
