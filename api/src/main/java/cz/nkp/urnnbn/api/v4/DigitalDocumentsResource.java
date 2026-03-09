@@ -37,6 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import cz.nkp.urnnbn.services.exceptions.*;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
@@ -61,15 +62,6 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
-import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
 import cz.nkp.urnnbn.xml.apiv4.builders.DigitalDocumentsBuilderXml;
 import cz.nkp.urnnbn.xml.apiv4.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.apiv4.unmarshallers.RecordImportUnmarshaller;
@@ -86,7 +78,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
 
     @Path("registrarScopeIdentifier/{idType}/{idValue}/digitalInstances")
     public DigitalInstancesResource getDigitalInstancesResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
-            @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
+                                                                @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
         ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
@@ -94,15 +86,15 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             UrnNbnWithStatus withStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(),
                     true);
             switch (withStatus.getStatus()) {
-            case DEACTIVATED:
-            case ACTIVE:
-                return new DigitalInstancesResource(digitalDocument);
-            case FREE:
-                throw new UnknownUrnException(format, urnNbn);
-            case RESERVED:
-                throw new UnknownDigitalDocumentException(format, urnNbn);
-            default:
-                throw new RuntimeException();
+                case DEACTIVATED:
+                case ACTIVE:
+                    return new DigitalInstancesResource(digitalDocument);
+                case FREE:
+                    throw new UnknownUrnException(format, urnNbn);
+                case RESERVED:
+                    throw new UnknownDigitalDocumentException(format, urnNbn);
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -114,7 +106,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
 
     @Path("registrarScopeIdentifier/{idType}/{idValue}/registrarScopeIdentifiers")
     public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
-            @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
+                                                                                  @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
         ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
@@ -122,15 +114,15 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             UrnNbnWithStatus withStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(),
                     true);
             switch (withStatus.getStatus()) {
-            case DEACTIVATED:
-            case ACTIVE:
-                return new RegistrarScopeIdentifiersResource(digitalDocument);
-            case FREE:
-                throw new UnknownUrnException(format, urnNbn);
-            case RESERVED:
-                throw new UnknownDigitalDocumentException(format, urnNbn);
-            default:
-                throw new RuntimeException();
+                case DEACTIVATED:
+                case ACTIVE:
+                    return new RegistrarScopeIdentifiersResource(digitalDocument);
+                case FREE:
+                    throw new UnknownUrnException(format, urnNbn);
+                case RESERVED:
+                    throw new UnknownDigitalDocumentException(format, urnNbn);
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -143,8 +135,8 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     @GET
     @Path("registrarScopeIdentifier/{idType}/{idValue}")
     public Response getDigitalDocumentResource(@Context HttpServletRequest context, @QueryParam(PARAM_FORMAT) String formatStr,
-            @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr,
-            @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
+                                               @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr,
+                                               @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
         if (formatStr == null) {
             // always redirect somewehere
             DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
@@ -166,11 +158,11 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
                 UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
                         urnNbnParsed.getDocumentCode(), true);
                 switch (fetched.getStatus()) {
-                case ACTIVE:
-                    return redirectionResponse(fetched.getUrn(), context.getHeader(HEADER_REFERER));
-                default:
-                    // redirect to web client
-                    return Response.seeOther(buildWebSearchUri(urnNbnParsed.toString())).build();
+                    case ACTIVE:
+                        return redirectionResponse(fetched.getUrn(), context.getHeader(HEADER_REFERER));
+                    default:
+                        // redirect to web client
+                        return Response.seeOther(buildWebSearchUri(urnNbnParsed.toString())).build();
                 }
             } catch (WebApplicationException e) {
                 // redirect to web client
@@ -199,21 +191,21 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             UrnNbnWithStatus urnNbnWithState = dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(),
                     true);
             switch (urnNbnWithState.getStatus()) {
-            case ACTIVE:
-                DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());
-                if (doc == null) {
-                    throw new UnknownDigitalDocumentException(null, urnNbnWithState.getUrn());
-                } else {
-                    return metadataResponse(doc, urnNbnWithState.getUrn(), format, withDigitalInstances);
-                }
-            case DEACTIVATED:
-                throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
-            case FREE:
-                throw new UnknownUrnException(format, urnNbnWithState.getUrn());
-            case RESERVED:
-                throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
-            default:
-                throw new RuntimeException();
+                case ACTIVE:
+                    DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());
+                    if (doc == null) {
+                        throw new UnknownDigitalDocumentException(null, urnNbnWithState.getUrn());
+                    } else {
+                        return metadataResponse(doc, urnNbnWithState.getUrn(), format, withDigitalInstances);
+                    }
+                case DEACTIVATED:
+                    throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
+                case FREE:
+                    throw new UnknownUrnException(format, urnNbnWithState.getUrn());
+                case RESERVED:
+                    throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -225,14 +217,14 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
 
     private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, ResponseFormat format, boolean withDigitalInstances) {
         switch (format) {
-        case XML:
-            String xml = digitalDocumentBuilderXml(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
-            return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-        case JSON:
-            String json = digitalDocumentBuilderJson(doc, urnNbn, withDigitalInstances).toJson();
-            return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
-        default:
-            throw new RuntimeException();
+            case XML:
+                String xml = digitalDocumentBuilderXml(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            case JSON:
+                String json = digitalDocumentBuilderJson(doc, urnNbn, withDigitalInstances).toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
+            default:
+                throw new RuntimeException();
         }
     }
 
@@ -256,14 +248,14 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             switch (format) {
-            case XML:
-                String xml = digitalDocumentsBuilderXml().buildDocumentWithResponseHeader().toXML();
-                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-            case JSON:
-                String json = digitalDocumentsBuilderJson().toJson();
-                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
-            default:
-                throw new RuntimeException();
+                case XML:
+                    String xml = digitalDocumentsBuilderXml().buildDocumentWithResponseHeader().toXML();
+                    return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+                case JSON:
+                    String json = digitalDocumentsBuilderJson().toJson();
+                    return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -329,7 +321,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             throw new UnauthorizedRegistrationModeException(format, ex.getMode(), ex.getUrn(), registrar);
         } catch (UnknownUserException ex) {
             throw new NoAccessRightsException(format, ex.getMessage());
-        } catch (UnknownArchiverException ex) {
+        } catch (UnknownArchiverException | ArchiverIsRegistrarException ex) {
             throw new InvalidArchiverIdException(format, ex.getMessage());
         } catch (RegistrarScopeIdentifierCollisionException ex) {
             throw new cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollisionException(format, ex.getMessage());

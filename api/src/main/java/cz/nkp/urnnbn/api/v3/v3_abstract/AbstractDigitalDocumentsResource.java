@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import cz.nkp.urnnbn.services.exceptions.*;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
@@ -42,15 +43,6 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
-import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
 import cz.nkp.urnnbn.xml.apiv3.builders.DigitalDocumentsBuilder;
 import cz.nkp.urnnbn.xml.apiv3.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.apiv3.unmarshallers.RecordImportUnmarshaller;
@@ -98,7 +90,7 @@ public abstract class AbstractDigitalDocumentsResource extends ApiResource {
             throw new UnauthorizedRegistrationModeException(ex.getMode(), ex.getUrn(), registrar);
         } catch (UnknownUserException ex) {
             throw new NotAuthorizedException(ex.getMessage());
-        } catch (UnknownArchiverException ex) {
+        } catch (UnknownArchiverException | ArchiverIsRegistrarException ex) {
             throw new InvalidArchiverIdException(ex.getMessage());
         } catch (RegistrarScopeIdentifierCollisionException ex) {
             throw new InvalidRegistrarScopeIdentifier(ex.getMessage());

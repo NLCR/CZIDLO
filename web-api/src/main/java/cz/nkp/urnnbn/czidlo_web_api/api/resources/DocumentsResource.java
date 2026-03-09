@@ -53,7 +53,7 @@ public class DocumentsResource extends AbstractResource {
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "403", description = "Insufficient rights (if URN:NBN is provided, user must manage the registrar)",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Registrar or archiver not found",
+                    @ApiResponse(responseCode = "404", description = "Registrar or archiver not found or archiver is also a (different) registrar",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
@@ -92,6 +92,8 @@ public class DocumentsResource extends AbstractResource {
         } catch (UnknownArchiverException e) {
             throw new RuntimeException(e);
         } catch (IncorrectPredecessorStatus e) {
+            throw new RuntimeException(e);
+        } catch (ArchiverIsRegistrarException e) {
             throw new RuntimeException(e);
         }
     }

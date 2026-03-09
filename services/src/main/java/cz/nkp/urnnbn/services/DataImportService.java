@@ -24,15 +24,16 @@ public interface DataImportService extends BusinessService {
      * @return UrnNbn that has been assigned or the one present in data if it can be used
      * @throws AccessException                            if access right of user to registrar doesn't exist
      * @throws UrnNotFromRegistrarException               If registrar code in urn:nbn and registrar code from importData don't match
-     * @throws UrnUsedException                           If this urn:nbn is allready being used
+     * @throws UrnUsedException                           If this urn:nbn is already being used
      * @throws UnknownRegistrarException                  if no such registrar with code obtained from importData object exists
      * @throws RegistrarScopeIdentifierCollisionException if registrar scope identifier with same type and value as one of those present in importData already exists (for given registrar)
-     * @throws UnknownArchiverException                   if no such archiver (with id obtained from importData) existes
+     * @throws UnknownArchiverException                   if no such archiver (with id obtained from importData) exists
+     * @throws ArchiverIsRegistrarException               if archiver identified by id obtained from importData is also registrar
      * @throws UnknownUserException                       if no such user with this login exists
      */
     public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws AccessException, UnknownUserException,
-            UnknownRegistrarException, UnknownArchiverException, UrnNotFromRegistrarException, RegistrationModeNotAllowedException, UrnUsedException,
-            IncorrectPredecessorStatus, RegistrarScopeIdentifierCollisionException;
+            UnknownRegistrarException, UnknownArchiverException, ArchiverIsRegistrarException, UrnNotFromRegistrarException, RegistrationModeNotAllowedException,
+            UrnUsedException, IncorrectPredecessorStatus, RegistrarScopeIdentifierCollisionException;
 
     /**
      * Creates new digital instance for existing digital document.

@@ -61,7 +61,6 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.v3.v3_abstract.A
             checkServerNotReadOnly();
             String login = req.getRemoteUser();
             String response = registerDigitalDocumentByApiV3(content, login, registrar.getCode());
-            //TODO: return created URI with @Context UriInfo uriIno
             return Response.created(null).entity(response).build();
         } catch (ValidityException ex) {
             throw new InvalidDataException(ex);

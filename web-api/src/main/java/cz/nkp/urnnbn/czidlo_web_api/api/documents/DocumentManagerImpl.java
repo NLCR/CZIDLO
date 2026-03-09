@@ -145,7 +145,7 @@ public class DocumentManagerImpl implements DocumentManager {
 
     @Override
     public UrnNbn createRecord(RecordToBeCreatedOrUpdated record, String login) throws
-            BadArgumentException, UnknownUserException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException,
+            BadArgumentException, UnknownUserException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException, ArchiverIsRegistrarException,
             IncorrectPredecessorStatus, UnknownRecordException, InsufficientRightsException {
         try {
             DigDocRegistrationData docData = convert(record);

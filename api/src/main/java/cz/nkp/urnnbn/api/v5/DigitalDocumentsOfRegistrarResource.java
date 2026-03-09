@@ -306,7 +306,7 @@ public class DigitalDocumentsOfRegistrarResource extends AbstractDigitalDocument
             throw new UnauthorizedRegistrationModeException(format, ex.getMode(), ex.getUrn(), registrar);
         } catch (UnknownUserException ex) {
             throw new NoAccessRightsException(format, ex.getMessage());
-        } catch (UnknownArchiverException ex) {
+        } catch (UnknownArchiverException | ArchiverIsRegistrarException ex) {
             throw new InvalidArchiverIdException(format, ex.getMessage());
         } catch (RegistrarScopeIdentifierCollisionException ex) {
             throw new cz.nkp.urnnbn.api.v5.exceptions.RegistrarScopeIdentifierCollisionException(format, ex.getMessage());

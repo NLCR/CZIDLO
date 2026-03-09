@@ -34,8 +34,8 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 
     @Override
     public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws AccessException, UrnNotFromRegistrarException,
-            UrnUsedException, UnknownRegistrarException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException,
-            RegistrationModeNotAllowedException, IncorrectPredecessorStatus {
+            UrnUsedException, UnknownRegistrarException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException, ArchiverIsRegistrarException,
+            UnknownUserException, RegistrationModeNotAllowedException, IncorrectPredecessorStatus {
         authorization.checkRegistrarRights(importData.getRegistrarCode(), login);
         UrnNbn urnNbn = new DigitalDocumentRegistrar(factory, importData, esIndexer).run();
         /*System.out.println("DataImportServiceImpl.registerDigitalDocument: registered " + urnNbn);

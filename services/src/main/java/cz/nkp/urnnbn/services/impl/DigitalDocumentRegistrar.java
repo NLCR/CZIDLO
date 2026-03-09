@@ -56,9 +56,10 @@ public class DigitalDocumentRegistrar {
     }
 
     public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, RegistrarScopeIdentifierCollisionException,
-            UnknownArchiverException, RegistrationModeNotAllowedException, UnknownRegistrarException, IncorrectPredecessorStatus {
+            UnknownArchiverException, ArchiverIsRegistrarException, RegistrationModeNotAllowedException, UnknownRegistrarException, IncorrectPredecessorStatus {
         synchronized (DigitalDocumentRegistrar.class) {
             checkPredecessorsFromSameRegistrar();
+            checkArchiverIsNotDifferentRegistrar();
             RollbackRecord transactionLog = new RollbackRecord();
             UrnNbn urn = urnToBeUsed(transactionLog);
             long ieId = findOrImportIntelectualEntityWithRollback(transactionLog);
@@ -279,7 +280,7 @@ public class DigitalDocumentRegistrar {
         return ieId;
     }
 
-    private Long persistDigitalDocument(long ieId) throws DatabaseException, RecordNotFoundException, UnknownArchiverException {
+    private Long persistDigitalDocument(long ieId) throws DatabaseException, RecordNotFoundException, UnknownArchiverException, ArchiverIsRegistrarException {
         DigitalDocument digDoc = data.getDigitalDocument();
         digDoc.setIntEntId(ieId);
         try {
@@ -460,6 +461,28 @@ public class DigitalDocumentRegistrar {
         List<UrnNbnWithStatus> predecessors = data.getPredecessors();
         for (UrnNbnWithStatus predecessor : predecessors) {
             checkUrnBelongsToRegistrar(predecessor.getUrn());
+        }
+    }
+
+    private void checkArchiverIsNotDifferentRegistrar() throws ArchiverIsRegistrarException {
+        Long archiverId = data.getDigitalDocument().getArchiverId();
+        if (archiverId == null) {
+            //ok, archiver is not set
+            return;
+        }
+        try {
+            Registrar registrarById = factory.registrarDao().getRegistrarById(archiverId);
+            if (registrarById != null) {
+                if (data.getRegistrarCode().equals(registrarById.getCode())) {
+                    //ok, archiver is the same as registrar, which is allowed
+                    return;
+                }
+                throw new ArchiverIsRegistrarException(archiverId, registrarById.getCode().toString());
+            }
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            // ok, archiver is not registrar
         }
     }
 
