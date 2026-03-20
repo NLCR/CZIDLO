@@ -58,7 +58,7 @@ public interface DocumentManager {
      */
     public UrnNbn createRecord(RecordToBeCreatedOrUpdated record, String login) throws
             BadArgumentException, UnknownUserException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException, ArchiverIsRegistrarException,
-            IncorrectPredecessorStatus, UnknownRecordException, InsufficientRightsException,;
+            IncorrectPredecessorStatus, UnknownRecordException, InsufficientRightsException;
 
     /**
      * Updates existing record identified by URN:NBN.
