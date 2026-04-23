@@ -121,10 +121,11 @@ Version 6.0
 
 This archive should contain following files:
 - `README.rm` - this file
-- `web.war` - web interface module
-- `api.war` - API module
-- `oaiPmhProvider.war` - OAI-PMH provider module
-- `processDataServer.war` - application to access logs and outputs of processes
+~~- `web.war` - web interface module~~
+- `web-api.war` - web API module (for tomcat 11+)
+- `api.war` - public API module (for tomcat 9)
+- `oaiPmhProvider.war` - OAI-PMH provider module (for tomcat 9)
+~~- `processDataServer.war` - application to access logs and outputs of processes~~
 - `initDatabase_6.0.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
 - `updateDatabase-2.0-2.2_to_2.3-3.0.sql` - sql script for upgrading core database (from CZIDLO versions 2.0, 2.1 or 2.2 to versions 2.3, 2.4 or 3.0)
 - `updateDatabase-2.3-3.0_to_4.1.sql` - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to version 4.1)
@@ -135,7 +136,7 @@ This archive should contain following files:
 - `updateDatabase_4.4-4.6_to_4.6.1.sql` - sql script for updating core database (from versions versions 4.4, 4.4.1, 4.5 and 4.6 to version 4.6.1).
 - `updateDatabase_4.6.1_to_5.0.sql` - sql script for updating core database (from version 4.6.1 to version 5.0).
 - `updateDatabase_5.0_to_6.0.sql` - sql script for updating core database (from version 5.0 to version 6.0).
-- `solr-7.2.1-czidlo.zip` - zip archive containing solr server with CZIDLO configuration
+~~- `solr-7.2.1-czidlo.zip` - zip archive containing solr server with CZIDLO configuration~~
 - `cliUtils.jar` - command line application with some utilities
 
 It is NOT sufficient only to run this script to update database. Complete database upgrade is described below.
@@ -185,7 +186,7 @@ It is NOT sufficient only to run this script to update database. Complete databa
    Bear in mind that there always exists default context.xml in each war
    so it will be copied into `$TOMCAT_HOME/webapps/$APPLICATION_NAME/META-INF/context.xml` when the application is (re)deployed.
 
-4. Application run on same server should set property `resolver.admin.logFile` to the same file so that admin logs of all modules
+4. Application run on same server should set property `czidlo.admin.logFile` to the same file so that admin logs of all modules
    are accessible through web interface.
 
 5. Web applications `web` and `processDataServer` need that database for processes and OAI Adapter xsl transformations is initialized.
