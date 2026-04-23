@@ -16,7 +16,9 @@ CZIDLO is authority over global persistent identifiers URN:NBN for single nation
 System is being developed under GNU GPL v3 licence by [National Library of the Czech Republic](http://nkp.cz/).
 Source codes, built software and documentation is available on [google code](http://code.google.com/p/czidlo/).
 
-This document describes installation of this system on Linux server.
+This document describes installation of backend part of this system on Linux server. 
+
+Web frontend component is availab.e at different repository: https://github.com/NLCR/czidlo-frontend 
 
 Since all the middleware (database, servlet container, web server) is available on multiple platforms, it should be possible to install the system on different platform.
 
@@ -143,13 +145,13 @@ It is NOT sufficient only to run this script to update database. Complete databa
 
 ### Process ###
 
-1. Provided you have database installed and properly configured, you should first run the `initDatabase_5.0.sql` script (e. g. by psql) in order to create tables, sequences and indexes.
+1. Provided you have database installed and properly configured, you should first run the `initDatabase_6.0.sql` script (e. g. by psql) in order to create tables, sequences and indexes.
 
    Script also creates one administrator account (admin:admin).
    It is very important that this account is removed immediately after another administrator account (with publicly unknown password) is created. Or at least the password for user 'admin' should be changed.
 
 
-2. Next step is the installation of the four web applications. That is done simply by copying `web.war`, `api.war`, `oaiPmhProvider.war` and `processDataServer.war` into `$TOMCAT_HOME/webapps`.
+2. Next step is installation of the four web applications. That is done simply by copying `web-api.war`, `api.war` and `oaiPmhProvider.war` into `$TOMCAT_HOME/webapps`.
    Applications are independent so you can choose from multiple deployment options. For example:
 
    - `web.war` + `processDataServer.war` + `api.war` - if OAI-PMH functionality is not desired
@@ -189,40 +191,24 @@ It is NOT sufficient only to run this script to update database. Complete databa
 4. Application run on same server should set property `czidlo.admin.logFile` to the same file so that admin logs of all modules
    are accessible through web interface.
 
-5. Web applications `web` and `processDataServer` need that database for processes and OAI Adapter xsl transformations is initialized.
-
-   Applications access this database by hibernate (unlike core database where pure JDBC is used).
-
-   Access to this database is configured in file `hibernate.cfg.xml` (in `$APPLICATION_RULE/WEB-INF/classes`).
-
-   Required tables in this database can be initialized this way:
-
-      - set property `hibernate.hbm2ddl.auto` to create in `hibernate.cfg.xml` in deployed application web (`<property name="hibernate.hbm2ddl.auto">create-drop</property>`)
-      - make sure application web is reloaded, for example by restarting application server
-      - now the tables should be created by hibernate
-      - remove property `hibernate.hbm2ddl.auto` from `hibernate.cfg.xml`
-
-   Without correct connection to this database the application "web" will behave incorrectly.
-
-6. Each of three applications has its own configuration. Some of the bundle keys are shared among them.
+5. Each of three applications has its own configuration. Some of the bundle keys are shared among them.
 
 
 ###################
 ## Configuration ##
 ###################
 
-Configuration of each module can be found in $TOMCAT_HOME/webapps/$APPLICATION_NAME/WEB-INF/classes.
+Configuration of each module can be found in ~/.czidlo directory.
 
 Default version of configuration files are contained within application and explained in comments.
 
 ### Configuration files are: ###
 
 - API: `api.properties`
-- WEB: `web.properties`, `quartz.properties`, `hibernate.cfg.xml`
-- OAI_PMH_PROVIDER: `provider.properties`
-- PROCESS_DATA_SERVER: `processDataServer.properties`, `hibernate.cfg.xml`
+- WEB API: `web-api.properties`
+- OAI_PMH_PROVIDER: `oaiPmhProvider.properties`
 
-Note: Keys in configuration properties files have been renamed since version 4.2.2. Also some new properties were introduced.
+Note: Some keys in configuration properties files have been renamed since version 4.2.2. Also some new properties were introduced.
 So don't rely on simply copying configuration from previous version. Migration should be straightforward.
 See https://github.com/NLCR/CZIDLO/commit/20543990df5132b156426f61ae5024ba4f2ef0b1.
 
@@ -243,6 +229,26 @@ You should always backup your database before upgrading it in order to avoid dat
 
 Apart from that, applications need to be replaced with newer versions.
 This will probably require fixing configuration files again, since application server will probably replace these files with default ones from war archives.
+
+
+##################################
+### Upgrade from version 5.0   ###
+##################################
+
+#### Core database ####
+
+1. Use script `updateDatabase_5.0_to_6.0.sql`. Be sure to run this script as user that has all necessary rights (creating, deleting and updating databases, indexes, views, functions, triggers).
+   Typically something like this: `psql czidlo_core czidlo_user <./updateDatabase_5.0_to_6.0.sql` with czidlo_core being name of database and czidlo_user being user that is owner of the database.
+
+#### Process database ####
+
+No upgrade needed.
+
+#### Index server ####
+
+There has been switch from Solr to Elasticsearch 8. You can drop Solr server and use Elasticsearch server instead.
+All the data in the index are derived from the primary database, so there is no need to migrate it. Just install Elasticsearch server and schedule indexation processes for all the content.
+
 
 ##################################
 ### Upgrade from version 4.6.1 ###
@@ -453,27 +459,14 @@ Database needs to be created and initialized same way as in current version.
 See installation section of this document.
 
 
-########################
-##  Solr installation ##
-########################
+###################################
+##  Elasticsearch 8 installation ##
+###################################
 
-If you are installing CZIDLO version 4.4+ or upgrading from version 4.3 to 4.4, you must install Solr server for web search:
-1. unpack file `solr-7.2.1-czidlo.zip` into directory from now on called SOLR_HOME
-2. start Solr server with `$SOLR_HOME/bin/solr start`
-3. check that Solr server is running correctly with `$SOLR_HOME/bin/solr status`
-4. create preconfigured czidlo solr-core with `$SOLR_HOME/bin/solr create -c czidlo -d $SOLR_HOME/server/solr/czidlo -n solrconfig.xml`
-5. stop Solr server with `$SOLR_HOME/bin/solr stop`
-6. enable security configuration by renaming file `$SOLR_HOME/server/solr/security.json.disabled` to `$SOLR_HOME/server/solr/security.json`
-7. change default login and password for solr indexer (czidloIndexer:czidloRolls) in all configuration files
-in properties `indexer.solr.login`, `indexer.solr.password`, `process.solrIndexer.login` and `process.solrIndexer.password`.
-8. use `cliUtils.jar` to generate credentials for new login and pasword and change configuration file `$SOLR_HOME/server/solr/security.json` accordingly:
-for example: `java -jar cliUtils.jar build_solr_basic-auth-plugin_credentials login password`
-9. update `$SOLR_HOME/server/solr/security.json` with new credentials
-10. start Solr server with `$SOLR_HOME/bin/solr start`
-
-Solr server needn't be visible to the client browser, application `web` works as a proxy. 
-When all applications are properly deployed (especially web, api) you should schedule indexation process for all the content.
-
+Install your Elasticsearch 8 server according to official documentation: https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html
+You must enable security features and create user with password for CZIDLO to be able to connect to Elasticsearch server. 
+Elasticsearch server needn't be visible to the client browser, applications `web-api` works as a proxy and application `api` connects to Elasticsearch server directly.
+When all applications are properly deployed (especially web, api) you should schedule indexation process for all the content through web interface or API.
 
 #############
 ## Logging ##
@@ -521,7 +514,7 @@ Apache can also perform other preprocessing of packets.
 Apache is thought to be more secure than Tomcat because of its wider usage.
 Also there are some API operations, that require SSL.
 
-If you wont to use API for automated access (authorized operations like data imports) you need to establish HTTPS somehow.
+If you want to use API for automated access (authorized operations like data imports) you need to establish HTTPS somehow.
 
 
 ###########
@@ -530,8 +523,10 @@ If you wont to use API for automated access (authorized operations like data imp
 
 Without any redirection and with Tomcat only the applications are available (for domain maydomain.cz) here:
 
-- http://mydomain.cz:8080/web - Web interface intended for human access.
+- http://mydomain.cz:8181/web-api - Web interface intended for human access.
 - http://mydomain.cz:8080/api - REST API for automated imports. Also performs resolving.
 - http://mydomain.cz:8080/oaiPmhProvider - OAI-PMH provider with simple web interface.
+
+In this basic example Tomcat 11 is running on port 8181 and older tomcat 9 is running on port 8080.
 
 There should always be available CZIDLO installation of National Library of the Czech Republic at http://resolver.nkp.cz.
