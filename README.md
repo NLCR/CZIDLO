@@ -11,9 +11,9 @@ Copyright (C) 2013-2018 Martin Řehánek
 
 This archive contains files for the CZIDLO (CZech IDentification and LOcalization Tool based on URN:NBN) system installation.
 
-CZIDLO is authority over global persistent identifiers URN:NBN for single national space and should be therefore run only by particular national library.
+CZIDLO is authority over global persistent identifiers URN:NBN for single national space and should therefore be run only by particular national library.
 
-System is being developed under GNU GPL v3 licence by [National Library of the Czech Republic](http://nkp.cz/).
+The system is developed and maintained under GNU GPL v3 licence by [National Library of the Czech Republic](http://nkp.cz/).
 Source codes, built software and documentation is available on [google code](http://code.google.com/p/czidlo/).
 
 This document describes installation of backend part of this system on Linux server. 
@@ -22,7 +22,7 @@ Web frontend component is availab.e at different repository: https://github.com/
 
 Since all the middleware (database, servlet container, web server) is available on multiple platforms, it should be possible to install the system on different platform.
 
-This processed has not been tested though and will not be explained here.
+This process has not been tested though and will not be explained here.
 
 
 ###################
@@ -32,7 +32,7 @@ This processed has not been tested though and will not be explained here.
 - resolving URN:NBN identifiers for national space (i. e. redirecting from stable URN:NBN-based URL to volatile URL in digital library).
 - redirecting according to access origin (HTTP header REFERER)
 - assigning URN:NBN identifiers for given subspace manually (web interface) or through REST API
-- resposibility for subspaces delegated to organisations yet Resolver is still global authority
+- responsibility for subspaces delegated to organizations yet Resolver is still global authority
 - user accounts management and accounts assigned to subspaces
 - OAI-PMH provider
 - web interface for manual data manipulation, managing processes on server, etc.
@@ -47,7 +47,7 @@ Version 4.0:
 - hidden registrars/archivers in web interface
 - content of tabs "info" and "rules" can be edited through web interface
 - application "web" can now also be deployed in read-only mode
-- login page configurable, which is usefull for more complicated system deployments
+- login page configurable, which is useful for more complicated system deployments
 - digital instances editable through web interface
 - more parameters for process Export URN:NBN - so far we could restrict records produced only by registrar
 - CZIDLO version in web interface header
@@ -60,7 +60,7 @@ Version 4.1:
 
 Version 4.2:
 - bug fixes
-- passwords from now on stored more securely as hash of password concancated with random salt
+- passwords from now on stored more securely as hash of password concatenated with random salt
 - fulltext web search though only withing title data
 - for more see https://code.google.com/p/czidlo/wiki/Changelog#4.2
 
@@ -79,7 +79,7 @@ Version 4.3:
 
 Version 4.4:
 - own search solution consisting of database tables, views, functions triggers has been replaced with Apache Solr
-- added reverse resolving, i.e. finding URN:NBN by URL, throw API or web interface
+- added reverse resolving, i.e. finding URN:NBN by URL, through the API or web interface
 - some tuning of web interface
 - OAI Adapter reworked, source code and report cleaned up. Parameters changed, enabled merging of digital instances.
 
