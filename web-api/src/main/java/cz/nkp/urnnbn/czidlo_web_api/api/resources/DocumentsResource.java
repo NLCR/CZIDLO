@@ -245,9 +245,7 @@ public class DocumentsResource extends AbstractResource {
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Invalid URN:NBN format: " + e.getMessage());
         }
-        if (!user.isAdmin() && !principal.managesRegistrar(urnNbn.getRegistrarCode().toString())) {
-            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + urnNbn.getRegistrarCode().toString() + " can perform this operation");
-        }
+        requireRightToManageRegistrar(principal, urnNbn);
         boolean deactivated = documentManager.deactivateRecord(urnNbn, note, user.getLogin());
         if (!deactivated) {
             throw new ConflictException("URN:NBN " + urn + " is already deactivated");
@@ -313,7 +311,7 @@ public class DocumentsResource extends AbstractResource {
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "403", description = "Not an admin",
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights to manage registrars of both successor and predecessor",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "One of the digital documents not found",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
@@ -333,12 +331,10 @@ public class DocumentsResource extends AbstractResource {
                     description = "JSON object containing predecessor URN:NBN and note describing reason for setting predecessor",
                     required = true
             ) String body) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, BadArgumentException, ConflictException {
-        //authorization: must be admin
+        //authorization: must be admin or user with right to manage registrars of both successor and predecessor
+        //(checked below, once both URN:NBNs are known)
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
-        if (!user.isAdmin()) {
-            throw new InsufficientRightsException("Only admin can setup predecessor - successor relation");
-        }
 
         //parse successor from path
         UrnNbn urnNbnSuccessor;
@@ -375,6 +371,10 @@ public class DocumentsResource extends AbstractResource {
             throw new BadArgumentException("Predecessor URN:NBN must be different from successor URN:NBN");
         }
 
+        //this operation also deactivates the predecessor, hence rights to the predecessor's registrar are required as well
+        requireRightToManageRegistrar(principal, urnNbnSuccessor);
+        requireRightToManageRegistrar(principal, predecessor);
+
         try {
             documentManager.addPredecessorSuccessorRelation(predecessor, urnNbnSuccessor, note, user.getLogin());
         } catch (IncorrectPredecessorStatus e) {
@@ -393,7 +393,7 @@ public class DocumentsResource extends AbstractResource {
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "403", description = "Not an admin",
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights to manage successor's registrar",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Digital document not found",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
@@ -409,12 +409,10 @@ public class DocumentsResource extends AbstractResource {
             @Parameter(description = "URN:NBN of the predecessor", required = true)
             @PathParam("predUrnNbn") String predecessorUrnNbnStr
     ) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException {
-        //authorization: must be admin
+        //authorization: must be admin or user with right to manage successor's registrar
+        //(checked below, once the successor's URN:NBN is known)
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
-        if (!user.isAdmin()) {
-            throw new InsufficientRightsException("Only admin can perform this operation");
-        }
 
         UrnNbn successorUrnNbn;
         try {
@@ -429,6 +427,8 @@ public class DocumentsResource extends AbstractResource {
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Invalid URN:NBN format for " + predecessorUrnNbnStr + ": " + e.getMessage());
         }
+        //only the relation is removed, the predecessor itself is not touched, hence rights to its registrar are not required
+        requireRightToManageRegistrar(principal, successorUrnNbn);
         documentManager.removePredecessorSuccessorRelation(predecessorUrnNbn, successorUrnNbn, user.getLogin());
         return Response.ok().build();
     }

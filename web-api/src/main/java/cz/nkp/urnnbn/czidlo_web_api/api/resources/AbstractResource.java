@@ -1,8 +1,10 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
 import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnauthorizedException;
 import jakarta.ws.rs.OPTIONS;
 import jakarta.ws.rs.Path;
@@ -36,6 +38,13 @@ public abstract class AbstractResource {
             );
         }
         return principal;
+    }
+
+    protected void requireRightToManageRegistrar(AuthenticatedUserPrincipal principal, UrnNbn urnNbn) throws InsufficientRightsException {
+        String registrarCode = urnNbn.getRegistrarCode().toString();
+        if (!principal.getUser().isAdmin() && !principal.managesRegistrar(registrarCode)) {
+            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + registrarCode + " can perform this operation");
+        }
     }
 
     protected <T> T readParam(String paramName, Function<String, T> funk) throws BadArgumentException {
