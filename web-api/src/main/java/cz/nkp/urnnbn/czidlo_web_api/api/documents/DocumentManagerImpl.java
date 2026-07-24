@@ -203,8 +203,6 @@ public class DocumentManagerImpl implements DocumentManager {
         } catch (UnknownUserException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        } catch (NotAdminException e) {
-            throw new InsufficientRightsException("Insufficient rights: " + e.getMessage());
         } catch (AccessException e) {
             throw new InsufficientRightsException("Insufficient rights: " + e.getMessage());
         } catch (UnknownDigDocException e) {
@@ -252,7 +250,7 @@ public class DocumentManagerImpl implements DocumentManager {
             dataUpdateService().removeRelationPredecessorSuccessor(predecessor, successor, login);
         } catch (UnknownUserException e) {
             throw new UnknownRecordException("Unknown digital document: " + e.getMessage());
-        } catch (NotAdminException e) {
+        } catch (AccessException e) {
             throw new InsufficientRightsException("Insufficient rights: " + e.getMessage());
         }
     }

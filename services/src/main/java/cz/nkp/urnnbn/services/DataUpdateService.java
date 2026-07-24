@@ -94,10 +94,10 @@ public interface DataUpdateService extends BusinessService {
      * @param note
      * @param login
      * @throws UnknownUserException
-     * @throws NotAdminException
+     * @throws AccessException           if user is neither admin nor has rights to registrars of both successor and predecessor
      * @throws IncorrectPredecessorStatus
      */
-    public void addRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String note, String login) throws UnknownUserException, NotAdminException, IncorrectPredecessorStatus;
+    public void addRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String note, String login) throws UnknownUserException, AccessException, IncorrectPredecessorStatus;
 
     /**
      * Removes relation predecessor-successor between two URN:NBNs.
@@ -106,8 +106,8 @@ public interface DataUpdateService extends BusinessService {
      * @param successor
      * @param login
      * @throws UnknownUserException
-     * @throws NotAdminException
+     * @throws AccessException      if user is neither admin nor has rights to successor's registrar
      */
-    public void removeRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String login) throws UnknownUserException, NotAdminException;
+    public void removeRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String login) throws UnknownUserException, AccessException;
 
 }

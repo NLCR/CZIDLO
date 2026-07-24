@@ -365,7 +365,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void deactivateUrnNbn(UrnNbn urn, String login, String note) throws UnknownUserException, AccessException, UnknownDigDocException {
         try {
             long registrarId = registrarOfDigDoc(urn.getDigDocId());
-            authorization.checkRegistrarRights(registrarId, login);
+            authorization.checkRegistrarRightsOrAdmin(registrarId, login);
             if ("".equals(note)) {
                 note = null;
             }
@@ -385,7 +385,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void reactivateUrnNbn(UrnNbn urn, String login) throws UnknownUserException, AccessException, UnknownDigDocException {
         try {
             long registrarId = registrarOfDigDoc(urn.getDigDocId());
-            authorization.checkRegistrarRights(registrarId, login);
+            authorization.checkRegistrarRightsOrAdmin(registrarId, login);
             factory.urnDao().reactivateUrnNbn(urn.getRegistrarCode(), urn.getDocumentCode());
             AdminLoggerSimple.info(String.format("User %s reactivated %s.", login, urn));
         } catch (DatabaseException ex) {
@@ -394,9 +394,11 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     }
 
     @Override
-    public void addRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String note, String login) throws UnknownUserException, NotAdminException, IncorrectPredecessorStatus {
+    public void addRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String note, String login) throws UnknownUserException, AccessException, IncorrectPredecessorStatus {
         try {
-            authorization.checkAdmin(login);
+            //the predecessor gets deactivated as part of this operation, hence rights to its registrar are required as well
+            authorization.checkRegistrarRightsOrAdmin(successor.getRegistrarCode(), login);
+            authorization.checkRegistrarRightsOrAdmin(predecessor.getRegistrarCode(), login);
             checkPredecessorNotFreeOrReserved(predecessor);
             factory.urnDao().insertUrnNbnPredecessor(predecessor, successor, note);
         } catch (IncorrectPredecessorStatus e) {
@@ -436,9 +438,10 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     }
 
     @Override
-    public void removeRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String login) throws UnknownUserException, NotAdminException {
+    public void removeRelationPredecessorSuccessor(UrnNbn predecessor, UrnNbn successor, String login) throws UnknownUserException, AccessException {
         try {
-            authorization.checkAdmin(login);
+            //only the relation is removed, the predecessor itself is not touched, hence rights to its registrar are not required
+            authorization.checkRegistrarRightsOrAdmin(successor.getRegistrarCode(), login);
             factory.urnDao().deletePredecessorSuccessorRelation(predecessor, successor);
         } catch (DatabaseException e) {
             LOGGER.log(Level.WARNING, "database  error while adding predecessor successor {0} - {1}: {2}", new Object[]{predecessor.toString(), successor.toString(), e.getMessage()});
