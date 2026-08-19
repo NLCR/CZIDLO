@@ -107,7 +107,7 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <!--<version>9.4-1201-jdbc41</version>-->
-            <version>42.7.11</version>
+            <version>42.7.12</version>
         </dependency>
 
         <!--db connection pool-->
